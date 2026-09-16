@@ -86,8 +86,11 @@ class RoutePlaceholderScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: <Widget>[
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 8,
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: <Widget>[
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -106,7 +109,6 @@ class RoutePlaceholderScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: AppSpacing.space12),
                           Text(
                             routePath,
                             style: AppTypography.labelMeta(

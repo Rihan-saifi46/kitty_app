@@ -268,18 +268,19 @@ class LuxuryNavDrawer extends ConsumerWidget {
   }
 
   Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
-    Navigator.of(context).pop(); // Close drawer
+    final AppAuthNotifier authNotifier = ref.read(appAuthStateProvider.notifier);
 
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
         backgroundColor: AppColors.emeraldCard,
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.border16),
         title: Text(
           'Log Out of Account?',
-          style: AppTypography.displaySubtitle(color: AppColors.textPrimaryLight),
+          style: AppTypography.cardTitle(color: AppColors.textPrimaryLight),
         ),
         content: Text(
-          'Are you sure you want to end your current session?',
+          'Are you sure you want to end your current session? You will need to re-verify via OTP.',
           style: AppTypography.bodyRegular(color: AppColors.emeraldTextSubtle),
         ),
         actions: <Widget>[
@@ -303,7 +304,7 @@ class LuxuryNavDrawer extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      await ref.read(appAuthStateProvider.notifier).logout();
+      await authNotifier.logout();
       if (context.mounted) {
         context.go(RoutePaths.login);
       }

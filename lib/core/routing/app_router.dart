@@ -67,6 +67,9 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
 
       // 3. Authenticated User: Redirect auth & splash routes to home
       if (auth.isAuthenticated) {
+        if (location == RoutePaths.authSuccess) {
+          return null; // Allow welcome / biometric post-auth step
+        }
         if (isAuthRoute || isSplashRoute) {
           return RoutePaths.home;
         }
@@ -98,38 +101,36 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
             child: const LoginPlaceholderScreen(),
           );
         },
-        routes: <RouteBase>[
-          GoRoute(
-            path: 'phone',
-            name: AppRoute.phone.name,
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              return RouteTransitions.slideFromRightPage(
-                key: state.pageKey,
-                child: const PhonePlaceholderScreen(),
-              );
-            },
-          ),
-          GoRoute(
-            path: 'otp',
-            name: AppRoute.otp.name,
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              return RouteTransitions.slideFromRightPage(
-                key: state.pageKey,
-                child: const OtpPlaceholderScreen(),
-              );
-            },
-          ),
-          GoRoute(
-            path: 'success',
-            name: AppRoute.authSuccess.name,
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              return RouteTransitions.fadeTransitionPage(
-                key: state.pageKey,
-                child: const AuthSuccessPlaceholderScreen(),
-              );
-            },
-          ),
-        ],
+      ),
+      GoRoute(
+        path: RoutePaths.phone,
+        name: AppRoute.phone.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const PhonePlaceholderScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.otp,
+        name: AppRoute.otp.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const OtpPlaceholderScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.authSuccess,
+        name: AppRoute.authSuccess.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.fadeTransitionPage(
+            key: state.pageKey,
+            child: const AuthSuccessPlaceholderScreen(),
+          );
+        },
       ),
 
       // =======================================================================
