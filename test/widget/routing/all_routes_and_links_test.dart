@@ -3,11 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kitty_app/app/kitty_app.dart';
+import 'package:kitty_app/core/mock/mock_engine_config.dart';
 import 'package:kitty_app/core/providers/auth_state_provider.dart';
 import 'package:kitty_app/core/providers/core_providers.dart';
 import 'package:kitty_app/core/providers/repository_providers.dart';
 import 'package:kitty_app/core/storage/secure_storage_service.dart';
 import 'package:kitty_app/features/auth/data/repositories/mock_auth_repository.dart';
+import 'package:kitty_app/features/dashboard/data/repositories/mock_dashboard_repository.dart';
+import 'package:kitty_app/features/home/data/repositories/mock_gold_rate_repository.dart';
+import 'package:kitty_app/features/home/data/repositories/mock_product_repository.dart';
+import 'package:kitty_app/features/home/presentation/screens/home_screen.dart';
+import 'package:kitty_app/features/offers/data/repositories/mock_scheme_repository.dart';
 import 'package:kitty_app/shared/widgets/inputs/kitty_otp_input.dart';
 
 class _FakeSecureStorageService extends SecureStorageService {
@@ -36,6 +42,12 @@ class _FakeSecureStorageService extends SecureStorageService {
 
 void main() {
   group('Comprehensive Route & Link Verification Test Suite', () {
+    late MockEngineConfig instantConfig;
+
+    setUp(() {
+      instantConfig = MockEngineConfig(latency: MockLatency.instant);
+    });
+
     testWidgets('1. Auth Flow: Login -> Phone -> OTP -> Success -> Dashboard', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1080, 2340);
       tester.view.devicePixelRatio = 2.0;
@@ -43,15 +55,26 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       final _FakeSecureStorageService fakeStorage = _FakeSecureStorageService();
-      final MockAuthRepository mockAuth = MockAuthRepository(storageService: fakeStorage);
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authRepositoryProvider.overrideWithValue(mockAuth),
+            mockEngineConfigProvider.overrideWithValue(instantConfig),
             secureStorageServiceProvider.overrideWithValue(fakeStorage),
-            appAuthStateProvider.overrideWith(
-              () => _TestAuthNotifier(const AppAuthState.unauthenticated()),
+            authRepositoryProvider.overrideWithValue(
+              MockAuthRepository(storageService: fakeStorage, engineConfig: instantConfig),
+            ),
+            goldRateRepositoryProvider.overrideWithValue(
+              MockGoldRateRepository(engineConfig: instantConfig),
+            ),
+            productRepositoryProvider.overrideWithValue(
+              MockProductRepository(engineConfig: instantConfig),
+            ),
+            schemeRepositoryProvider.overrideWithValue(
+              MockSchemeRepository(engineConfig: instantConfig),
+            ),
+            dashboardRepositoryProvider.overrideWithValue(
+              MockDashboardRepository(engineConfig: instantConfig),
             ),
           ],
           child: const KittyApp(),
@@ -86,7 +109,7 @@ void main() {
       // 1e. Tap 'Enter Kitty Vault' -> Navigates to /home
       await tester.tap(find.text('Enter Kitty Vault'));
       await tester.pumpAndSettle();
-      expect(find.text('Home Screen'), findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
     });
 
     testWidgets('2. 5 Shell Bottom Tabs switch smoothly and preserve state', (WidgetTester tester) async {
@@ -98,6 +121,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            mockEngineConfigProvider.overrideWithValue(instantConfig),
             appAuthStateProvider.overrideWith(
               () => _TestAuthNotifier(
                 const AppAuthState.authenticated(
@@ -106,6 +130,18 @@ void main() {
                 ),
               ),
             ),
+            goldRateRepositoryProvider.overrideWithValue(
+              MockGoldRateRepository(engineConfig: instantConfig),
+            ),
+            productRepositoryProvider.overrideWithValue(
+              MockProductRepository(engineConfig: instantConfig),
+            ),
+            schemeRepositoryProvider.overrideWithValue(
+              MockSchemeRepository(engineConfig: instantConfig),
+            ),
+            dashboardRepositoryProvider.overrideWithValue(
+              MockDashboardRepository(engineConfig: instantConfig),
+            ),
           ],
           child: const KittyApp(),
         ),
@@ -113,32 +149,32 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tab 0: Home Tab
-      expect(find.text('Home Screen'), findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
 
       // Tab 1: Switch to My Kitty Tab
-      await tester.tap(find.text('My Kitty'));
+      await tester.tap(find.text('My Kitty').last);
       await tester.pumpAndSettle();
       expect(find.text('My Kitty Scheme'), findsOneWidget);
 
       // Tab 2: Switch to Passbook Tab
-      await tester.tap(find.text('Passbook'));
+      await tester.tap(find.text('Passbook').last);
       await tester.pumpAndSettle();
       expect(find.text('Passbook Ledger'), findsOneWidget);
 
       // Tab 3: Switch to Offers Tab
-      await tester.tap(find.text('Offers'));
+      await tester.tap(find.text('Offers').last);
       await tester.pumpAndSettle();
       expect(find.text('Kitty Offers & Plans'), findsOneWidget);
 
       // Tab 4: Switch to Settings Tab
-      await tester.tap(find.text('Settings'));
+      await tester.tap(find.text('Settings').last);
       await tester.pumpAndSettle();
       expect(find.text('Patron Settings'), findsOneWidget);
 
       // Return to Home Tab
-      await tester.tap(find.text('Home'));
+      await tester.tap(find.text('Home').last);
       await tester.pumpAndSettle();
-      expect(find.text('Home Screen'), findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
     });
 
     testWidgets('3. In-screen Navigation Links: Home -> Dashboard -> Checkout -> Gokwik', (WidgetTester tester) async {
@@ -150,6 +186,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            mockEngineConfigProvider.overrideWithValue(instantConfig),
             appAuthStateProvider.overrideWith(
               () => _TestAuthNotifier(
                 const AppAuthState.authenticated(
@@ -158,14 +195,26 @@ void main() {
                 ),
               ),
             ),
+            goldRateRepositoryProvider.overrideWithValue(
+              MockGoldRateRepository(engineConfig: instantConfig),
+            ),
+            productRepositoryProvider.overrideWithValue(
+              MockProductRepository(engineConfig: instantConfig),
+            ),
+            schemeRepositoryProvider.overrideWithValue(
+              MockSchemeRepository(engineConfig: instantConfig),
+            ),
+            dashboardRepositoryProvider.overrideWithValue(
+              MockDashboardRepository(engineConfig: instantConfig),
+            ),
           ],
           child: const KittyApp(),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Home: Tap 'View Active Scheme Pass' -> Dashboard
-      await tester.tap(find.text('View Active Scheme Pass'));
+      // Home: Tap 'My Kitty' in quick actions or bottom bar -> Dashboard
+      await tester.tap(find.text('My Kitty').first);
       await tester.pumpAndSettle();
       expect(find.text('My Kitty Scheme'), findsOneWidget);
 
@@ -194,6 +243,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            mockEngineConfigProvider.overrideWithValue(instantConfig),
             appAuthStateProvider.overrideWith(
               () => _TestAuthNotifier(
                 const AppAuthState.authenticated(
@@ -202,16 +252,35 @@ void main() {
                 ),
               ),
             ),
+            goldRateRepositoryProvider.overrideWithValue(
+              MockGoldRateRepository(engineConfig: instantConfig),
+            ),
+            productRepositoryProvider.overrideWithValue(
+              MockProductRepository(engineConfig: instantConfig),
+            ),
+            schemeRepositoryProvider.overrideWithValue(
+              MockSchemeRepository(engineConfig: instantConfig),
+            ),
+            dashboardRepositoryProvider.overrideWithValue(
+              MockDashboardRepository(engineConfig: instantConfig),
+            ),
           ],
           child: const KittyApp(),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Tap the Bell Icon button in Header
+      // Tap Notification Bell in Header
       await tester.tap(find.byTooltip('Notifications'));
       await tester.pumpAndSettle();
+
+      // Verify Notifications Screen
       expect(find.text('Notifications Center'), findsOneWidget);
+
+      // Back navigation returns to Home
+      await tester.tap(find.text('Back to App'));
+      await tester.pumpAndSettle();
+      expect(find.byType(HomeScreen), findsOneWidget);
     });
 
     testWidgets('5. Luxury Drawer Links: KYC and Logout', (WidgetTester tester) async {
@@ -223,6 +292,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            mockEngineConfigProvider.overrideWithValue(instantConfig),
             appAuthStateProvider.overrideWith(
               () => _TestAuthNotifier(
                 const AppAuthState.authenticated(
@@ -230,6 +300,18 @@ void main() {
                   userName: 'Rihan',
                 ),
               ),
+            ),
+            goldRateRepositoryProvider.overrideWithValue(
+              MockGoldRateRepository(engineConfig: instantConfig),
+            ),
+            productRepositoryProvider.overrideWithValue(
+              MockProductRepository(engineConfig: instantConfig),
+            ),
+            schemeRepositoryProvider.overrideWithValue(
+              MockSchemeRepository(engineConfig: instantConfig),
+            ),
+            dashboardRepositoryProvider.overrideWithValue(
+              MockDashboardRepository(engineConfig: instantConfig),
             ),
           ],
           child: const KittyApp(),
@@ -245,12 +327,12 @@ void main() {
       // Tap 'KYC Compliance' link
       await tester.tap(find.text('KYC Compliance'));
       await tester.pumpAndSettle();
-      expect(find.text('Statutory KYC Verification'), findsOneWidget);
+      expect(find.text('KYC Document Verification'), findsOneWidget);
 
-      // Tap 'Back to Home' on KYC screen
-      await tester.tap(find.text('Back to Home'));
+      // Tap 'Back' on KYC screen
+      await tester.tap(find.byTooltip('Back'));
       await tester.pumpAndSettle();
-      expect(find.text('Home Screen'), findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
 
       // Open Drawer again to test Logout
       await tester.tap(find.byTooltip('Open Menu'));
@@ -278,6 +360,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            mockEngineConfigProvider.overrideWithValue(instantConfig),
             appAuthStateProvider.overrideWith(
               () => _TestAuthNotifier(
                 const AppAuthState.authenticated(
@@ -285,6 +368,18 @@ void main() {
                   userName: 'Rihan',
                 ),
               ),
+            ),
+            goldRateRepositoryProvider.overrideWithValue(
+              MockGoldRateRepository(engineConfig: instantConfig),
+            ),
+            productRepositoryProvider.overrideWithValue(
+              MockProductRepository(engineConfig: instantConfig),
+            ),
+            schemeRepositoryProvider.overrideWithValue(
+              MockSchemeRepository(engineConfig: instantConfig),
+            ),
+            dashboardRepositoryProvider.overrideWithValue(
+              MockDashboardRepository(engineConfig: instantConfig),
             ),
           ],
           child: const KittyApp(),
@@ -305,7 +400,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Successfully recovered to Home Screen
-      expect(find.text('Home Screen'), findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
     });
   });
 }
