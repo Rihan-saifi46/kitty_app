@@ -2,14 +2,26 @@ import 'package:flutter/material.dart';
 
 /// Centralized 4px base-grid layout spacing constants for Kitty App.
 abstract final class AppSpacing {
+  /// 2px - Ultra micro spacing
+  static const double space2 = 2.0;
+
   /// 4px - Micro spacing between icon and badge text
   static const double space4 = 4.0;
+
+  /// 6px - Small micro gap
+  static const double space6 = 6.0;
 
   /// 8px - Small gap between related vertical elements
   static const double space8 = 8.0;
 
+  /// 10px - Compact element spacing
+  static const double space10 = 10.0;
+
   /// 12px - Medium gap between list items / sub-sections
   static const double space12 = 12.0;
+
+  /// 14px - Intermediate form padding
+  static const double space14 = 14.0;
 
   /// 16px - Base layout spacing / screen horizontal padding
   static const double space16 = 16.0;
@@ -19,6 +31,9 @@ abstract final class AppSpacing {
 
   /// 24px - Large section gap
   static const double space24 = 24.0;
+
+  /// 28px - Extended section gap
+  static const double space28 = 28.0;
 
   /// 32px - Extra large hero/footer separation
   static const double space32 = 32.0;
@@ -38,6 +53,9 @@ abstract final class AppSpacing {
 
   /// EdgeInsets.all(12.0)
   static const EdgeInsets all12 = EdgeInsets.all(space12);
+
+  /// EdgeInsets.all(14.0)
+  static const EdgeInsets all14 = EdgeInsets.all(space14);
 
   /// EdgeInsets.all(16.0)
   static const EdgeInsets all16 = EdgeInsets.all(space16);
