@@ -7,4 +7,7 @@ abstract class IProductRepository {
 
   /// Fetches available product categories.
   Future<List<String>> getCategories();
+
+  /// Fetches a specific jewelry product by unique ID.
+  Future<ProductEntity> getProductById(String id);
 }

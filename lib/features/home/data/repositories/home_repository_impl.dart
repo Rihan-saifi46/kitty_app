@@ -50,4 +50,13 @@ class HomeRepositoryImpl implements IGoldRateRepository, IProductRepository {
         data['categories'] as List<dynamic>? ?? <dynamic>[];
     return list.map((dynamic e) => e.toString()).toList();
   }
+
+  @override
+  Future<ProductEntity> getProductById(String id) async {
+    final response = await _dio.get<Map<String, dynamic>>('/api/v1/products/$id');
+    final Map<String, dynamic> data =
+        response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    return HomeMapper.toProductEntity(
+        ProductDto.fromJson(data['product'] as Map<String, dynamic>));
+  }
 }
