@@ -176,6 +176,95 @@ class DashboardScreen extends ConsumerWidget {
           ),
 
           const SliverToBoxAdapter(
+            child: SizedBox(height: AppSpacing.space4),
+          ),
+
+          // Passbook & Statements Quick Link Card
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.space16,
+                vertical: AppSpacing.space4,
+              ),
+              child: InkWell(
+                key: const Key('dashboard_view_passbook_link'),
+                onTap: () => context.go(RoutePaths.passbook),
+                borderRadius: AppRadius.border16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.space16,
+                    vertical: AppSpacing.space12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceCardBg,
+                    borderRadius: AppRadius.border16,
+                    border: Border.all(
+                      color: AppColors.surfaceCardBorder,
+                      width: 1,
+                    ),
+                    boxShadow: const <BoxShadow>[
+                      BoxShadow(
+                        color: Color(0x0A000000),
+                        blurRadius: 10,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.goldSubtle,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.goldBorder.withValues(alpha: 0.35),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.menu_book_outlined,
+                            color: AppColors.goldPrimary,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.space12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Passbook & Statements',
+                              style: AppTypography.cardTitle(
+                                color: AppColors.textPrimaryDark,
+                              ).copyWith(fontSize: 14, fontWeight: FontWeight.w700),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'View 12-month installment history & gold allocation',
+                              style: AppTypography.bodySmall(
+                                color: AppColors.textSecondaryMuted,
+                              ).copyWith(fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 14,
+                        color: AppColors.textTertiary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          const SliverToBoxAdapter(
             child: SizedBox(height: AppSpacing.space8),
           ),
 

@@ -11,7 +11,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/kyc/presentation/screens/kyc_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_placeholder_screen.dart';
 import '../../features/offers/presentation/screens/offers_placeholder_screen.dart';
-import '../../features/passbook/presentation/screens/passbook_placeholder_screen.dart';
+import '../../features/passbook/presentation/screens/passbook_screen.dart';
 import '../../features/payment_gateway/presentation/screens/gokwik_placeholder_screen.dart';
 import '../../features/receipt/presentation/screens/receipt_placeholder_screen.dart';
 import '../../features/settings/presentation/screens/settings_placeholder_screen.dart';
@@ -189,7 +189,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return RouteTransitions.fadeTransitionPage(
                     key: state.pageKey,
-                    child: const PassbookPlaceholderScreen(),
+                    child: const PassbookScreen(),
                   );
                 },
               ),
