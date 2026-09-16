@@ -10,6 +10,7 @@ import 'package:kitty_app/core/providers/repository_providers.dart';
 import 'package:kitty_app/core/storage/secure_storage_service.dart';
 import 'package:kitty_app/features/auth/data/repositories/mock_auth_repository.dart';
 import 'package:kitty_app/features/dashboard/data/repositories/mock_dashboard_repository.dart';
+import 'package:kitty_app/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:kitty_app/features/home/data/repositories/mock_gold_rate_repository.dart';
 import 'package:kitty_app/features/home/data/repositories/mock_product_repository.dart';
 import 'package:kitty_app/features/home/presentation/screens/home_screen.dart';
@@ -154,7 +155,7 @@ void main() {
       // Tab 1: Switch to My Kitty Tab
       await tester.tap(find.text('My Kitty').last);
       await tester.pumpAndSettle();
-      expect(find.text('My Kitty Scheme'), findsOneWidget);
+      expect(find.byType(DashboardScreen), findsOneWidget);
 
       // Tab 2: Switch to Passbook Tab
       await tester.tap(find.text('Passbook').last);
@@ -216,10 +217,10 @@ void main() {
       // Home: Tap 'My Kitty' in quick actions or bottom bar -> Dashboard
       await tester.tap(find.text('My Kitty').first);
       await tester.pumpAndSettle();
-      expect(find.text('My Kitty Scheme'), findsOneWidget);
+      expect(find.byType(DashboardScreen), findsOneWidget);
 
-      // Dashboard: Tap 'Pay Next EMI' -> Checkout modal
-      await tester.tap(find.text('Pay Next EMI (₹5,000)'));
+      // Dashboard: Tap 'PAY NEXT EMI (₹5,000)' -> Checkout modal
+      await tester.tap(find.text('PAY NEXT EMI (₹5,000)'));
       await tester.pumpAndSettle();
       expect(find.text('Payment Checkout'), findsOneWidget);
 
@@ -231,7 +232,7 @@ void main() {
       // Gokwik: Tap 'Simulate Successful Return -> /dashboard'
       await tester.tap(find.text('Simulate Successful Return -> /dashboard'));
       await tester.pumpAndSettle();
-      expect(find.text('My Kitty Scheme'), findsOneWidget);
+      expect(find.byType(DashboardScreen), findsOneWidget);
     });
 
     testWidgets('4. Header Navigation: Bell Icon opens Notifications', (WidgetTester tester) async {

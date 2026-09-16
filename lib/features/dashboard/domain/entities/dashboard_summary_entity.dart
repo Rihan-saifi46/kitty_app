@@ -1,3 +1,4 @@
+import '../../../../core/enums/app_enums.dart';
 import '../../../passbook/domain/entities/passbook_entry_entity.dart';
 
 /// Next installment due summary.
@@ -33,6 +34,7 @@ class DashboardSummaryEntity {
     this.valuationGainPct,
     this.nextInstallment,
     this.passbook = const <PassbookEntryEntity>[],
+    this.status = MembershipStatusEnum.active,
   });
 
   final bool hasActiveScheme;
@@ -50,6 +52,7 @@ class DashboardSummaryEntity {
   final double? valuationGainPct;
   final NextInstallmentEntity? nextInstallment;
   final List<PassbookEntryEntity> passbook;
+  final MembershipStatusEnum status;
 
   double get progressRatio {
     if (totalMonths == null || totalMonths == 0 || monthsPaid == null) return 0.0;
@@ -59,4 +62,14 @@ class DashboardSummaryEntity {
   int get progressPercentage {
     return (progressRatio * 100).round();
   }
+
+  int get remainingMonthsPayable {
+    if (totalMonths == null || monthsPaid == null) return 0;
+    // 12th month is free bonus, so payable remaining = totalMonths - 1 - monthsPaid
+    final int payable = (totalMonths! - 1) - monthsPaid!;
+    return payable < 0 ? 0 : payable;
+  }
+
+  bool get isPreJoin => status == MembershipStatusEnum.preJoin;
+  bool get isCompleted => (totalMonths != null && monthsPaid != null && monthsPaid! >= totalMonths!) || status == MembershipStatusEnum.completed;
 }

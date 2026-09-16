@@ -48,6 +48,7 @@ class DashboardDetailsDto {
     required this.valuationGainPct,
     this.nextInstallment,
     required this.passbook,
+    this.status = 'ACTIVE',
   });
 
   factory DashboardDetailsDto.fromJson(Map<String, dynamic> json) {
@@ -73,6 +74,7 @@ class DashboardDetailsDto {
                   PassbookEntryDto.fromJson(e as Map<String, dynamic>))
               .toList() ??
           <PassbookEntryDto>[],
+      status: json['status'] as String? ?? 'ACTIVE',
     );
   }
 
@@ -90,6 +92,7 @@ class DashboardDetailsDto {
   final double valuationGainPct;
   final NextInstallmentDto? nextInstallment;
   final List<PassbookEntryDto> passbook;
+  final String status;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'membershipId': membershipId,
@@ -107,6 +110,7 @@ class DashboardDetailsDto {
         if (nextInstallment != null)
           'nextInstallment': nextInstallment!.toJson(),
         'passbook': passbook.map((PassbookEntryDto e) => e.toJson()).toList(),
+        'status': status,
       };
 }
 

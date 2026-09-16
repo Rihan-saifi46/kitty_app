@@ -60,6 +60,7 @@ enum InstallmentStatusEnum {
 /// Membership status of an enrolled user scheme.
 enum MembershipStatusEnum {
   active,
+  preJoin,
   winner,
   completed,
   defaulted,
@@ -71,6 +72,9 @@ enum MembershipStatusEnum {
     switch (clean) {
       case 'ACTIVE':
         return MembershipStatusEnum.active;
+      case 'PRE_JOIN':
+      case 'PREJOIN':
+        return MembershipStatusEnum.preJoin;
       case 'WINNER':
         return MembershipStatusEnum.winner;
       case 'COMPLETED':
@@ -86,6 +90,8 @@ enum MembershipStatusEnum {
     switch (this) {
       case MembershipStatusEnum.active:
         return 'ACTIVE';
+      case MembershipStatusEnum.preJoin:
+        return 'PRE_JOIN';
       case MembershipStatusEnum.winner:
         return 'WINNER';
       case MembershipStatusEnum.completed:

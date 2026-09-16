@@ -6,7 +6,7 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/otp_screen.dart';
 import '../../features/auth/presentation/screens/phone_screen.dart';
 import '../../features/checkout/presentation/screens/checkout_placeholder_screen.dart';
-import '../../features/dashboard/presentation/screens/dashboard_placeholder_screen.dart';
+import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/kyc/presentation/screens/kyc_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_placeholder_screen.dart';
@@ -172,7 +172,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return RouteTransitions.fadeTransitionPage(
                     key: state.pageKey,
-                    child: const DashboardPlaceholderScreen(),
+                    child: const DashboardScreen(),
                   );
                 },
               ),

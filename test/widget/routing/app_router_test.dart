@@ -6,6 +6,7 @@ import 'package:kitty_app/core/providers/auth_state_provider.dart';
 import 'package:kitty_app/core/providers/repository_providers.dart';
 import 'package:kitty_app/core/routing/app_router.dart';
 import 'package:kitty_app/features/dashboard/data/repositories/mock_dashboard_repository.dart';
+import 'package:kitty_app/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:kitty_app/features/home/data/repositories/mock_gold_rate_repository.dart';
 import 'package:kitty_app/features/home/data/repositories/mock_product_repository.dart';
 import 'package:kitty_app/features/home/presentation/screens/home_screen.dart';
@@ -113,7 +114,7 @@ void main() {
       // Switch to Tab 1 ('My Kitty')
       await tester.tap(find.text('My Kitty').last);
       await tester.pumpAndSettle();
-      expect(find.text('My Kitty Scheme'), findsOneWidget);
+      expect(find.byType(DashboardScreen), findsOneWidget);
 
       // Switch to Tab 2 ('Passbook')
       await tester.tap(find.text('Passbook').last);

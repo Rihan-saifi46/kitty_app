@@ -1,3 +1,4 @@
+import '../../../../core/enums/app_enums.dart';
 import '../../../passbook/data/mappers/passbook_mapper.dart';
 import '../../domain/entities/dashboard_summary_entity.dart';
 import '../dtos/dashboard_dto.dart';
@@ -40,6 +41,7 @@ abstract final class DashboardMapper {
       valuationGainPct: d.valuationGainPct,
       nextInstallment: toNextInstallmentEntity(d.nextInstallment),
       passbook: d.passbook.map<dynamic>(PassbookMapper.toEntity).toList().cast(),
+      status: MembershipStatusEnum.fromString(d.status),
     );
   }
 }
