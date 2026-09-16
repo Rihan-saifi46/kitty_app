@@ -4,6 +4,7 @@ import '../network/dio_client.dart';
 import '../network/interceptors/auth_interceptor.dart';
 import '../services/connectivity_service.dart';
 import '../storage/secure_storage_service.dart';
+import 'auth_state_provider.dart';
 
 /// Provider for global application configuration.
 final Provider<AppConfig> appConfigProvider = Provider<AppConfig>((Ref ref) {
@@ -36,7 +37,7 @@ final Provider<AuthInterceptor> authInterceptorProvider =
   return AuthInterceptor(
     secureStorageService: storage,
     onUnauthorized: () {
-      // Future Phase 2: Hook into authNotifierProvider.logout()
+      ref.read(appAuthStateProvider.notifier).logout();
     },
   );
 });
