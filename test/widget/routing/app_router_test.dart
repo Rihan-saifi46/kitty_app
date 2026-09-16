@@ -20,7 +20,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify that Login Screen is rendered
-      expect(find.text('Login Screen'), findsOneWidget);
+      expect(find.text('Sign in to continue'), findsOneWidget);
     });
 
     testWidgets('Authenticated user accessing root navigates to protected shell and renders Home Screen', (WidgetTester tester) async {

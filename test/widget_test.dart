@@ -19,7 +19,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that the declarative router mounts and routes to Login
-    expect(find.text('Login Screen'), findsOneWidget);
+    expect(find.text('Sign in to continue'), findsOneWidget);
   });
 }
 

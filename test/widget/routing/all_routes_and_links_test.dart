@@ -4,6 +4,35 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kitty_app/app/kitty_app.dart';
 import 'package:kitty_app/core/providers/auth_state_provider.dart';
+import 'package:kitty_app/core/providers/core_providers.dart';
+import 'package:kitty_app/core/providers/repository_providers.dart';
+import 'package:kitty_app/core/storage/secure_storage_service.dart';
+import 'package:kitty_app/features/auth/data/repositories/mock_auth_repository.dart';
+import 'package:kitty_app/shared/widgets/inputs/kitty_otp_input.dart';
+
+class _FakeSecureStorageService extends SecureStorageService {
+  final Map<String, String> _map = <String, String>{};
+
+  @override
+  Future<void> write({required String key, required String value}) async {
+    _map[key] = value;
+  }
+
+  @override
+  Future<String?> read({required String key}) async {
+    return _map[key];
+  }
+
+  @override
+  Future<void> delete({required String key}) async {
+    _map.remove(key);
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    _map.clear();
+  }
+}
 
 void main() {
   group('Comprehensive Route & Link Verification Test Suite', () {
@@ -13,9 +42,14 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
+      final _FakeSecureStorageService fakeStorage = _FakeSecureStorageService();
+      final MockAuthRepository mockAuth = MockAuthRepository(storageService: fakeStorage);
+
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            authRepositoryProvider.overrideWithValue(mockAuth),
+            secureStorageServiceProvider.overrideWithValue(fakeStorage),
             appAuthStateProvider.overrideWith(
               () => _TestAuthNotifier(const AppAuthState.unauthenticated()),
             ),
@@ -26,25 +60,31 @@ void main() {
       await tester.pumpAndSettle();
 
       // 1a. Start on Login Screen
-      expect(find.text('Login Screen'), findsOneWidget);
+      expect(find.text('Sign in to continue'), findsOneWidget);
 
-      // 1b. Tap 'Enter Mobile Number (View 1)' -> /auth/phone
-      await tester.tap(find.text('Enter Mobile Number (View 1)'));
+      // 1b. Tap 'Continue with Mobile' -> /auth/phone
+      await tester.tap(find.text('Continue with Mobile'));
       await tester.pumpAndSettle();
-      expect(find.text('Phone Input View'), findsOneWidget);
+      expect(find.text('Enter your mobile number'), findsOneWidget);
 
-      // 1c. Tap 'Proceed to OTP Verification (View 2)' -> /auth/otp
-      await tester.tap(find.text('Proceed to OTP Verification (View 2)'));
+      // 1c. Enter phone and tap 'Continue' -> /auth/otp
+      await tester.enterText(find.byType(TextField), '9876543210');
       await tester.pumpAndSettle();
-      expect(find.text('OTP Verification View'), findsOneWidget);
 
-      // 1d. Tap 'Verify OTP & Enter App' -> Authenticates and pushes /auth/success
-      await tester.tap(find.text('Verify OTP & Enter App'));
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
-      expect(find.text('Authentication Success'), findsOneWidget);
+      expect(find.text('Verify your number'), findsOneWidget);
 
-      // 1e. Tap 'Continue to Swastik Vault' -> Navigates to /home
-      await tester.tap(find.text('Continue to Swastik Vault'));
+      // 1d. Enter OTP '123456' -> Authenticates and pushes /auth/success
+      final Finder otpFinder = find.byType(KittyOtpInput);
+      expect(otpFinder, findsOneWidget);
+      final KittyOtpInputState otpState = tester.state(otpFinder);
+      otpState.setOtp('123456');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Welcome Back'), findsOneWidget);
+
+      // 1e. Tap 'Enter Kitty Vault' -> Navigates to /home
+      await tester.tap(find.text('Enter Kitty Vault'));
       await tester.pumpAndSettle();
       expect(find.text('Home Screen'), findsOneWidget);
     });
@@ -226,7 +266,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Successfully redirected to Login
-      expect(find.text('Login Screen'), findsOneWidget);
+      expect(find.text('Sign in to continue'), findsOneWidget);
     });
 
     testWidgets('6. Unknown Route renders 404 and recovers back to Home', (WidgetTester tester) async {

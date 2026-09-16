@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/auth/presentation/screens/auth_success_placeholder_screen.dart';
-import '../../features/auth/presentation/screens/login_placeholder_screen.dart';
-import '../../features/auth/presentation/screens/otp_placeholder_screen.dart';
-import '../../features/auth/presentation/screens/phone_placeholder_screen.dart';
+import '../../features/auth/presentation/screens/auth_success_screen.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/otp_screen.dart';
+import '../../features/auth/presentation/screens/phone_screen.dart';
 import '../../features/checkout/presentation/screens/checkout_placeholder_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_placeholder_screen.dart';
 import '../../features/home/presentation/screens/home_placeholder_screen.dart';
@@ -15,7 +15,7 @@ import '../../features/passbook/presentation/screens/passbook_placeholder_screen
 import '../../features/payment_gateway/presentation/screens/gokwik_placeholder_screen.dart';
 import '../../features/receipt/presentation/screens/receipt_placeholder_screen.dart';
 import '../../features/settings/presentation/screens/settings_placeholder_screen.dart';
-import '../../features/splash/presentation/screens/splash_placeholder_screen.dart';
+import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../shared/screens/not_found_screen.dart';
 import '../../shared/widgets/navigation/app_shell_scaffold.dart';
 import '../providers/auth_state_provider.dart';
@@ -88,7 +88,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           return RouteTransitions.fadeTransitionPage(
             key: state.pageKey,
-            child: const SplashPlaceholderScreen(),
+            child: const SplashScreen(),
           );
         },
       ),
@@ -98,7 +98,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           return RouteTransitions.fadeTransitionPage(
             key: state.pageKey,
-            child: const LoginPlaceholderScreen(),
+            child: const LoginScreen(),
           );
         },
       ),
@@ -108,7 +108,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           return RouteTransitions.slideFromRightPage(
             key: state.pageKey,
-            child: const PhonePlaceholderScreen(),
+            child: const PhoneScreen(),
           );
         },
       ),
@@ -118,7 +118,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           return RouteTransitions.slideFromRightPage(
             key: state.pageKey,
-            child: const OtpPlaceholderScreen(),
+            child: const OtpScreen(),
           );
         },
       ),
@@ -128,7 +128,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           return RouteTransitions.fadeTransitionPage(
             key: state.pageKey,
-            child: const AuthSuccessPlaceholderScreen(),
+            child: const AuthSuccessScreen(),
           );
         },
       ),
