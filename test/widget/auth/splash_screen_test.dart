@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitty_app/core/providers/auth_state_provider.dart';
 import 'package:kitty_app/features/splash/presentation/screens/splash_screen.dart';
-import 'package:kitty_app/features/splash/presentation/widgets/diamond_3d_painter.dart';
 
 void main() {
   testWidgets('SplashScreen renders deep emerald background and 3D diamond custom paint', (WidgetTester tester) async {

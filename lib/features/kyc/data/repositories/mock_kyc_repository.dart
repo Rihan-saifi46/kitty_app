@@ -9,15 +9,30 @@ import '../mappers/kyc_mapper.dart';
 
 /// Mock implementation of [IKycRepository].
 class MockKycRepository implements IKycRepository {
-  MockKycRepository({MockEngineConfig? engineConfig})
-      : _engineConfig = engineConfig ?? MockEngineConfig.instance;
+  MockKycRepository({
+    MockEngineConfig? engineConfig,
+    KycStatusEnum initialStatus = KycStatusEnum.notSubmitted,
+  })  : _engineConfig = engineConfig ?? MockEngineConfig.instance,
+        _currentStatus = initialStatus;
 
   final MockEngineConfig _engineConfig;
-  KycStatusEnum _currentStatus = KycStatusEnum.verified;
+  KycStatusEnum _currentStatus;
+  String? _rejectionReason;
+  KycResultEntity? _customResult;
 
   /// Helper to configure mock KYC status for testing.
-  void setMockStatus(KycStatusEnum status) {
+  void setMockStatus(KycStatusEnum status, {String? rejectionReason}) {
     _currentStatus = status;
+    _rejectionReason = rejectionReason;
+  }
+
+  /// Helper to set custom KYC result entity.
+  void setCustomResult(KycResultEntity? result) {
+    _customResult = result;
+    if (result != null) {
+      _currentStatus = result.status;
+      _rejectionReason = result.rejectionReason;
+    }
   }
 
   @override
@@ -63,9 +78,13 @@ class MockKycRepository implements IKycRepository {
       );
     }
 
-    final String masked = cleanNumber.length >= 4
-        ? 'XXXX XXXX ${cleanNumber.substring(cleanNumber.length - 4)}'
-        : 'XXXX XXXX 9012';
+    final String masked = submission.documentType == DocTypeEnum.aadhaar
+        ? (cleanNumber.length >= 4
+            ? 'XXXX XXXX ${cleanNumber.substring(cleanNumber.length - 4)}'
+            : 'XXXX XXXX 9012')
+        : (cleanNumber.length >= 4
+            ? 'XXXXXX${cleanNumber.substring(cleanNumber.length - 4)}'
+            : 'XXXXXX5678');
 
     _currentStatus = KycStatusEnum.pending;
 
@@ -85,6 +104,10 @@ class MockKycRepository implements IKycRepository {
   Future<KycResultEntity> getKycStatus() async {
     await _engineConfig.simulate();
 
+    if (_customResult != null) {
+      return _customResult!;
+    }
+
     final KycSubmitResponseDto dto = KycSubmitResponseDto.fromJson(
       MockFixtures.kycSubmitSuccessJson['data'] as Map<String, dynamic>,
     );
@@ -97,6 +120,7 @@ class MockKycRepository implements IKycRepository {
       documentNumberMasked: entity.documentNumberMasked,
       documentUrl: entity.documentUrl,
       submittedAt: entity.submittedAt,
+      rejectionReason: _rejectionReason,
     );
   }
 }

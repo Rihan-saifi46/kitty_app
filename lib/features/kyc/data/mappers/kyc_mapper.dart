@@ -16,6 +16,7 @@ abstract final class KycMapper {
       documentNumberMasked: dto.documentNumberMasked,
       documentUrl: dto.documentUrl,
       submittedAt: parsedSubmittedAt,
+      rejectionReason: dto.rejectionReason,
     );
   }
 }

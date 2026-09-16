@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kitty_app/core/providers/auth_state_provider.dart';
 import 'package:kitty_app/features/auth/presentation/screens/auth_success_screen.dart';
 
 void main() {

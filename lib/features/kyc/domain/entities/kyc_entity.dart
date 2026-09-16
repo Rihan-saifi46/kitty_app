@@ -1,5 +1,38 @@
 import '../../../../core/enums/app_enums.dart';
 
+/// Represents a validated local file selected for KYC upload.
+class SelectedKycFile {
+  const SelectedKycFile({
+    required this.name,
+    required this.path,
+    required this.sizeBytes,
+    required this.mimeType,
+  });
+
+  final String name;
+  final String path;
+  final int sizeBytes;
+  final String mimeType;
+
+  bool get isImage =>
+      mimeType.startsWith('image/') ||
+      name.toLowerCase().endsWith('.jpg') ||
+      name.toLowerCase().endsWith('.jpeg') ||
+      name.toLowerCase().endsWith('.png') ||
+      name.toLowerCase().endsWith('.webp');
+
+  bool get isPdf =>
+      mimeType == 'application/pdf' || name.toLowerCase().endsWith('.pdf');
+
+  String get formattedSize {
+    if (sizeBytes < 1024) return '$sizeBytes B';
+    if (sizeBytes < 1024 * 1024) {
+      return '${(sizeBytes / 1024).toStringAsFixed(1)} KB';
+    }
+    return '${(sizeBytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+}
+
 /// Request parameters for submitting statutory identity verification.
 class KycSubmissionEntity {
   const KycSubmissionEntity({
@@ -28,6 +61,7 @@ class KycResultEntity {
     required this.documentNumberMasked,
     this.documentUrl,
     this.submittedAt,
+    this.rejectionReason,
   });
 
   final String referenceId;
@@ -36,4 +70,5 @@ class KycResultEntity {
   final String documentNumberMasked;
   final String? documentUrl;
   final DateTime? submittedAt;
+  final String? rejectionReason;
 }

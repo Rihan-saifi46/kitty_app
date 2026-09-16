@@ -26,6 +26,7 @@ class KycSubmitResponseDto {
     required this.documentNumberMasked,
     this.documentUrl,
     this.submittedAt,
+    this.rejectionReason,
   });
 
   factory KycSubmitResponseDto.fromJson(Map<String, dynamic> json) {
@@ -36,6 +37,7 @@ class KycSubmitResponseDto {
       documentNumberMasked: json['documentNumberMasked'] as String? ?? 'XXXX XXXX 0000',
       documentUrl: json['documentUrl'] as String?,
       submittedAt: json['submittedAt'] as String?,
+      rejectionReason: json['rejectionReason'] as String?,
     );
   }
 
@@ -45,6 +47,7 @@ class KycSubmitResponseDto {
   final String documentNumberMasked;
   final String? documentUrl;
   final String? submittedAt;
+  final String? rejectionReason;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'referenceId': referenceId,
@@ -53,5 +56,6 @@ class KycSubmitResponseDto {
         'documentNumberMasked': documentNumberMasked,
         if (documentUrl != null) 'documentUrl': documentUrl,
         if (submittedAt != null) 'submittedAt': submittedAt,
+        if (rejectionReason != null) 'rejectionReason': rejectionReason,
       };
 }
