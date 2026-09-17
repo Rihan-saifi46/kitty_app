@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/routing/route_paths.dart';
+import '../../../../shared/widgets/feedback/kitty_error_state.dart';
 import '../providers/settings_controller.dart';
 import '../providers/settings_state.dart';
 import '../widgets/mpin_dialog.dart';
 import '../widgets/nominee_details_modal.dart';
 import '../widgets/patron_profile_card.dart';
 import '../widgets/settings_group_card.dart';
+import '../widgets/settings_skeleton_loader.dart';
 import '../widgets/terms_and_compliance_modal.dart';
 
 /// Luxury Patron Settings, Security & Profile screen strictly matching `settings.html`.
@@ -43,9 +45,43 @@ class SettingsScreen extends ConsumerWidget {
 
             // 2. Scrollable Settings Content
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: Column(
+              child: _buildBody(context, ref, state, controller, isDark),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    WidgetRef ref,
+    SettingsState state,
+    SettingsController controller,
+    bool isDark,
+  ) {
+    if (state.isLoading && state.user == null) {
+      return const SettingsSkeletonLoader();
+    }
+
+    if (state.errorMessage != null && state.user == null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.space24),
+          child: KittyErrorState(
+            title: 'Unable to Load Profile',
+            message: state.errorMessage!,
+            retryLabel: 'Try Again',
+            isDarkSurface: isDark,
+            onRetry: () => controller.loadInitialData(),
+          ),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     // Patron Profile Quick Card
@@ -173,12 +209,7 @@ class SettingsScreen extends ConsumerWidget {
                     const SizedBox(height: AppSpacing.space24),
                   ],
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+              );
   }
 
   Widget _buildTopNavBar({

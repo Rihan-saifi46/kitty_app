@@ -60,9 +60,9 @@ abstract final class ErrorHandler {
       };
     }
 
-    // Fallback for non-AppException errors
-    return UnknownFailure(
-      message: error.toString(),
+    // Fallback for non-AppException errors: Never expose raw exceptions or URLs
+    return const UnknownFailure(
+      message: 'Something went wrong. Please try again.',
     );
   }
 }

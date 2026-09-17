@@ -8,7 +8,6 @@ import 'package:kitty_app/core/providers/repository_providers.dart';
 import 'package:kitty_app/core/storage/secure_storage_service.dart';
 import 'package:kitty_app/features/auth/data/repositories/mock_auth_repository.dart';
 import 'package:kitty_app/features/settings/data/repositories/settings_local_repository_impl.dart';
-import 'package:kitty_app/features/settings/presentation/providers/settings_controller.dart';
 import 'package:kitty_app/features/settings/presentation/screens/settings_screen.dart';
 
 class _FakeSecureStorageService extends SecureStorageService {

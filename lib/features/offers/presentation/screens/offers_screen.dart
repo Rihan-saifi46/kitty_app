@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/constants/app_typography.dart';
-import '../../../../shared/widgets/buttons/kitty_primary_button.dart';
 import '../../../../shared/widgets/feedback/kitty_empty_state.dart';
+import '../../../../shared/widgets/feedback/kitty_error_state.dart';
 import '../../../home/domain/entities/product_entity.dart';
 import '../../domain/entities/scheme_entity.dart';
 import '../providers/offers_controller.dart';
@@ -32,6 +31,21 @@ class OffersScreen extends ConsumerWidget {
     final OffersController controller =
         ref.read(offersControllerProvider.notifier);
 
+    // Show floating error notification if pull-to-refresh fails while catalog is already loaded
+    ref.listen<OffersState>(offersControllerProvider, (previous, next) {
+      if (next.status == OffersStatus.loaded &&
+          next.errorMessage != null &&
+          previous?.errorMessage != next.errorMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor: AppColors.statusErrorText,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.surfacePageBg,
       body: SafeArea(
@@ -55,45 +69,12 @@ class OffersScreen extends ConsumerWidget {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.space24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.statusErrorText.withValues(alpha: 0.1),
-                ),
-                child: const Icon(
-                  Icons.cloud_off_rounded,
-                  size: 32,
-                  color: AppColors.statusErrorText,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.space16),
-              Text(
-                'Unable to Load Offers & Catalog',
-                style: AppTypography.cardTitle(
-                  color: AppColors.textPrimaryDark,
-                ).copyWith(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.space8),
-              Text(
-                state.errorMessage ??
-                    'Please check your connection and try again.',
-                style: AppTypography.bodySmall(
-                  color: AppColors.textSecondaryMuted,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.space24),
-              KittyPrimaryButton(
-                label: 'TRY AGAIN',
-                onPressed: controller.retry,
-              ),
-            ],
+          child: KittyErrorState(
+            title: 'Unable to Load Offers & Catalog',
+            message: state.errorMessage ??
+                'Please check your connection and try again.',
+            retryLabel: 'Try Again',
+            onRetry: controller.retry,
           ),
         ),
       );
@@ -148,14 +129,11 @@ class OffersScreen extends ConsumerWidget {
 
               // Filtered Schemes List
               if (state.filteredSchemes.isEmpty)
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.space24),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'No schemes found for the selected duration.',
-                    style: AppTypography.bodySmall(
-                      color: AppColors.textSecondaryMuted,
-                    ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: AppSpacing.space24),
+                  child: KittyEmptyState(
+                    title: 'No offers available right now',
+                    description: 'No schemes found for the selected duration.',
                   ),
                 )
               else

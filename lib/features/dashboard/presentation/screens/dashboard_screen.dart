@@ -6,8 +6,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/routing/route_paths.dart';
-import '../../../../shared/widgets/buttons/kitty_primary_button.dart';
 import '../../../../shared/widgets/feedback/kitty_empty_state.dart';
+import '../../../../shared/widgets/feedback/kitty_error_state.dart';
 import '../../domain/entities/dashboard_summary_entity.dart';
 import '../providers/dashboard_controller.dart';
 import '../providers/dashboard_state.dart';
@@ -27,6 +27,21 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final DashboardState state = ref.watch(dashboardControllerProvider);
     final DashboardController controller = ref.read(dashboardControllerProvider.notifier);
+
+    // Show floating error notification if pull-to-refresh fails while data is already loaded
+    ref.listen<DashboardState>(dashboardControllerProvider, (previous, next) {
+      if (next.status == DashboardStatus.loaded &&
+          next.errorMessage != null &&
+          previous?.errorMessage != next.errorMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor: AppColors.statusErrorText,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColors.surfacePageBg,
@@ -81,45 +96,12 @@ class DashboardScreen extends ConsumerWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.space24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.statusErrorBg,
-                border: Border.all(
-                  color: AppColors.statusErrorText.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-              ),
-              child: const Icon(
-                Icons.error_outline_rounded,
-                color: AppColors.statusErrorText,
-                size: 32,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.space16),
-            Text(
-              'Unable to Load Kitty Details',
-              style: AppTypography.cardTitle(color: AppColors.textPrimaryLight),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.space8),
-            Text(
-              errorMessage ??
-                  'Unable to load your kitty details. Please check your connection and try again.',
-              style: AppTypography.bodySmall(color: AppColors.textSecondaryLight),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.space24),
-            KittyPrimaryButton(
-              label: 'Try Again',
-              onPressed: controller.retry,
-            ),
-          ],
+        child: KittyErrorState(
+          title: 'Unable to Load Kitty Details',
+          message: errorMessage ??
+              'Unable to load your kitty details. Please check your connection and try again.',
+          retryLabel: 'Try Again',
+          onRetry: controller.retry,
         ),
       ),
     );

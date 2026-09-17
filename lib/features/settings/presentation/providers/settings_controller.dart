@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/providers/repository_providers.dart';
 import '../../../auth/domain/entities/user_entity.dart';
@@ -22,7 +23,23 @@ class SettingsController extends Notifier<SettingsState> {
     // Asynchronously load user profile & local settings after build completes
     Future.microtask(loadInitialData);
 
-    return const SettingsState(isLoading: true);
+    final AppAuthState authState = ref.read(appAuthStateProvider);
+    UserEntity? initialUser;
+    if (authState.isAuthenticated) {
+      initialUser = UserEntity(
+        id: 'patron_active',
+        name: authState.userName,
+        phone: authState.userPhone,
+        role: UserRoleEnum.customer,
+        tier: authState.tier,
+        createdAt: DateTime(2024, 1, 1),
+      );
+    }
+
+    return SettingsState(
+      isLoading: true,
+      user: initialUser,
+    );
   }
 
   /// Fetches canonical user profile from backend/mock and local preferences from storage.

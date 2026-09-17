@@ -29,7 +29,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   String _currentOtp = '';
 
   Future<void> _handleVerify() async {
-    if (_currentOtp.length != 6) return;
+    if (_currentOtp.length != 6 || ref.read(authControllerProvider).isVerifying) return;
 
     final AuthController controller = ref.read(authControllerProvider.notifier);
     final bool success = await controller.verifyOtp(_currentOtp);
@@ -40,6 +40,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   }
 
   Future<void> _handleResend() async {
+    if (!ref.read(authControllerProvider).canResend) return;
+
     final AuthController controller = ref.read(authControllerProvider.notifier);
     final bool success = await controller.resendOtp();
 

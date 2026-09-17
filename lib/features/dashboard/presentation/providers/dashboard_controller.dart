@@ -26,8 +26,10 @@ class DashboardController extends Notifier<DashboardState> {
 
   /// Fetches active kitty dashboard summary from repository.
   Future<void> loadDashboard({bool refresh = false}) async {
-    if (refresh && state.isLoaded && state.data != null) {
-      state = DashboardState.refreshing(state.data!);
+    final DashboardSummaryEntity? cachedData = state.data;
+
+    if (refresh && cachedData != null) {
+      state = DashboardState.refreshing(cachedData);
     } else {
       state = const DashboardState.loading();
     }
@@ -41,11 +43,27 @@ class DashboardController extends Notifier<DashboardState> {
         state = DashboardState.loaded(summary);
       }
     } on AppException catch (e) {
-      state = DashboardState.error(e.message);
+      if (refresh && cachedData != null) {
+        state = DashboardState(
+          status: DashboardStatus.loaded,
+          data: cachedData,
+          errorMessage: e.message,
+        );
+      } else {
+        state = DashboardState.error(e.message);
+      }
     } catch (_) {
-      state = const DashboardState.error(
-        'Unable to load your kitty details. Please check your connection and try again.',
-      );
+      if (refresh && cachedData != null) {
+        state = DashboardState(
+          status: DashboardStatus.loaded,
+          data: cachedData,
+          errorMessage: 'Failed to refresh. Showing cached data.',
+        );
+      } else {
+        state = const DashboardState.error(
+          'Unable to load your kitty details. Please check your connection and try again.',
+        );
+      }
     }
   }
 

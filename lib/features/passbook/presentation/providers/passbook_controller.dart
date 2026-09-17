@@ -29,11 +29,13 @@ class PassbookController extends Notifier<PassbookState> {
   /// Fetches passbook ledger records and summary metrics.
   Future<void> loadPassbook({bool refresh = false}) async {
     final PassbookViewMode currentMode = state.viewMode;
+    final List<PassbookEntryEntity> cachedEntries = state.entries;
+    final PassbookSummaryEntity? cachedSummary = state.summary;
 
-    if (refresh && state.isLoaded) {
+    if (refresh && cachedEntries.isNotEmpty) {
       state = PassbookState.refreshing(
-        entries: state.entries,
-        summary: state.summary,
+        entries: cachedEntries,
+        summary: cachedSummary,
         viewMode: currentMode,
       );
     } else {
@@ -64,13 +66,33 @@ class PassbookController extends Notifier<PassbookState> {
       }
     } on AppException catch (e) {
       if (!ref.mounted) return;
-      state = PassbookState.error(e.message, viewMode: currentMode);
+      if (refresh && cachedEntries.isNotEmpty) {
+        state = PassbookState(
+          status: PassbookStatus.loaded,
+          entries: cachedEntries,
+          summary: cachedSummary,
+          viewMode: currentMode,
+          errorMessage: e.message,
+        );
+      } else {
+        state = PassbookState.error(e.message, viewMode: currentMode);
+      }
     } catch (_) {
       if (!ref.mounted) return;
-      state = PassbookState.error(
-        'Unable to load your passbook. Please check your connection and try again.',
-        viewMode: currentMode,
-      );
+      if (refresh && cachedEntries.isNotEmpty) {
+        state = PassbookState(
+          status: PassbookStatus.loaded,
+          entries: cachedEntries,
+          summary: cachedSummary,
+          viewMode: currentMode,
+          errorMessage: 'Failed to refresh. Showing cached passbook.',
+        );
+      } else {
+        state = PassbookState.error(
+          'Unable to load your passbook. Please check your connection and try again.',
+          viewMode: currentMode,
+        );
+      }
     }
   }
 

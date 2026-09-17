@@ -32,6 +32,21 @@ class HomeScreen extends ConsumerWidget {
     final HomeState homeState = ref.watch(homeControllerProvider);
     final AppAuthState authState = ref.watch(appAuthStateProvider);
 
+    // Show floating error notification if pull-to-refresh fails while data is already loaded
+    ref.listen<HomeState>(homeControllerProvider, (previous, next) {
+      if (next.status == HomeStatus.loaded &&
+          next.errorMessage != null &&
+          previous?.errorMessage != next.errorMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor: AppColors.statusErrorText,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
+
     // 1. Loading State
     if (homeState.isLoading && homeState.data == null) {
       return const Scaffold(

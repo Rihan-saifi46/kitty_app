@@ -69,15 +69,29 @@ class OffersController extends Notifier<OffersState> {
         errorMessage: () => null,
       );
     } on AppException catch (e) {
-      state = state.copyWith(
-        status: OffersStatus.error,
-        errorMessage: () => e.message,
-      );
+      if (refresh && (state.schemes.isNotEmpty || state.curatedProducts.isNotEmpty)) {
+        state = state.copyWith(
+          status: OffersStatus.loaded,
+          errorMessage: () => e.message,
+        );
+      } else {
+        state = state.copyWith(
+          status: OffersStatus.error,
+          errorMessage: () => e.message,
+        );
+      }
     } catch (_) {
-      state = state.copyWith(
-        status: OffersStatus.error,
-        errorMessage: () => 'Unable to load offers and jewellery catalog.',
-      );
+      if (refresh && (state.schemes.isNotEmpty || state.curatedProducts.isNotEmpty)) {
+        state = state.copyWith(
+          status: OffersStatus.loaded,
+          errorMessage: () => 'Failed to refresh. Showing cached catalog.',
+        );
+      } else {
+        state = state.copyWith(
+          status: OffersStatus.error,
+          errorMessage: () => 'Unable to load offers and jewellery catalog.',
+        );
+      }
     }
   }
 

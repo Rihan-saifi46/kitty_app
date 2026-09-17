@@ -25,9 +25,10 @@ final Provider<ConnectivityService> connectivityServiceProvider =
 
 /// Stream provider broadcasting boolean online (`true`) / offline (`false`) status.
 final StreamProvider<bool> connectivityStatusProvider =
-    StreamProvider<bool>((Ref ref) {
+    StreamProvider<bool>((Ref ref) async* {
   final ConnectivityService service = ref.watch(connectivityServiceProvider);
-  return service.onConnectivityChanged;
+  yield await service.isConnected();
+  yield* service.onConnectivityChanged;
 });
 
 /// Provider for outgoing authentication Bearer token interceptor.

@@ -6,8 +6,10 @@ import '../core/routing/app_router.dart';
 import '../core/theme/app_theme.dart';
 import '../features/settings/presentation/providers/settings_controller.dart';
 
+import '../shared/widgets/feedback/connectivity_banner_wrapper.dart';
+
 /// Root application widget configured with Riverpod, GoRouter declarative routing,
-/// and dual-surface luxury theme.
+/// dual-surface luxury theme, and global offline network awareness.
 class KittyApp extends ConsumerWidget {
   const KittyApp({super.key});
 
@@ -23,6 +25,11 @@ class KittyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       routerConfig: router,
+      builder: (BuildContext context, Widget? child) {
+        return ConnectivityBannerWrapper(
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

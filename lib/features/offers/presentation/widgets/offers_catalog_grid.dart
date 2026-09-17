@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/utils/currency_formatter.dart';
+import '../../../../shared/widgets/feedback/kitty_empty_state.dart';
 import '../../../home/domain/entities/product_entity.dart';
 
 /// 2-Column Jewellery Catalog Grid with Category Chips and Wishlist actions.
@@ -93,14 +94,11 @@ class OffersCatalogGrid extends StatelessWidget {
 
         // Product Grid or Empty
         if (products.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.space24),
-            alignment: Alignment.center,
-            child: Text(
-              'No jewellery found in $selectedCategory.',
-              style: AppTypography.bodySmall(
-                color: AppColors.textSecondaryMuted,
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.space32),
+            child: KittyEmptyState(
+              title: 'No products available',
+              description: 'No jewellery found in $selectedCategory.',
             ),
           )
         else
