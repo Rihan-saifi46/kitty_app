@@ -14,9 +14,9 @@ import '../models/receipt_dto.dart';
 /// To avoid HTTP 404 errors, this repository resolves receipt data locally
 /// or delegates to local fixtures.
 class ReceiptRepositoryImpl implements IReceiptRepository {
-  ReceiptRepositoryImpl({required this.apiClient});
+  ReceiptRepositoryImpl({this.apiClient});
 
-  final DioClient apiClient;
+  final DioClient? apiClient;
 
   @override
   Future<ReceiptEntity> getReceipt(String receiptId) async {

@@ -38,7 +38,7 @@ class ReceiptDto {
       paymentMethod: PaymentMethodEnum.fromString(json['paymentMethod'] as String? ?? json['payment_method'] as String?),
       paymentStatus: PaymentStatusEnum.fromString(json['paymentStatus'] as String? ?? json['payment_status'] as String? ?? 'SUCCESS'),
       paidAt: json['paidAt'] as String? ?? json['paid_at'] as String? ?? '',
-      pdfUrl: json['pdfUrl'] as String? ?? json['pdf_url'] as String?,
+      pdfUrl: json['receiptUrl'] as String? ?? json['pdfUrl'] as String? ?? json['pdf_url'] as String?,
     );
   }
 
