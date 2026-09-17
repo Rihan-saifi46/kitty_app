@@ -193,7 +193,11 @@ final Provider<IProductRepository> productRepositoryProvider =
 final Provider<INotificationRepository> notificationRepositoryProvider =
     Provider<INotificationRepository>((Ref ref) {
   final MockEngineConfig mockEngine = ref.watch(mockEngineConfigProvider);
-  return MockNotificationRepository(engineConfig: mockEngine);
+  final storage = ref.watch(secureStorageServiceProvider);
+  return MockNotificationRepository(
+    engineConfig: mockEngine,
+    storageService: storage,
+  );
 });
 
 /// Payment Receipt Repository Provider.

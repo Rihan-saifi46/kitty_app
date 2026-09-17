@@ -54,6 +54,12 @@ abstract final class AppConstants {
   /// Key for local 4-digit transaction MPIN in SecureStorage.
   static const String mpinKey = 'kitty_mpin';
 
+  /// Key for persisted set of read notification IDs in SecureStorage.
+  static const String notificationsReadIdsKey = 'kitty_notifications_read_ids';
+
+  /// Key for locally generated notifications list in SecureStorage.
+  static const String notificationsLocalItemsKey = 'kitty_notifications_local_items';
+
   // ---------------------------------------------------------------------------
   // Validation Rules & Limits
   // ---------------------------------------------------------------------------

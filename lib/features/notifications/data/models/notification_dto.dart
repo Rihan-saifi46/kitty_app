@@ -21,7 +21,9 @@ class NotificationDto {
       type: NotificationTypeEnum.fromString(json['type'] as String?),
       isRead: json['is_read'] as bool? ?? json['isRead'] as bool? ?? false,
       createdAt: json['created_at'] as String? ?? '',
-      actionUrl: json['action_url'] as String? ?? json['actionUrl'] as String?,
+      actionUrl: json['action_url'] as String? ??
+          json['actionUrl'] as String? ??
+          json['actionRoute'] as String?,
       metadata: json['metadata'] as Map<String, dynamic>?,
     );
   }

@@ -330,6 +330,7 @@ enum NotificationTypeEnum {
     final String clean = value.trim().toUpperCase();
     switch (clean) {
       case 'TRANSACTION':
+      case 'PAYMENT':
         return NotificationTypeEnum.transaction;
       case 'SCHEME':
         return NotificationTypeEnum.scheme;

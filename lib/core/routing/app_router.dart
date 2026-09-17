@@ -10,11 +10,13 @@ import '../../features/checkout/presentation/screens/checkout_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/kyc/presentation/screens/kyc_screen.dart';
-import '../../features/notifications/presentation/screens/notifications_placeholder_screen.dart';
+import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/offers/presentation/screens/offers_screen.dart';
 import '../../features/passbook/presentation/screens/passbook_screen.dart';
+import '../../features/passbook/domain/entities/passbook_entry_entity.dart';
 import '../../features/payment_gateway/presentation/screens/gokwik_gateway_screen.dart';
-import '../../features/receipt/presentation/screens/receipt_placeholder_screen.dart';
+import '../../features/receipt/domain/entities/receipt_entity.dart';
+import '../../features/receipt/presentation/screens/receipt_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../shared/screens/not_found_screen.dart';
@@ -243,7 +245,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           return RouteTransitions.slideFromRightPage(
             key: state.pageKey,
-            child: const NotificationsPlaceholderScreen(),
+            child: const NotificationsScreen(),
           );
         },
       ),
@@ -276,9 +278,18 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         name: AppRoute.receipt.name,
         pageBuilder: (BuildContext context, GoRouterState state) {
           final String receiptId = state.pathParameters['id'] ?? 'REC-UNKNOWN';
+          final Object? extra = state.extra;
+          final PassbookEntryEntity? passbookEntry =
+              extra is PassbookEntryEntity ? extra : null;
+          final ReceiptEntity? receipt = extra is ReceiptEntity ? extra : null;
+
           return RouteTransitions.slideFromBottomPage(
             key: state.pageKey,
-            child: ReceiptPlaceholderScreen(receiptId: receiptId),
+            child: ReceiptScreen(
+              receiptId: receiptId,
+              passbookEntry: passbookEntry,
+              receipt: receipt,
+            ),
           );
         },
       ),

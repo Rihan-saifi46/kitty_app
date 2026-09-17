@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../features/notifications/presentation/providers/notifications_controller.dart';
 import 'app_bottom_nav_bar.dart';
 import 'header_nav_bar.dart';
 import 'luxury_nav_drawer.dart';
@@ -9,7 +11,7 @@ import 'luxury_nav_drawer.dart';
 ///
 /// Houses the sticky header, slide-out navigation drawer, bottom navigation dock,
 /// and Android hardware back-button interceptor.
-class AppShellScaffold extends StatefulWidget {
+class AppShellScaffold extends ConsumerStatefulWidget {
   const AppShellScaffold({
     required this.navigationShell,
     super.key,
@@ -19,15 +21,16 @@ class AppShellScaffold extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
 
   @override
-  State<AppShellScaffold> createState() => _AppShellScaffoldState();
+  ConsumerState<AppShellScaffold> createState() => _AppShellScaffoldState();
 }
 
-class _AppShellScaffoldState extends State<AppShellScaffold> {
+class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final int unreadCount = ref.watch(unreadNotificationsCountProvider);
 
     return PopScope(
       canPop: false,
@@ -54,6 +57,7 @@ class _AppShellScaffoldState extends State<AppShellScaffold> {
         backgroundColor: isDark ? AppColors.deepEmeraldBase : AppColors.surfacePageBg,
         appBar: HeaderNavBar(
           onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
+          unreadNotificationsCount: unreadCount,
         ),
         drawer: const LuxuryNavDrawer(),
         body: widget.navigationShell,

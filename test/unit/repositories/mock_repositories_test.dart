@@ -183,9 +183,9 @@ void main() {
 
       // Notifications
       final notifs = await notifRepo.getNotifications();
-      expect(notifs.length, 3);
+      expect(notifs.length, 5);
       final unreadBefore = await notifRepo.getUnreadCount();
-      expect(unreadBefore, 2);
+      expect(unreadBefore, 3);
       await notifRepo.markAllAsRead();
       final unreadAfter = await notifRepo.getUnreadCount();
       expect(unreadAfter, 0);

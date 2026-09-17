@@ -14,6 +14,7 @@ import 'package:kitty_app/features/dashboard/presentation/screens/dashboard_scre
 import 'package:kitty_app/features/home/data/repositories/mock_gold_rate_repository.dart';
 import 'package:kitty_app/features/home/data/repositories/mock_product_repository.dart';
 import 'package:kitty_app/features/home/presentation/screens/home_screen.dart';
+import 'package:kitty_app/features/notifications/data/repositories/mock_notification_repository.dart';
 import 'package:kitty_app/features/offers/data/repositories/mock_scheme_repository.dart';
 import 'package:kitty_app/shared/widgets/inputs/kitty_otp_input.dart';
 
@@ -273,6 +274,10 @@ void main() {
             dashboardRepositoryProvider.overrideWithValue(
               MockDashboardRepository(engineConfig: instantConfig),
             ),
+            secureStorageServiceProvider.overrideWithValue(_FakeSecureStorageService()),
+            notificationRepositoryProvider.overrideWithValue(
+              MockNotificationRepository(engineConfig: instantConfig),
+            ),
           ],
           child: const KittyApp(),
         ),
@@ -284,10 +289,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Notifications Screen
-      expect(find.text('Notifications Center'), findsOneWidget);
+      expect(find.text('Notifications'), findsOneWidget);
 
       // Back navigation returns to Home
-      await tester.tap(find.text('Back to App'));
+      await tester.tap(find.byKey(const Key('btn_notifications_back')));
       await tester.pumpAndSettle();
       expect(find.byType(HomeScreen), findsOneWidget);
     });
