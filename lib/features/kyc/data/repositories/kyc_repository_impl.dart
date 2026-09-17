@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import '../../../../core/config/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/kyc_entity.dart';
 import '../../domain/repositories/i_kyc_repository.dart';
@@ -12,13 +14,24 @@ class KycRepositoryImpl implements IKycRepository {
 
   @override
   Future<KycResultEntity> submitKyc(KycSubmissionEntity submission) async {
+    final Map<String, dynamic> formMap = <String, dynamic>{
+      'documentType': submission.documentType.toJson(),
+      'documentNumber': submission.documentNumber,
+      'consentAgreed': submission.consentAgreed.toString(),
+    };
+
+    if (submission.filePath != null && submission.filePath!.isNotEmpty) {
+      formMap['file'] = await MultipartFile.fromFile(
+        submission.filePath!,
+        filename: submission.fileName ?? 'kyc_document',
+      );
+    }
+
+    final FormData formData = FormData.fromMap(formMap);
+
     final response = await _dio.post<Map<String, dynamic>>(
-      '/api/v1/users/kyc',
-      data: KycSubmitRequestDto(
-        documentType: submission.documentType.toJson(),
-        documentNumber: submission.documentNumber,
-        consentAgreed: submission.consentAgreed,
-      ).toJson(),
+      ApiEndpoints.userKyc,
+      data: formData,
     );
 
     final Map<String, dynamic> data =
@@ -28,9 +41,12 @@ class KycRepositoryImpl implements IKycRepository {
 
   @override
   Future<KycResultEntity> getKycStatus() async {
-    final response = await _dio.get<Map<String, dynamic>>('/api/v1/users/kyc/status');
+    final response = await _dio.get<Map<String, dynamic>>(ApiEndpoints.userProfile);
     final Map<String, dynamic> data =
         response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
-    return KycMapper.toEntity(KycSubmitResponseDto.fromJson(data));
+    final Map<String, dynamic>? userMap = data['user'] as Map<String, dynamic>?;
+    final Map<String, dynamic> kycMap =
+        (userMap?['kyc'] ?? data['kyc']) as Map<String, dynamic>? ?? <String, dynamic>{};
+    return KycMapper.toEntity(KycSubmitResponseDto.fromJson(kycMap));
   }
 }

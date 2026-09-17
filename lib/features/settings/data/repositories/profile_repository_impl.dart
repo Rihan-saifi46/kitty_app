@@ -14,7 +14,8 @@ class ProfileRepositoryImpl implements IProfileRepository {
   Future<ProfileEntity> getProfile() async {
     final response = await apiClient.get<Map<String, dynamic>>('/api/v1/users/profile');
     final data = response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
-    return ProfileMapper.toEntity(ProfileDto.fromJson(data));
+    final userJson = (data['user'] as Map<String, dynamic>?) ?? data;
+    return ProfileMapper.toEntity(ProfileDto.fromJson(userJson));
   }
 
   @override

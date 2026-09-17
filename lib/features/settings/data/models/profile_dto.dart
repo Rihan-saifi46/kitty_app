@@ -7,6 +7,7 @@ class UserPreferencesDto {
     required this.themeMode,
     required this.language,
     required this.biometricEnabled,
+    this.autoPayEnabled = true,
     required this.pushNotifications,
     required this.smsNotifications,
     required this.whatsappUpdates,
@@ -17,6 +18,7 @@ class UserPreferencesDto {
       themeMode: json['theme_mode'] as String? ?? json['themeMode'] as String? ?? 'system',
       language: json['language'] as String? ?? 'en',
       biometricEnabled: json['biometric_enabled'] as bool? ?? json['biometricEnabled'] as bool? ?? true,
+      autoPayEnabled: json['autopay_enabled'] as bool? ?? json['autoPayEnabled'] as bool? ?? true,
       pushNotifications: json['push_notifications'] as bool? ?? json['pushNotifications'] as bool? ?? true,
       smsNotifications: json['sms_notifications'] as bool? ?? json['smsNotifications'] as bool? ?? true,
       whatsappUpdates: json['whatsapp_updates'] as bool? ?? json['whatsappUpdates'] as bool? ?? true,
@@ -26,6 +28,7 @@ class UserPreferencesDto {
   final String themeMode;
   final String language;
   final bool biometricEnabled;
+  final bool autoPayEnabled;
   final bool pushNotifications;
   final bool smsNotifications;
   final bool whatsappUpdates;
@@ -35,6 +38,7 @@ class UserPreferencesDto {
       'theme_mode': themeMode,
       'language': language,
       'biometric_enabled': biometricEnabled,
+      'autopay_enabled': autoPayEnabled,
       'push_notifications': pushNotifications,
       'sms_notifications': smsNotifications,
       'whatsapp_updates': whatsappUpdates,

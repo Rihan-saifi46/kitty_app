@@ -7,6 +7,7 @@ class UserPreferencesEntity {
     this.themeMode = 'system',
     this.language = 'en',
     this.biometricEnabled = true,
+    this.autoPayEnabled = true,
     this.pushNotifications = true,
     this.smsNotifications = true,
     this.whatsappUpdates = true,
@@ -15,6 +16,7 @@ class UserPreferencesEntity {
   final String themeMode;
   final String language;
   final bool biometricEnabled;
+  final bool autoPayEnabled;
   final bool pushNotifications;
   final bool smsNotifications;
   final bool whatsappUpdates;
@@ -23,6 +25,7 @@ class UserPreferencesEntity {
     String? themeMode,
     String? language,
     bool? biometricEnabled,
+    bool? autoPayEnabled,
     bool? pushNotifications,
     bool? smsNotifications,
     bool? whatsappUpdates,
@@ -31,6 +34,7 @@ class UserPreferencesEntity {
       themeMode: themeMode ?? this.themeMode,
       language: language ?? this.language,
       biometricEnabled: biometricEnabled ?? this.biometricEnabled,
+      autoPayEnabled: autoPayEnabled ?? this.autoPayEnabled,
       pushNotifications: pushNotifications ?? this.pushNotifications,
       smsNotifications: smsNotifications ?? this.smsNotifications,
       whatsappUpdates: whatsappUpdates ?? this.whatsappUpdates,

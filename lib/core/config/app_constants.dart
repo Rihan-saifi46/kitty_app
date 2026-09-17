@@ -42,6 +42,18 @@ abstract final class AppConstants {
   /// Key for biometric lock preference in SecureStorage.
   static const String biometricEnabledKey = 'kitty_biometric_enabled';
 
+  /// Key for dark/light theme mode preference in SecureStorage.
+  static const String themeModeKey = 'kitty_theme_mode';
+
+  /// Key for app language preference in SecureStorage.
+  static const String languageKey = 'kitty_language';
+
+  /// Key for UPI AutoPay preference in SecureStorage.
+  static const String autoPayEnabledKey = 'kitty_autopay_enabled';
+
+  /// Key for local 4-digit transaction MPIN in SecureStorage.
+  static const String mpinKey = 'kitty_mpin';
+
   // ---------------------------------------------------------------------------
   // Validation Rules & Limits
   // ---------------------------------------------------------------------------

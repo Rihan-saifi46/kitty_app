@@ -1,87 +1,63 @@
-/// Canonical REST URI endpoints for Kitty App adhering to Frozen Backend Contract v1.0.
+/// Canonical REST URI endpoints for Kitty App adhering to Frozen Backend Contract v1.0
+/// and verified actual backend routes.
 abstract final class ApiEndpoints {
-  // Base path
+  // Base path prefix
   static const String apiVersion = '/api/v1';
 
   // ---------------------------------------------------------------------------
   // Authentication (/api/v1/auth/*)
   // ---------------------------------------------------------------------------
 
-  /// Request OTP for mobile login.
+  /// Request SMS OTP for mobile login.
   static const String authSendOtp = '$apiVersion/auth/send-otp';
 
   /// Verify 6-digit OTP and obtain 30-day JWT.
   static const String authVerifyOtp = '$apiVersion/auth/verify-otp';
 
-  /// Resend OTP after 30-second countdown.
-  static const String authResendOtp = '$apiVersion/auth/resend-otp';
-
-  /// Fetch authenticated user profile.
-  static const String authMe = '$apiVersion/auth/me';
-
-  /// Invalidate server session.
+  /// Invalidate server session and logout.
   static const String authLogout = '$apiVersion/auth/logout';
 
   // ---------------------------------------------------------------------------
-  // KYC Compliance (/api/v1/kyc/*)
+  // User Profile & Statutory KYC Compliance (/api/v1/users/*)
   // ---------------------------------------------------------------------------
 
-  /// Upload statutory KYC identity document (Aadhaar/PAN).
-  static const String kycUpload = '$apiVersion/kyc/upload';
+  /// Fetch authenticated user profile (including nested KYC compliance status).
+  static const String userProfile = '$apiVersion/users/profile';
 
-  /// Query KYC document verification status.
-  static const String kycStatus = '$apiVersion/kyc/status';
+  /// Upload statutory KYC identity document (multipart/form-data with 'file').
+  static const String userKyc = '$apiVersion/users/kyc';
 
   // ---------------------------------------------------------------------------
-  // Home & Catalog Discovery (/api/v1/*)
+  // Schemes Discovery (/api/v1/schemes/*)
   // ---------------------------------------------------------------------------
 
-  /// Live gold rate ticker (24K & 22K per gram).
-  static const String ratesLive = '$apiVersion/rates/live';
-
-  /// Active promo banner carousel cards.
-  static const String homePromos = '$apiVersion/home/promos';
-
-  /// Curated featured jewelry showcase catalog.
-  static const String catalogFeatured = '$apiVersion/catalog/featured';
+  /// Discover active savings schemes (supports optional ?duration= query param).
+  static const String schemesActive = '$apiVersion/schemes/active';
 
   // ---------------------------------------------------------------------------
   // Memberships & Dashboard (/api/v1/memberships/*)
   // ---------------------------------------------------------------------------
 
-  /// User active scheme hero, next EMI due, and 2x2 stats grid.
+  /// Enroll / join an open scheme with dynamic late-joiner EMI calculation.
+  static const String membershipsJoin = '$apiVersion/memberships/join';
+
+  /// Active scheme summary, gold valuation, next EMI due, and 12-month passbook array.
   static const String membershipsDashboard = '$apiVersion/memberships/my-dashboard';
 
-  /// 12-month passbook ledger and payment status nodes.
-  static String membershipPassbook(String membershipId) =>
-      '$apiVersion/memberships/$membershipId/passbook';
-
-  /// Available scheme catalog and filter tiers.
-  static const String schemesCatalog = '$apiVersion/schemes/catalog';
-
-  /// Enroll in a new chit scheme plan.
-  static const String schemeEnroll = '$apiVersion/memberships/enroll';
-
   // ---------------------------------------------------------------------------
-  // Payments & Checkout (/api/v1/payments/*)
+  // Payments (/api/v1/payments/*)
   // ---------------------------------------------------------------------------
 
-  /// Initialize GoKwik payment order.
-  static const String paymentsInitiateGokwik = '$apiVersion/payments/initiate-gokwik';
+  /// Initiate GoKwik payment order for a monthly installment.
+  static const String paymentsInitiate = '$apiVersion/payments/initiate';
 
   /// Poll GoKwik payment transaction status by order ID.
   static String paymentsStatus(String orderId) => '$apiVersion/payments/status/$orderId';
 
   // ---------------------------------------------------------------------------
-  // Digital Receipts & User Profile (/api/v1/*)
+  // Live Gold Rate Benchmark (/api/v1/rates/*)
   // ---------------------------------------------------------------------------
 
-  /// Download monthly digital payment receipt PDF.
-  static String receiptDownloadPdf(String receiptId) => '$apiVersion/receipts/$receiptId/pdf';
-
-  /// User profile details and preferences.
-  static const String userProfile = '$apiVersion/users/profile';
-
-  /// In-app notification center feed.
-  static const String notifications = '$apiVersion/notifications';
+  /// Live benchmark gold rate per gram (24K and 22K).
+  static const String ratesGold = '$apiVersion/rates/gold';
 }

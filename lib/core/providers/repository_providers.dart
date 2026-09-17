@@ -47,17 +47,18 @@ import '../../features/home/data/repositories/mock_product_repository.dart';
 // Notifications
 import '../../features/notifications/domain/repositories/i_notification_repository.dart';
 import '../../features/notifications/data/repositories/mock_notification_repository.dart';
-import '../../features/notifications/data/repositories/notification_repository_impl.dart';
 
 // Receipt
 import '../../features/receipt/domain/repositories/i_receipt_repository.dart';
 import '../../features/receipt/data/repositories/mock_receipt_repository.dart';
-import '../../features/receipt/data/repositories/receipt_repository_impl.dart';
 
-// Settings Profile
+// Settings Profile & Local Settings
 import '../../features/settings/domain/repositories/i_profile_repository.dart';
 import '../../features/settings/data/repositories/mock_profile_repository.dart';
 import '../../features/settings/data/repositories/profile_repository_impl.dart';
+import '../../features/settings/domain/repositories/i_settings_local_repository.dart';
+import '../../features/settings/data/repositories/settings_local_repository_impl.dart';
+import '../storage/secure_storage_service.dart';
 
 /// Provider for Mock Engine latency & failure simulation configuration.
 final Provider<MockEngineConfig> mockEngineConfigProvider =
@@ -176,39 +177,33 @@ final Provider<IGoldRateRepository> goldRateRepositoryProvider =
 });
 
 /// Products / Jewellery Catalog Repository Provider.
+/// NOTE: The backend does not provide a products/jewellery catalog endpoint (the backend
+/// is focused on kitty schemes and payments; jewellery is a design prototype showcase).
+/// Kept explicitly on mock to prevent 404s even when [useMockApi] is false.
 final Provider<IProductRepository> productRepositoryProvider =
     Provider<IProductRepository>((Ref ref) {
-  final AppConfig config = ref.watch(appConfigProvider);
-  if (config.useMockApi) {
-    final MockEngineConfig mockEngine = ref.watch(mockEngineConfigProvider);
-    return MockProductRepository(engineConfig: mockEngine);
-  }
-  final DioClient dioClient = ref.watch(dioClientProvider);
-  return HomeRepositoryImpl(apiClient: dioClient);
+  final MockEngineConfig mockEngine = ref.watch(mockEngineConfigProvider);
+  return MockProductRepository(engineConfig: mockEngine);
 });
 
 /// In-app Notifications Repository Provider.
+/// NOTE: The backend has no in-app notification feed collection or REST endpoints.
+/// Notifications are dispatched externally via SMS OTP / WhatsApp (Phase 14 verified gap).
+/// Kept explicitly on mock to prevent 404s even when [useMockApi] is false.
 final Provider<INotificationRepository> notificationRepositoryProvider =
     Provider<INotificationRepository>((Ref ref) {
-  final AppConfig config = ref.watch(appConfigProvider);
-  if (config.useMockApi) {
-    final MockEngineConfig mockEngine = ref.watch(mockEngineConfigProvider);
-    return MockNotificationRepository(engineConfig: mockEngine);
-  }
-  final DioClient dioClient = ref.watch(dioClientProvider);
-  return NotificationRepositoryImpl(apiClient: dioClient);
+  final MockEngineConfig mockEngine = ref.watch(mockEngineConfigProvider);
+  return MockNotificationRepository(engineConfig: mockEngine);
 });
 
 /// Payment Receipt Repository Provider.
+/// NOTE: The backend generates receipts server-side (via pdfkit) and attaches
+/// Cloudinary URLs directly to payments and passbook transactions. There is no `/api/v1/receipts` endpoint.
+/// Kept explicitly on mock to safeguard against nonexistent route calls.
 final Provider<IReceiptRepository> receiptRepositoryProvider =
     Provider<IReceiptRepository>((Ref ref) {
-  final AppConfig config = ref.watch(appConfigProvider);
-  if (config.useMockApi) {
-    final MockEngineConfig mockEngine = ref.watch(mockEngineConfigProvider);
-    return MockReceiptRepository(engineConfig: mockEngine);
-  }
-  final DioClient dioClient = ref.watch(dioClientProvider);
-  return ReceiptRepositoryImpl(apiClient: dioClient);
+  final MockEngineConfig mockEngine = ref.watch(mockEngineConfigProvider);
+  return MockReceiptRepository(engineConfig: mockEngine);
 });
 
 /// User Profile & Settings Repository Provider.
@@ -222,3 +217,11 @@ final Provider<IProfileRepository> profileRepositoryProvider =
   final DioClient dioClient = ref.watch(dioClientProvider);
   return ProfileRepositoryImpl(apiClient: dioClient);
 });
+
+/// Local Settings & Preferences Repository Provider.
+final Provider<ISettingsLocalRepository> settingsLocalRepositoryProvider =
+    Provider<ISettingsLocalRepository>((Ref ref) {
+  final SecureStorageService storage = ref.watch(secureStorageServiceProvider);
+  return SettingsLocalRepositoryImpl(storageService: storage);
+});
+

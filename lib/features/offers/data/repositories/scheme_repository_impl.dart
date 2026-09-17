@@ -1,11 +1,11 @@
+import '../../../../core/config/api_endpoints.dart';
+import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/offer_entity.dart';
 import '../../domain/entities/scheme_entity.dart';
 import '../../domain/repositories/i_offer_repository.dart';
 import '../../domain/repositories/i_scheme_repository.dart';
-import '../dtos/offer_dto.dart';
 import '../dtos/scheme_dto.dart';
-import '../mappers/offer_mapper.dart';
 import '../mappers/scheme_mapper.dart';
 
 /// Remote implementation of [ISchemeRepository] and [IOfferRepository].
@@ -17,7 +17,7 @@ class SchemeRepositoryImpl implements ISchemeRepository, IOfferRepository {
   @override
   Future<List<SchemeEntity>> getActiveSchemes({int? durationFilter}) async {
     final response = await _dio.get<Map<String, dynamic>>(
-      '/api/v1/schemes/active',
+      ApiEndpoints.schemesActive,
       queryParameters: durationFilter != null
           ? <String, dynamic>{'duration': durationFilter}
           : null,
@@ -35,22 +35,29 @@ class SchemeRepositoryImpl implements ISchemeRepository, IOfferRepository {
 
   @override
   Future<SchemeEntity> getSchemeById(String id) async {
-    final response = await _dio.get<Map<String, dynamic>>('/api/v1/schemes/$id');
-    final Map<String, dynamic> data =
-        response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
-    return SchemeMapper.toEntity(SchemeDto.fromJson(data));
+    final List<SchemeEntity> schemes = await getActiveSchemes();
+    return schemes.firstWhere(
+      (SchemeEntity s) => s.id == id,
+      orElse: () => throw const NotFoundException('Scheme not found.'),
+    );
   }
 
   @override
   Future<List<OfferEntity>> getActiveOffers() async {
-    final response = await _dio.get<Map<String, dynamic>>('/api/v1/offers');
-    final Map<String, dynamic> data =
-        response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
-    final List<dynamic> list = data['offers'] as List<dynamic>? ?? <dynamic>[];
-
-    return list
-        .map((dynamic json) =>
-            OfferMapper.toEntity(OfferDto.fromJson(json as Map<String, dynamic>)))
-        .toList();
+    // The backend does not expose a dedicated /offers endpoint; promotional offers are
+    // derived directly from active scheme privileges and perks (GET /api/v1/schemes/active).
+    final List<SchemeEntity> schemes = await getActiveSchemes();
+    return schemes.map((SchemeEntity scheme) {
+      return OfferEntity(
+        id: 'offer_${scheme.id}',
+        title: scheme.name,
+        description: scheme.benefits.isNotEmpty
+            ? scheme.benefits.join(' • ')
+            : 'Enroll now and receive 1 Month Free Jeweler Bonus upon maturity.',
+        code: 'SWASTIK${scheme.durationMonths}',
+        discountPct: 25.0,
+        imageUrl: scheme.bannerImageUrl,
+      );
+    }).toList();
   }
 }

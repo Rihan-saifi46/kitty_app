@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../../../core/config/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/storage/secure_storage_service.dart';
 import '../../domain/entities/auth_session_entity.dart';
@@ -22,7 +23,7 @@ class AuthRepositoryImpl implements IAuthRepository {
   @override
   Future<SendOtpResultEntity> sendOtp({required String phone}) async {
     final response = await _dio.post<Map<String, dynamic>>(
-      '/api/v1/auth/send-otp',
+      ApiEndpoints.authSendOtp,
       data: SendOtpRequestDto(phone: phone).toJson(),
     );
 
@@ -38,7 +39,7 @@ class AuthRepositoryImpl implements IAuthRepository {
     String? sessionId,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(
-      '/api/v1/auth/verify-otp',
+      ApiEndpoints.authVerifyOtp,
       data: VerifyOtpRequestDto(phone: phone, otp: otp, sessionId: sessionId).toJson(),
     );
 
@@ -54,16 +55,18 @@ class AuthRepositoryImpl implements IAuthRepository {
 
   @override
   Future<UserEntity> getCurrentUser() async {
-    final response = await _dio.get<Map<String, dynamic>>('/api/v1/users/profile');
+    final response = await _dio.get<Map<String, dynamic>>(ApiEndpoints.userProfile);
     final Map<String, dynamic> data =
         response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
-    return AuthMapper.toUserEntity(UserDto.fromJson(data));
+    final Map<String, dynamic> userJson =
+        (data['user'] as Map<String, dynamic>?) ?? data;
+    return AuthMapper.toUserEntity(UserDto.fromJson(userJson));
   }
 
   @override
   Future<void> logout() async {
     try {
-      await _dio.post<dynamic>('/api/v1/auth/logout');
+      await _dio.post<dynamic>(ApiEndpoints.authLogout);
     } catch (_) {
       // Best-effort remote notification
     }

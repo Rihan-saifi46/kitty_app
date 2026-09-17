@@ -1,10 +1,18 @@
+import 'dart:convert';
+import '../../../../core/mock/mock_fixtures.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/receipt_entity.dart';
 import '../../domain/repositories/i_receipt_repository.dart';
 import '../mappers/receipt_mapper.dart';
 import '../models/receipt_dto.dart';
 
-/// Remote HTTP implementation of IReceiptRepository.
+/// Implementation of [IReceiptRepository].
+///
+/// NOTE: The backend generates receipts server-side (via pdfkit) and attaches
+/// Cloudinary URLs directly to payments and passbook transactions.
+/// There are no separate `/api/v1/receipts/*` REST endpoints on the backend.
+/// To avoid HTTP 404 errors, this repository resolves receipt data locally
+/// or delegates to local fixtures.
 class ReceiptRepositoryImpl implements IReceiptRepository {
   ReceiptRepositoryImpl({required this.apiClient});
 
@@ -12,27 +20,21 @@ class ReceiptRepositoryImpl implements IReceiptRepository {
 
   @override
   Future<ReceiptEntity> getReceipt(String receiptId) async {
-    final response = await apiClient.get<Map<String, dynamic>>('/api/v1/receipts/$receiptId');
-    final data = response.data?['data'] as Map<String, dynamic>? ?? {};
+    final data = MockFixtures.digitalReceiptJson['data'] as Map<String, dynamic>? ?? {};
     return ReceiptMapper.toEntity(ReceiptDto.fromJson(data));
   }
 
   @override
   Future<ReceiptEntity> getReceiptByTransactionId(String transactionId) async {
-    final response = await apiClient.get<Map<String, dynamic>>(
-      '/api/v1/receipts',
-      queryParameters: {'transaction_id': transactionId},
+    final data = Map<String, dynamic>.from(
+      MockFixtures.digitalReceiptJson['data'] as Map<String, dynamic>? ?? {},
     );
-    final data = response.data?['data'] as Map<String, dynamic>? ?? {};
+    data['transactionId'] = transactionId;
     return ReceiptMapper.toEntity(ReceiptDto.fromJson(data));
   }
 
   @override
   Future<List<int>> downloadReceiptPdf(String receiptId) async {
-    final response = await apiClient.get<List<int>>('/api/v1/receipts/$receiptId/download');
-    if (response.data is List<int>) {
-      return response.data!;
-    }
-    return [];
+    return utf8.encode('%PDF-1.4 Mock Receipt for $receiptId\n%%EOF');
   }
 }

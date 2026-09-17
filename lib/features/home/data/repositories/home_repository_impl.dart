@@ -1,3 +1,4 @@
+import '../../../../core/config/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/gold_rate_entity.dart';
 import '../../domain/entities/product_entity.dart';
@@ -15,7 +16,7 @@ class HomeRepositoryImpl implements IGoldRateRepository, IProductRepository {
 
   @override
   Future<LiveGoldRateEntity> getLiveGoldRate() async {
-    final response = await _dio.get<Map<String, dynamic>>('/api/v1/gold-rate/live');
+    final response = await _dio.get<Map<String, dynamic>>(ApiEndpoints.ratesGold);
     final Map<String, dynamic> data =
         response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
     return HomeMapper.toGoldRateEntity(LiveGoldRateDto.fromJson(data));
