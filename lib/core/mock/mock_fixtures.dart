@@ -406,6 +406,19 @@ abstract final class MockFixtures {
     },
   };
 
+  static const Map<String, dynamic> paymentStatusCancelledJson = <String, dynamic>{
+    'success': false,
+    'message': 'Payment cancelled by patron.',
+    'data': <String, dynamic>{
+      'orderId': 'gokwik_ord_771829',
+      'status': 'CANCELLED',
+      'transactionId': null,
+      'receiptUrl': null,
+      'totalPaidAmount': 40000,
+      'monthsPaid': 8,
+    },
+  };
+
   // ---------------------------------------------------------------------------
   // 6. Live Gold Rate Fixtures (3-Decimal Precision)
   // ---------------------------------------------------------------------------

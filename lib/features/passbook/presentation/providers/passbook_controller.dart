@@ -14,7 +14,7 @@ final NotifierProvider<PassbookController, PassbookState> passbookControllerProv
 /// Controller managing customer's 12-month installment passbook ledger,
 /// view mode toggling, pull-to-refresh, and error recovery.
 class PassbookController extends Notifier<PassbookState> {
-  late final IPassbookRepository _passbookRepository;
+  late IPassbookRepository _passbookRepository;
 
   @override
   PassbookState build() {

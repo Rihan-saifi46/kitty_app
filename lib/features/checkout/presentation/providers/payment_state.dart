@@ -1,0 +1,124 @@
+import '../../../../core/enums/app_enums.dart';
+import '../../domain/entities/payment_order_entity.dart';
+
+/// Presentation state lifecycle for payment flow and polling.
+enum PaymentUiStatus {
+  /// Initial idle state. Ready for method selection and initiation.
+  initial,
+
+  /// Calling initiatePayment to acquire GoKwik orderId and session.
+  initiating,
+
+  /// Gateway UI currently active on screen.
+  awaitingGateway,
+
+  /// Polling backend /api/v1/payments/status/:orderId for reconciliation.
+  polling,
+
+  /// Backend confirmed payment success. Terminal state.
+  success,
+
+  /// Backend confirmed payment failed. Terminal state.
+  failed,
+
+  /// Payment cancelled by user. Terminal state.
+  cancelled,
+
+  /// Polling reached maximum attempts (timeout) without final confirmation.
+  timeout,
+
+  /// Error occurred during initiation or polling.
+  error,
+}
+
+/// Comprehensive immutable state container for Payment Checkout and Polling.
+class PaymentState {
+  const PaymentState({
+    this.status = PaymentUiStatus.initial,
+    this.membershipId = 'mem_994411',
+    this.chitToken = '#SW-042',
+    this.monthFor = 9,
+    this.amount = 5000, // Whole integer Rupees
+    this.selectedMethod = PaymentMethodEnum.online,
+    this.order,
+    this.statusEntity,
+    this.pollCount = 0,
+    this.maxPolls = 5,
+    this.pollingMessage = 'Verifying payment with bank...',
+    this.errorMessage,
+  });
+
+  final PaymentUiStatus status;
+  final String membershipId;
+  final String chitToken;
+  final int monthFor;
+  final int amount; // Whole integer Rupees
+  final PaymentMethodEnum selectedMethod;
+  final PaymentOrderEntity? order;
+  final PaymentStatusEntity? statusEntity;
+  final int pollCount;
+  final int maxPolls;
+  final String pollingMessage;
+  final String? errorMessage;
+
+  /// True if payment is initiating, in gateway, or currently polling.
+  bool get isBusy =>
+      status == PaymentUiStatus.initiating ||
+      status == PaymentUiStatus.awaitingGateway ||
+      status == PaymentUiStatus.polling;
+
+  /// True if payment can be initiated (idle or after terminal failure/retry).
+  bool get canInitiate =>
+      status == PaymentUiStatus.initial ||
+      status == PaymentUiStatus.failed ||
+      status == PaymentUiStatus.cancelled ||
+      status == PaymentUiStatus.error;
+
+  /// True if in terminal state.
+  bool get isTerminal =>
+      status == PaymentUiStatus.success ||
+      status == PaymentUiStatus.failed ||
+      status == PaymentUiStatus.cancelled ||
+      status == PaymentUiStatus.timeout;
+
+  bool get isInitial => status == PaymentUiStatus.initial;
+  bool get isInitiating => status == PaymentUiStatus.initiating;
+  bool get isAwaitingGateway => status == PaymentUiStatus.awaitingGateway;
+  bool get isPolling => status == PaymentUiStatus.polling;
+  bool get isSuccess => status == PaymentUiStatus.success;
+  bool get isFailed => status == PaymentUiStatus.failed;
+  bool get isCancelled => status == PaymentUiStatus.cancelled;
+  bool get isTimeout => status == PaymentUiStatus.timeout;
+  bool get isError => status == PaymentUiStatus.error;
+
+  PaymentState copyWith({
+    PaymentUiStatus? status,
+    String? membershipId,
+    String? chitToken,
+    int? monthFor,
+    int? amount,
+    PaymentMethodEnum? selectedMethod,
+    PaymentOrderEntity? order,
+    PaymentStatusEntity? statusEntity,
+    int? pollCount,
+    int? maxPolls,
+    String? pollingMessage,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return PaymentState(
+      status: status ?? this.status,
+      membershipId: membershipId ?? this.membershipId,
+      chitToken: chitToken ?? this.chitToken,
+      monthFor: monthFor ?? this.monthFor,
+      amount: amount ?? this.amount,
+      selectedMethod: selectedMethod ?? this.selectedMethod,
+      order: order ?? this.order,
+      statusEntity: statusEntity ?? this.statusEntity,
+      pollCount: pollCount ?? this.pollCount,
+      maxPolls: maxPolls ?? this.maxPolls,
+      pollingMessage: pollingMessage ?? this.pollingMessage,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    );
+  }
+}

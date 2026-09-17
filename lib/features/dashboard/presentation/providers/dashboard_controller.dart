@@ -12,7 +12,7 @@ final NotifierProvider<DashboardController, DashboardState> dashboardControllerP
 
 /// Controller managing active scheme dashboard metrics, loading, refresh, and error handling.
 class DashboardController extends Notifier<DashboardState> {
-  late final IDashboardRepository _dashboardRepository;
+  late IDashboardRepository _dashboardRepository;
 
   @override
   DashboardState build() {

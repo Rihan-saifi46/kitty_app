@@ -222,15 +222,23 @@ void main() {
       // Dashboard: Tap 'PAY NEXT EMI (₹5,000)' -> Checkout modal
       await tester.tap(find.text('PAY NEXT EMI (₹5,000)'));
       await tester.pumpAndSettle();
-      expect(find.text('Payment Checkout'), findsOneWidget);
+      expect(find.text('Pay Kitty Installment'), findsOneWidget);
+      expect(find.text('Confirm & Pay ₹5,000'), findsOneWidget);
 
-      // Checkout: Tap 'Open GoKwik Gateway Host' -> Gokwik WebView host
-      await tester.tap(find.text('Open GoKwik Gateway Host'));
+      // Checkout: Tap 'Confirm & Pay ₹5,000' -> Launches Gokwik Gateway
+      await tester.tap(find.text('Confirm & Pay ₹5,000'));
       await tester.pumpAndSettle();
-      expect(find.text('GoKwik Gateway Host'), findsOneWidget);
+      expect(find.text('GoKwik Sandbox'), findsOneWidget);
 
-      // Gokwik: Tap 'Simulate Successful Return -> /dashboard'
-      await tester.tap(find.text('Simulate Successful Return -> /dashboard'));
+      // Gokwik: Tap 'Simulate User Payment Complete'
+      await tester.tap(find.text('Simulate User Payment Complete'));
+      await tester.pumpAndSettle();
+
+      // Verified Success screen in Checkout
+      expect(find.text('PAYMENT CONFIRMED'), findsOneWidget);
+
+      // Tap 'Back to Kitty Dashboard'
+      await tester.tap(find.text('Back to Kitty Dashboard'));
       await tester.pumpAndSettle();
       expect(find.byType(DashboardScreen), findsOneWidget);
     });

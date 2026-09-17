@@ -19,10 +19,10 @@ final NotifierProvider<HomeController, HomeState> homeControllerProvider =
 
 /// Controller managing data loading, category filtering, and refresh for the Home screen.
 class HomeController extends Notifier<HomeState> {
-  late final IGoldRateRepository _goldRateRepository;
-  late final IProductRepository _productRepository;
-  late final ISchemeRepository _schemeRepository;
-  late final IDashboardRepository _dashboardRepository;
+  late IGoldRateRepository _goldRateRepository;
+  late IProductRepository _productRepository;
+  late ISchemeRepository _schemeRepository;
+  late IDashboardRepository _dashboardRepository;
 
   @override
   HomeState build() {

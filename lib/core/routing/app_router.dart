@@ -5,14 +5,15 @@ import '../../features/auth/presentation/screens/auth_success_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/otp_screen.dart';
 import '../../features/auth/presentation/screens/phone_screen.dart';
-import '../../features/checkout/presentation/screens/checkout_placeholder_screen.dart';
+import '../../features/checkout/domain/entities/payment_order_entity.dart';
+import '../../features/checkout/presentation/screens/checkout_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/kyc/presentation/screens/kyc_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_placeholder_screen.dart';
 import '../../features/offers/presentation/screens/offers_screen.dart';
 import '../../features/passbook/presentation/screens/passbook_screen.dart';
-import '../../features/payment_gateway/presentation/screens/gokwik_placeholder_screen.dart';
+import '../../features/payment_gateway/presentation/screens/gokwik_gateway_screen.dart';
 import '../../features/receipt/presentation/screens/receipt_placeholder_screen.dart';
 import '../../features/settings/presentation/screens/settings_placeholder_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
@@ -262,9 +263,10 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         path: RoutePaths.checkout,
         name: AppRoute.checkout.name,
         pageBuilder: (BuildContext context, GoRouterState state) {
+          final CheckoutArgs? args = state.extra as CheckoutArgs?;
           return RouteTransitions.slideFromBottomPage(
             key: state.pageKey,
-            child: const CheckoutPlaceholderScreen(),
+            child: CheckoutScreen(args: args),
           );
         },
       ),
@@ -285,9 +287,10 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         path: RoutePaths.gokwikGateway,
         name: AppRoute.gokwikGateway.name,
         pageBuilder: (BuildContext context, GoRouterState state) {
+          final PaymentOrderEntity? order = state.extra as PaymentOrderEntity?;
           return RouteTransitions.fadeTransitionPage(
             key: state.pageKey,
-            child: const GokwikPlaceholderScreen(),
+            child: GokwikGatewayScreen(order: order),
           );
         },
       ),
