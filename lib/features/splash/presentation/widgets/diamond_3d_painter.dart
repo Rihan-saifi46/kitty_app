@@ -3,16 +3,14 @@ import 'package:flutter/material.dart';
 
 /// 3D Faceted Brilliant-Cut Crystal Diamond Custom Painter.
 ///
-/// Reproduces the exact 3D geometry, facet indices, lighting calculations,
-/// metallic white gold specular shading, and sparkling stars from `loader.js`.
+/// Faithfully reproduces the exact 3D geometry, facet indices, lighting calculations,
+/// metallic white-gold specular shading, and sparkling stars from `loader.js`.
 class Diamond3DPainter extends CustomPainter {
   Diamond3DPainter({
     required this.rotationY,
     required this.scaleFactor,
     required this.opacity,
-  }) {
-    _initGeometry();
-  }
+  });
 
   final double rotationY;
   final double scaleFactor;
@@ -23,54 +21,65 @@ class Diamond3DPainter extends CustomPainter {
   static const double _pitchX = 0.36;
   static const double _rollZ = 0.06;
 
-  final List<List<double>> _vertices = <List<double>>[];
-  final List<_DiamondFace> _faces = <_DiamondFace>[];
+  static final List<List<double>> _vertices = _computeVertices();
+  static final List<_DiamondFace> _faces = _computeFaces();
+  static final List<double> _normalizedLight = _normalize(_lightDir);
 
-  void _initGeometry() {
+  static final Paint _fillPaint = Paint()..style = PaintingStyle.fill;
+  static final Paint _strokePaint = Paint()..style = PaintingStyle.stroke;
+  static final Paint _sparklePaint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 1.1;
+
+  static List<List<double>> _computeVertices() {
     const double rGirdle = 76.0;
     const double rTable = 40.0;
     const double hCrown = 30.0;
     const double hGirdleHalf = 2.0;
     const double hPavilion = 72.0;
 
-    _vertices.clear();
-    _faces.clear();
+    final List<List<double>> vertices = <List<double>>[];
 
     // 1. Table Octagon (indices 0..7)
     for (int i = 0; i < 8; i++) {
       final double ang = (i * math.pi) / 4.0;
-      _vertices.add(<double>[rTable * math.cos(ang), rTable * math.sin(ang), hCrown]);
+      vertices.add(<double>[rTable * math.cos(ang), rTable * math.sin(ang), hCrown]);
     }
 
     // 2. Upper Girdle (indices 8..23)
     for (int i = 0; i < 16; i++) {
       final double ang = (i * math.pi) / 8.0;
-      _vertices.add(<double>[rGirdle * math.cos(ang), rGirdle * math.sin(ang), hGirdleHalf]);
+      vertices.add(<double>[rGirdle * math.cos(ang), rGirdle * math.sin(ang), hGirdleHalf]);
     }
 
     // 3. Lower Girdle (indices 24..39)
     for (int i = 0; i < 16; i++) {
       final double ang = (i * math.pi) / 8.0;
-      _vertices.add(<double>[rGirdle * math.cos(ang), rGirdle * math.sin(ang), -hGirdleHalf]);
+      vertices.add(<double>[rGirdle * math.cos(ang), rGirdle * math.sin(ang), -hGirdleHalf]);
     }
 
     // 4. Culet apex (index 40)
-    final int culetIdx = _vertices.length;
-    _vertices.add(<double>[0.0, 0.0, -hPavilion]);
+    vertices.add(<double>[0.0, 0.0, -hPavilion]);
 
     // 5. Mid-pavilion star vertices (indices 41..48)
-    final int midPavStart = _vertices.length;
     const double rMidPav = 38.0;
     const double hMidPav = -35.0;
     for (int i = 0; i < 8; i++) {
       final double ang = ((i + 0.5) * math.pi) / 4.0;
-      _vertices.add(<double>[rMidPav * math.cos(ang), rMidPav * math.sin(ang), hMidPav]);
+      vertices.add(<double>[rMidPav * math.cos(ang), rMidPav * math.sin(ang), hMidPav]);
     }
 
-    // Faces:
+    return List<List<double>>.unmodifiable(vertices);
+  }
+
+  static List<_DiamondFace> _computeFaces() {
+    const int culetIdx = 40;
+    const int midPavStart = 41;
+    final List<_DiamondFace> faces = <_DiamondFace>[];
+
     // 1. Table
     for (int i = 1; i < 7; i++) {
-      _faces.add(_DiamondFace(indices: <int>[0, i, i + 1], type: 'table'));
+      faces.add(_DiamondFace(indices: <int>[0, i, i + 1], type: 'table'));
     }
 
     // 2. Crown & Star facets
@@ -81,9 +90,9 @@ class Diamond3DPainter extends CustomPainter {
       final int g1 = 8 + (i * 2 + 1) % 16;
       final int g2 = 8 + (i * 2 + 2) % 16;
 
-      _faces.add(_DiamondFace(indices: <int>[t0, t1, g1], type: 'star'));
-      _faces.add(_DiamondFace(indices: <int>[t0, g0, g1], type: 'crown'));
-      _faces.add(_DiamondFace(indices: <int>[t1, g1, g2], type: 'crown'));
+      faces.add(_DiamondFace(indices: <int>[t0, t1, g1], type: 'star'));
+      faces.add(_DiamondFace(indices: <int>[t0, g0, g1], type: 'crown'));
+      faces.add(_DiamondFace(indices: <int>[t1, g1, g2], type: 'crown'));
     }
 
     // 3. Girdle bands
@@ -92,8 +101,8 @@ class Diamond3DPainter extends CustomPainter {
       final int u1 = 8 + (i + 1) % 16;
       final int l0 = 24 + i;
       final int l1 = 24 + (i + 1) % 16;
-      _faces.add(_DiamondFace(indices: <int>[u0, l0, l1], type: 'girdle'));
-      _faces.add(_DiamondFace(indices: <int>[u0, l1, u1], type: 'girdle'));
+      faces.add(_DiamondFace(indices: <int>[u0, l0, l1], type: 'girdle'));
+      faces.add(_DiamondFace(indices: <int>[u0, l1, u1], type: 'girdle'));
     }
 
     // 4. Pavilion
@@ -103,16 +112,18 @@ class Diamond3DPainter extends CustomPainter {
       final int l2 = 24 + (i * 2 + 2) % 16;
       final int mp = midPavStart + i;
 
-      _faces.add(_DiamondFace(indices: <int>[l0, l1, mp], type: 'pavilion'));
-      _faces.add(_DiamondFace(indices: <int>[l1, l2, mp], type: 'pavilion'));
-      _faces.add(_DiamondFace(indices: <int>[mp, l0, culetIdx], type: 'pavilion'));
-      _faces.add(_DiamondFace(indices: <int>[mp, culetIdx, l2], type: 'pavilion'));
+      faces.add(_DiamondFace(indices: <int>[l0, l1, mp], type: 'pavilion'));
+      faces.add(_DiamondFace(indices: <int>[l1, l2, mp], type: 'pavilion'));
+      faces.add(_DiamondFace(indices: <int>[mp, l0, culetIdx], type: 'pavilion'));
+      faces.add(_DiamondFace(indices: <int>[mp, culetIdx, l2], type: 'pavilion'));
     }
+
+    return List<_DiamondFace>.unmodifiable(faces);
   }
 
   static List<double> _normalize(List<double> v) {
     final double len = math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-    if (len == 0) return <double>[0.0, 0.0, 0.0];
+    if (len == 0) return const <double>[0.0, 0.0, 0.0];
     return <double>[v[0] / len, v[1] / len, v[2] / len];
   }
 
@@ -138,11 +149,8 @@ class Diamond3DPainter extends CustomPainter {
     final double cosZ = math.cos(_rollZ);
     final double sinZ = math.sin(_rollZ);
 
-    final List<double> normLight = _normalize(_lightDir);
-
     final List<List<double>> transformed = <List<double>>[];
     final List<Offset> projected = <Offset>[];
-    final List<double> zPositions = <double>[];
 
     for (int i = 0; i < _vertices.length; i++) {
       final List<double> v = _vertices[i];
@@ -166,7 +174,6 @@ class Diamond3DPainter extends CustomPainter {
       final double z3 = z2;
 
       transformed.add(<double>[x3, y3, z3]);
-      zPositions.add(z3);
 
       final double zDist = math.max(20.0, _fov + z3);
       final double pFactor = _fov / zDist;
@@ -194,10 +201,10 @@ class Diamond3DPainter extends CustomPainter {
 
       final double dotL = math.max(
         0.0,
-        normal[0] * normLight[0] + normal[1] * normLight[1] + normal[2] * normLight[2],
+        normal[0] * _normalizedLight[0] + normal[1] * _normalizedLight[1] + normal[2] * _normalizedLight[2],
       );
 
-      final double rz = 2.0 * dotL * normal[2] - normLight[2];
+      final double rz = 2.0 * dotL * normal[2] - _normalizedLight[2];
       final double specular = math.pow(math.max(0.0, rz), 16).toDouble();
 
       renderedFaces.add(
@@ -216,11 +223,8 @@ class Diamond3DPainter extends CustomPainter {
       }
     }
 
-    // Sort back to front (painter's algorithm)
+    // Painter's algorithm: sort back-to-front by depth
     renderedFaces.sort((_RenderedFace a, _RenderedFace b) => a.zAvg.compareTo(b.zAvg));
-
-    final Paint fillPaint = Paint()..style = PaintingStyle.fill;
-    final Paint strokePaint = Paint()..style = PaintingStyle.stroke;
 
     for (int i = 0; i < renderedFaces.length; i++) {
       final _RenderedFace item = renderedFaces[i];
@@ -235,13 +239,13 @@ class Diamond3DPainter extends CustomPainter {
         ..close();
 
       if (!item.isFront) {
-        // Back facet shading
-        fillPaint.color = Color.fromRGBO(8, 38, 32, 0.30 * opacity);
-        canvas.drawPath(path, fillPaint);
+        // Back facet shading (translucent deep emerald)
+        _fillPaint.color = Color.fromRGBO(8, 38, 32, 0.30 * opacity);
+        canvas.drawPath(path, _fillPaint);
 
-        strokePaint.color = Color.fromRGBO(225, 232, 240, 0.16 * opacity);
-        strokePaint.strokeWidth = math.min(2.5, 0.5 * math.max(1.0, scaleFactor * 0.35));
-        canvas.drawPath(path, strokePaint);
+        _strokePaint.color = Color.fromRGBO(225, 232, 240, 0.16 * opacity);
+        _strokePaint.strokeWidth = math.min(2.5, 0.5 * math.max(1.0, scaleFactor * 0.35));
+        canvas.drawPath(path, _strokePaint);
       } else {
         final double lit = item.dotL;
         final double spec = item.specular;
@@ -252,29 +256,30 @@ class Diamond3DPainter extends CustomPainter {
         final int b = (235 + lit * 18 + spec * 35).clamp(0, 255).toInt();
         final double a = (0.70 + lit * 0.20 + spec * 0.28).clamp(0.0, 0.96) * opacity;
 
-        fillPaint.color = Color.fromRGBO(r, g, b, a);
-        canvas.drawPath(path, fillPaint);
+        _fillPaint.color = Color.fromRGBO(r, g, b, a);
+        canvas.drawPath(path, _fillPaint);
 
         // Radiant facet edges
         final double edgeAlpha = (0.52 + spec * 0.45).clamp(0.0, 0.95) * opacity;
-        strokePaint.color = Color.fromRGBO(242, 246, 252, edgeAlpha);
-        strokePaint.strokeWidth = math.min(4.5, math.max(0.7, 0.85 * (scaleFactor * 0.38)));
-        canvas.drawPath(path, strokePaint);
+        _strokePaint.color = Color.fromRGBO(242, 246, 252, edgeAlpha);
+        _strokePaint.strokeWidth = math.min(4.5, math.max(0.7, 0.85 * (scaleFactor * 0.38)));
+        canvas.drawPath(path, _strokePaint);
       }
     }
 
     // Render sparkle star glints
-    final Paint sparklePaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.1;
-
     for (int i = 0; i < sparkles.length; i++) {
       final _Sparkle sp = sparkles[i];
       final double size = 5.5 * sp.intensity;
-      sparklePaint.color = Color.fromRGBO(255, 255, 255, (0.92 * sp.intensity * opacity).clamp(0.0, 1.0));
+      _sparklePaint.color = Color.fromRGBO(
+        255,
+        255,
+        255,
+        (0.92 * sp.intensity * opacity).clamp(0.0, 1.0),
+      );
 
-      canvas.drawLine(Offset(sp.x - size, sp.y), Offset(sp.x + size, sp.y), sparklePaint);
-      canvas.drawLine(Offset(sp.x, sp.y - size), Offset(sp.x, sp.y + size), sparklePaint);
+      canvas.drawLine(Offset(sp.x - size, sp.y), Offset(sp.x + size, sp.y), _sparklePaint);
+      canvas.drawLine(Offset(sp.x, sp.y - size), Offset(sp.x, sp.y + size), _sparklePaint);
     }
   }
 

@@ -1,4 +1,5 @@
 import '../../../../core/config/app_constants.dart';
+import '../../../../core/security/mpin_security_service.dart';
 import '../../../../core/storage/secure_storage_service.dart';
 import '../../domain/entities/profile_entity.dart';
 import '../../domain/repositories/i_settings_local_repository.dart';
@@ -73,14 +74,41 @@ class SettingsLocalRepositoryImpl implements ISettingsLocalRepository {
 
   @override
   Future<void> setMpin(String mpin) async {
+    final String hashed = MpinSecurityService.hashMpin(mpin);
     await _storage.write(
       key: AppConstants.mpinKey,
-      value: mpin,
+      value: hashed,
     );
   }
 
   @override
   Future<String?> getMpin() async {
     return _storage.read(key: AppConstants.mpinKey);
+  }
+
+  @override
+  Future<bool> hasMpin() async {
+    final String? stored = await _storage.read(key: AppConstants.mpinKey);
+    return stored != null && stored.trim().isNotEmpty;
+  }
+
+  @override
+  Future<bool> verifyMpin(String mpin) async {
+    final String? stored = await _storage.read(key: AppConstants.mpinKey);
+    if (stored == null || stored.trim().isEmpty) {
+      return false;
+    }
+
+    final bool isValid = MpinSecurityService.verifyMpin(
+      candidateMpin: mpin,
+      storedHash: stored,
+    );
+
+    // Auto-migrate legacy plaintext MPIN to salted PBKDF2 representation
+    if (isValid && MpinSecurityService.isLegacyPlaintext(stored)) {
+      await setMpin(mpin);
+    }
+
+    return isValid;
   }
 }

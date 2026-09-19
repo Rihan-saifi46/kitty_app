@@ -1,12 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'app_constants.dart';
 import 'app_environment.dart';
 
 /// Centralized configuration service for Kitty App.
 ///
 /// Supports `--dart-define` compile-time overrides:
-/// - `ENVIRONMENT`: `mock`, `dev`, `staging`, `prod` (defaults to `mock`)
+/// - `ENVIRONMENT`: `mock`, `dev`, `staging`, `prod` (defaults to `prod` in release, `mock` in debug)
 /// - `BASE_URL`: API root URI override
-/// - `USE_MOCK_API`: Explicit boolean flag to force mock data
+/// - `USE_MOCK_API`: Explicit boolean flag to force mock data (defaults to `false` in release)
 class AppConfig {
   AppConfig._({
     required this.environment,
@@ -23,12 +24,18 @@ class AppConfig {
     String? baseUrl,
     bool? useMockApi,
   }) {
-    // Read from --dart-define or fallback
-    const String envString = String.fromEnvironment('ENVIRONMENT', defaultValue: 'mock');
-    const String baseUrlDefine = String.fromEnvironment('BASE_URL', defaultValue: '');
-    const bool useMockApiDefine = bool.fromEnvironment('USE_MOCK_API', defaultValue: true);
+    // Determine release mode defaults
+    const String defaultEnv = kReleaseMode ? 'prod' : 'mock';
 
-    final AppEnvironment resolvedEnv = environment ?? AppEnvironment.fromString(envString);
+    // Read from --dart-define or fallback
+    const String envString = String.fromEnvironment('ENVIRONMENT', defaultValue: '');
+    final String resolvedEnvString = envString.isNotEmpty ? envString : defaultEnv;
+
+    const String baseUrlDefine = String.fromEnvironment('BASE_URL', defaultValue: '');
+    const bool hasMockDefine = bool.hasEnvironment('USE_MOCK_API');
+    const bool useMockApiDefine = bool.fromEnvironment('USE_MOCK_API', defaultValue: false);
+
+    final AppEnvironment resolvedEnv = environment ?? AppEnvironment.fromString(resolvedEnvString);
 
     final String resolvedBaseUrl = baseUrl ??
         (baseUrlDefine.isNotEmpty
@@ -36,7 +43,9 @@ class AppConfig {
             : _resolveDefaultBaseUrl(resolvedEnv));
 
     final bool resolvedMock = useMockApi ??
-        (resolvedEnv.isMock || useMockApiDefine);
+        (hasMockDefine
+            ? useMockApiDefine
+            : (resolvedEnv.isMock || (!kReleaseMode && resolvedEnv == AppEnvironment.mock)));
 
     return AppConfig._(
       environment: resolvedEnv,

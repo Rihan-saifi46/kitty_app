@@ -1,42 +1,36 @@
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/notification_entity.dart';
 import '../../domain/repositories/i_notification_repository.dart';
-import '../mappers/notification_mapper.dart';
-import '../models/notification_dto.dart';
+import 'mock_notification_repository.dart';
 
-/// Remote HTTP implementation of INotificationRepository.
+/// Implementation of [INotificationRepository].
+///
+/// NOTE: The Swastik Kitty backend does not maintain an in-app notifications database;
+/// notifications are dispatched externally via MSG91 / WhatsApp OTP services.
+/// The application intentionally uses [MockNotificationRepository] via [notificationRepositoryProvider].
 class NotificationRepositoryImpl implements INotificationRepository {
-  NotificationRepositoryImpl({required this.apiClient});
+  NotificationRepositoryImpl({this.apiClient});
 
-  final DioClient apiClient;
+  final DioClient? apiClient;
+  final MockNotificationRepository _mockRepo = MockNotificationRepository();
 
   @override
-  Future<List<NotificationEntity>> getNotifications({int page = 1, int limit = 20}) async {
-    final response = await apiClient.get<Map<String, dynamic>>(
-      '/api/v1/notifications',
-      queryParameters: {'page': page, 'limit': limit},
-    );
-    final data = response.data?['data'] as List<dynamic>? ?? [];
-    return data
-        .map((dynamic json) => NotificationMapper.toEntity(
-              NotificationDto.fromJson(json as Map<String, dynamic>),
-            ))
-        .toList();
+  Future<List<NotificationEntity>> getNotifications({int page = 1, int limit = 20}) {
+    return _mockRepo.getNotifications(page: page, limit: limit);
   }
 
   @override
-  Future<void> markAsRead(String notificationId) async {
-    await apiClient.patch<Map<String, dynamic>>('/api/v1/notifications/$notificationId/read');
+  Future<void> markAsRead(String notificationId) {
+    return _mockRepo.markAsRead(notificationId);
   }
 
   @override
-  Future<void> markAllAsRead() async {
-    await apiClient.post<Map<String, dynamic>>('/api/v1/notifications/read-all');
+  Future<void> markAllAsRead() {
+    return _mockRepo.markAllAsRead();
   }
 
   @override
-  Future<int> getUnreadCount() async {
-    final response = await apiClient.get<Map<String, dynamic>>('/api/v1/notifications/unread-count');
-    return (response.data?['data']?['count'] as num?)?.toInt() ?? 0;
+  Future<int> getUnreadCount() {
+    return _mockRepo.getUnreadCount();
   }
 }

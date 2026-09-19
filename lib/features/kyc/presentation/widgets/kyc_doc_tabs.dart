@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/enums/app_enums.dart';
 
 /// Document selector tab widget matching `kyc.html` / `kyc.css`.
@@ -18,6 +16,23 @@ class KycDocTabs extends StatelessWidget {
   final ValueChanged<DocTypeEnum> onDocTypeChanged;
   final bool enabled;
 
+  static const Color _goldLight = Color(0xFFF4E2AA);
+  static const Color _tabGroupBg = Color(0xD9041913); // rgba(4, 25, 19, 0.85)
+  static const Color _tabBorder = Color(0x40CCA243); // rgba(204, 162, 65, 0.25)
+  static const Color _textMuted = Color(0xFF8FA499);
+  static const Color _darkText = Color(0xFF1A1404);
+
+  static const LinearGradient _goldGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: <Color>[
+      Color(0xFFCCA243),
+      Color(0xFFF4E2AA),
+      Color(0xFFCCA243),
+    ],
+    stops: <double>[0.0, 0.5, 1.0],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -25,22 +40,22 @@ class KycDocTabs extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          'Select Document Type',
+          'SELECT DOCUMENT TYPE',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: AppColors.emeraldTextSubtle,
-            letterSpacing: 0.2,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: _goldLight,
+            letterSpacing: 0.04 * 12,
           ),
         ),
-        const SizedBox(height: AppSpacing.space8),
+        const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: Colors.white.withAlpha(12),
-            borderRadius: AppRadius.border12,
+            color: _tabGroupBg,
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: Colors.white.withAlpha(25),
+              color: _tabBorder,
               width: 1,
             ),
           ),
@@ -48,17 +63,15 @@ class KycDocTabs extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: _buildTab(
-                  context: context,
                   type: DocTypeEnum.aadhaar,
                   label: 'Aadhaar Card',
                   icon: Icons.badge_outlined,
                   isSelected: selectedDocType == DocTypeEnum.aadhaar,
                 ),
               ),
-              const SizedBox(width: AppSpacing.space6),
+              const SizedBox(width: 4),
               Expanded(
                 child: _buildTab(
-                  context: context,
                   type: DocTypeEnum.pan,
                   label: 'PAN Card',
                   icon: Icons.credit_card_outlined,
@@ -73,7 +86,6 @@ class KycDocTabs extends StatelessWidget {
   }
 
   Widget _buildTab({
-    required BuildContext context,
     required DocTypeEnum type,
     required String label,
     required IconData icon,
@@ -83,21 +95,21 @@ class KycDocTabs extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: enabled ? () => onDocTypeChanged(type) : null,
-        borderRadius: AppRadius.border10,
+        borderRadius: BorderRadius.circular(10),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 11),
+          curve: Curves.easeOutCubic,
+          height: 44,
           decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.goldPrimary
-                : Colors.transparent,
-            borderRadius: AppRadius.border10,
+            gradient: isSelected ? _goldGradient : null,
+            color: isSelected ? null : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
             boxShadow: isSelected
-                ? <BoxShadow>[
+                ? const <BoxShadow>[
                     BoxShadow(
-                      color: AppColors.goldPrimary.withAlpha(70),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
+                      color: Color(0x4DCCA243), // rgba(204, 162, 65, 0.3)
+                      blurRadius: 14,
+                      offset: Offset(0, 4),
                     ),
                   ]
                 : null,
@@ -108,19 +120,19 @@ class KycDocTabs extends StatelessWidget {
               Icon(
                 icon,
                 size: 16,
-                color: isSelected
-                    ? AppColors.deepEmeraldBase
-                    : AppColors.emeraldTextSubtle,
+                color: isSelected ? _darkText : _textMuted,
               ),
-              const SizedBox(width: AppSpacing.space8),
-              Text(
-                label,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13.5,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected
-                      ? AppColors.deepEmeraldBase
-                      : AppColors.textPrimaryLight,
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected ? _darkText : _textMuted,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

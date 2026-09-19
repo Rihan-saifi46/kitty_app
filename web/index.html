@@ -1,24 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Swastik Jewel Kitty Vault Application">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -29,18 +17,568 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>kitty_app</title>
+  <title>Swastik Jewel | Kitty Vault</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. STRICT SUPPRESSION: FLUTTER DWDS DEBUG BLUE PROGRESS BAR
+       Completely eliminates .flutter-loader and .indeterminate from rendering.
+       ========================================================================== */
+    .flutter-loader,
+    .indeterminate,
+    .indeterminate:before,
+    .indeterminate:after,
+    .indeterminate::before,
+    .indeterminate::after {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0px !important;
+      width: 0px !important;
+      pointer-events: none !important;
+      background: transparent !important;
+      animation: none !important;
+    }
+
+    /* ==========================================================================
+       2. LUXURY SWASTIK JEWEL LOADING AESTHETICS (Source: D:\ui design)
+       Deep emerald green: #05241C
+       ========================================================================== */
+    :root {
+      --bg-primary: #05241C;
+      --gold-primary: #CCA243;
+      --gold-light: #F4E2AA;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #05241C;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #FFFFFF;
+    }
+
+    #swastik-loader {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 99999;
+      background-color: #05241C;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: opacity 0.35s ease-out;
+    }
+
+    .diamond-viewport {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 20;
+      opacity: 1;
+      transition: opacity 0.15s ease;
+    }
+
+    .diamond-viewport.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    #diamond-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .damask-pattern-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('assets/damask-pattern.jpg');
+      background-repeat: repeat;
+      background-size: 320px auto;
+      background-position: center top;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      filter: invert(1) brightness(0.68) contrast(1.4) sepia(0.55) hue-rotate(10deg);
+      mix-blend-mode: screen;
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .damask-pattern-bg.visible {
+      opacity: 0.16;
+    }
+
+    .branding-stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -48%) scale(0.96);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .branding-stage.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .brand-logo-only {
+      width: clamp(210px, 50vw, 300px);
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 4px 28px rgba(0, 0, 0, 0.5));
+    }
+
+    .brand-subtitle {
+      margin-top: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: rgba(244, 226, 170, 0.9);
+      text-transform: uppercase;
+    }
+  </style>
+
+  <script>
+    // Record web loader launch timestamp immediately on frame 0
+    window.__kittyWebLoaderStartTime = Date.now();
+
+    // Aggressive watchdog to immediately eradicate DWDS debug loader elements
+    (function () {
+      function purgeLoader() {
+        const loaders = document.querySelectorAll('.flutter-loader');
+        loaders.forEach(function (el) {
+          if (el && el.parentNode) {
+            el.parentNode.removeChild(el);
+          }
+        });
+      }
+      try {
+        const observer = new MutationObserver(purgeLoader);
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+      } catch (e) {}
+      window.addEventListener('DOMContentLoaded', purgeLoader);
+    })();
+
+    // Method invoked by Flutter to seamlessly fade out HTML loader overlay
+    window.dismissKittyWebLoader = function () {
+      const loader = document.getElementById('swastik-loader');
+      if (loader) {
+        loader.style.opacity = '0';
+        loader.style.pointerEvents = 'none';
+        setTimeout(function () {
+          if (loader.parentNode) {
+            loader.parentNode.removeChild(loader);
+          }
+        }, 360);
+      }
+    };
+  </script>
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+  <!-- ========================================================================
+       PREMIUM SWASTIK JEWEL LOADING SEQUENCE
+       Direct reproduction of D:\ui design\index.html + loader.js
+       Background: #05241C
+       ======================================================================== -->
+  <div id="swastik-loader" aria-live="polite" aria-label="Loading Swastik Jewel">
+    <!-- PHASE 1: Full-Viewport 3D Faceted Crystal Diamond Canvas -->
+    <div class="diamond-viewport">
+      <canvas id="diamond-canvas"></canvas>
+    </div>
+
+    <!-- PHASE 2: Royal Damask Wallpaper Pattern (Background) -->
+    <div class="damask-pattern-bg" id="damaskPattern" aria-hidden="true"></div>
+
+    <!-- PHASE 2: Swastik Jewel Logo & Vault Subtitle (Foreground) -->
+    <div class="branding-stage" id="brandingStage" aria-label="Swastik Jewel Brand">
+      <img src="assets/swastiklogo.svg" alt="Swastik Jewel" class="brand-logo-only" />
+      <div class="brand-subtitle">KITTY VAULT</div>
+    </div>
+  </div>
+
+  <!-- Loading Sequence Engine Script from loader.js -->
+  <script>
+  (function () {
+    'use strict';
+
+    const DIAMOND_START = 0;       // Immediate frame-0 diamond appearance
+    const DIAMOND_END = 2300;      // 2.3s diamond completely leaves screen
+    const LOGO_REVEAL = 2320;      // ~2.32s logo & damask pattern fade in
+    const SEQUENCE_STOP = 3320;    // ~3.32s sequence completes
+
+    class DiamondRenderer3D {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.dpr = window.devicePixelRatio || 1;
+        this.resize();
+        this.initGeometry();
+        this.lightDir = this.normalize([0.42, 0.78, 0.52]);
+      }
+
+      resize() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        this.width = w;
+        this.height = h;
+        this.canvas.width = w * this.dpr;
+        this.canvas.height = h * this.dpr;
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this.ctx.scale(this.dpr, this.dpr);
+      }
+
+      normalize(v) {
+        const len = Math.hypot(v[0], v[1], v[2]) || 1;
+        return [v[0] / len, v[1] / len, v[2] / len];
+      }
+
+      cross(a, b) {
+        return [
+          a[1] * b[2] - a[2] * b[1],
+          a[2] * b[0] - a[0] * b[2],
+          a[0] * b[1] - a[1] * b[0]
+        ];
+      }
+
+      initGeometry() {
+        const R_girdle = 76;
+        const R_table = 40;
+        const H_crown = 30;
+        const H_girdle_half = 2;
+        const H_pavilion = 72;
+
+        this.vertices = [];
+
+        // 1. Table Octagon (0..7)
+        for (let i = 0; i < 8; i++) {
+          const ang = (i * Math.PI) / 4;
+          this.vertices.push([R_table * Math.cos(ang), R_table * Math.sin(ang), H_crown]);
+        }
+
+        // 2. Upper Girdle (8..23)
+        for (let i = 0; i < 16; i++) {
+          const ang = (i * Math.PI) / 8;
+          this.vertices.push([R_girdle * Math.cos(ang), R_girdle * Math.sin(ang), H_girdle_half]);
+        }
+
+        // 3. Lower Girdle (24..39)
+        for (let i = 0; i < 16; i++) {
+          const ang = (i * Math.PI) / 8;
+          this.vertices.push([R_girdle * Math.cos(ang), R_girdle * Math.sin(ang), -H_girdle_half]);
+        }
+
+        // 4. Culet apex (40)
+        const culetIdx = this.vertices.length;
+        this.vertices.push([0, 0, -H_pavilion]);
+
+        // 5. Mid-pavilion star vertices (41..48)
+        const midPavStart = this.vertices.length;
+        const R_mid_pav = 38;
+        const H_mid_pav = -35;
+        for (let i = 0; i < 8; i++) {
+          const ang = ((i + 0.5) * Math.PI) / 4;
+          this.vertices.push([R_mid_pav * Math.cos(ang), R_mid_pav * Math.sin(ang), H_mid_pav]);
+        }
+
+        this.faces = [];
+
+        // 1. Table
+        for (let i = 1; i < 7; i++) {
+          this.faces.push({ indices: [0, i, i + 1], type: 'table' });
+        }
+
+        // 2. Crown
+        for (let i = 0; i < 8; i++) {
+          const t0 = i;
+          const t1 = (i + 1) % 8;
+          const g0 = 8 + i * 2;
+          const g1 = 8 + (i * 2 + 1) % 16;
+          const g2 = 8 + (i * 2 + 2) % 16;
+          this.faces.push({ indices: [t0, t1, g1], type: 'star' });
+          this.faces.push({ indices: [t0, g0, g1], type: 'crown' });
+          this.faces.push({ indices: [t1, g1, g2], type: 'crown' });
+        }
+
+        // 3. Girdle bands
+        for (let i = 0; i < 16; i++) {
+          const u0 = 8 + i;
+          const u1 = 8 + (i + 1) % 16;
+          const l0 = 24 + i;
+          const l1 = 24 + (i + 1) % 16;
+          this.faces.push({ indices: [u0, l0, l1], type: 'girdle' });
+          this.faces.push({ indices: [u0, l1, u1], type: 'girdle' });
+        }
+
+        // 4. Pavilion
+        for (let i = 0; i < 8; i++) {
+          const l0 = 24 + i * 2;
+          const l1 = 24 + (i * 2 + 1) % 16;
+          const l2 = 24 + (i * 2 + 2) % 16;
+          const mp = midPavStart + i;
+          this.faces.push({ indices: [l0, l1, mp], type: 'pavilion' });
+          this.faces.push({ indices: [l1, l2, mp], type: 'pavilion' });
+          this.faces.push({ indices: [mp, l0, culetIdx], type: 'pavilion' });
+          this.faces.push({ indices: [mp, culetIdx, l2], type: 'pavilion' });
+        }
+      }
+
+      clear() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+      }
+
+      render(rotY, scaleFactor, opacity) {
+        if (opacity <= 0.001) {
+          this.clear();
+          return;
+        }
+
+        const ctx = this.ctx;
+        ctx.clearRect(0, 0, this.width, this.height);
+        ctx.globalAlpha = opacity;
+
+        const cx = this.width / 2;
+        const cy = this.height / 2;
+        const fov = 460;
+        const pitchX = 0.36;
+        const rollZ = 0.06;
+
+        const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+        const cosX = Math.cos(pitchX), sinX = Math.sin(pitchX);
+        const cosZ = Math.cos(rollZ), sinZ = Math.sin(rollZ);
+
+        const transformed = [];
+        const projected = [];
+
+        for (let i = 0; i < this.vertices.length; i++) {
+          const v = this.vertices[i];
+          const x = v[0] * scaleFactor;
+          const y = v[1] * scaleFactor;
+          const z = v[2] * scaleFactor;
+
+          const x1 = x * cosY + z * sinY;
+          const y1 = y;
+          const z1 = -x * sinY + z * cosY;
+
+          const x2 = x1;
+          const y2 = y1 * cosX - z1 * sinX;
+          const z2 = y1 * sinX + z1 * cosX;
+
+          const x3 = x2 * cosZ - y2 * sinZ;
+          const y3 = x2 * sinZ + y2 * cosZ;
+          const z3 = z2;
+
+          transformed.push([x3, y3, z3]);
+
+          const zDist = Math.max(20, fov + z3);
+          const pFactor = fov / zDist;
+          const px = cx + x3 * pFactor;
+          const py = cy - y3 * pFactor;
+          projected.push([px, py, z3]);
+        }
+
+        const renderedFaces = [];
+        const sparkles = [];
+
+        for (let i = 0; i < this.faces.length; i++) {
+          const face = this.faces[i];
+          const idx = face.indices;
+          const v0 = transformed[idx[0]];
+          const v1 = transformed[idx[1]];
+          const v2 = transformed[idx[2]];
+
+          const e1 = [v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]];
+          const e2 = [v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]];
+          const normal = this.normalize(this.cross(e1, e2));
+
+          const zAvg = (v0[2] + v1[2] + v2[2]) / 3;
+          const isFront = normal[2] > -0.15;
+
+          const dotL = Math.max(0, normal[0] * this.lightDir[0] + normal[1] * this.lightDir[1] + normal[2] * this.lightDir[2]);
+          const rx = 2 * dotL * normal[0] - this.lightDir[0];
+          const ry = 2 * dotL * normal[1] - this.lightDir[1];
+          const rz = 2 * dotL * normal[2] - this.lightDir[2];
+          const specular = Math.pow(Math.max(0, rz), 16);
+
+          renderedFaces.push({
+            idx,
+            zAvg,
+            isFront,
+            dotL,
+            specular
+          });
+
+          if (isFront && specular > 0.76 && scaleFactor < 6.0) {
+            const pt = projected[idx[0]];
+            sparkles.push({ x: pt[0], y: pt[1], intensity: specular });
+          }
+        }
+
+        renderedFaces.sort((a, b) => a.zAvg - b.zAvg);
+
+        for (let i = 0; i < renderedFaces.length; i++) {
+          const item = renderedFaces[i];
+          const p0 = projected[item.idx[0]];
+          const p1 = projected[item.idx[1]];
+          const p2 = projected[item.idx[2]];
+
+          ctx.beginPath();
+          ctx.moveTo(p0[0], p0[1]);
+          ctx.lineTo(p1[0], p1[1]);
+          ctx.lineTo(p2[0], p2[1]);
+          ctx.closePath();
+
+          if (!item.isFront) {
+            ctx.fillStyle = 'rgba(8, 38, 32, 0.30)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(225, 232, 240, 0.16)';
+            ctx.lineWidth = Math.min(2.5, 0.5 * Math.max(1, scaleFactor * 0.35));
+            ctx.stroke();
+          } else {
+            const lit = item.dotL;
+            const spec = item.specular;
+
+            const r = Math.min(255, Math.floor(220 + lit * 28 + spec * 45));
+            const g = Math.min(255, Math.floor(226 + lit * 24 + spec * 40));
+            const b = Math.min(255, Math.floor(235 + lit * 18 + spec * 35));
+            const a = Math.min(0.96, 0.70 + lit * 0.20 + spec * 0.28);
+
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+            ctx.fill();
+
+            const edgeAlpha = Math.min(0.95, 0.52 + spec * 0.45);
+            ctx.strokeStyle = `rgba(242, 246, 252, ${edgeAlpha})`;
+            ctx.lineWidth = Math.min(4.5, Math.max(0.7, 0.85 * (scaleFactor * 0.38)));
+            ctx.stroke();
+          }
+        }
+
+        for (let i = 0; i < sparkles.length; i++) {
+          const pt = sparkles[i];
+          const size = 5.5 * pt.intensity;
+          ctx.save();
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.92 * pt.intensity})`;
+          ctx.lineWidth = 1.1;
+          ctx.beginPath();
+          ctx.moveTo(pt.x - size, pt.y);
+          ctx.lineTo(pt.x + size, pt.y);
+          ctx.moveTo(pt.x, pt.y - size);
+          ctx.lineTo(pt.x, pt.y + size);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        ctx.globalAlpha = 1.0;
+      }
+    }
+
+    class SwastikLoadingController {
+      constructor() {
+        this.loaderEl = document.getElementById('swastik-loader');
+        this.diamondViewport = document.querySelector('.diamond-viewport');
+        this.diamondCanvas = document.getElementById('diamond-canvas');
+        this.damaskPattern = document.getElementById('damaskPattern');
+        this.brandingStage = document.getElementById('brandingStage');
+
+        this.diamondRenderer = new DiamondRenderer3D(this.diamondCanvas);
+        this.startTime = performance.now();
+        this.isRunning = true;
+        this.phaseFlags = { diamondExited: false, brandingShown: false };
+
+        window.addEventListener('resize', () => {
+          this.diamondRenderer.resize();
+        });
+
+        this.tick = this.tick.bind(this);
+        this.animFrameId = requestAnimationFrame(this.tick);
+      }
+
+      tick(currentTime) {
+        if (!this.isRunning) return;
+
+        const elapsed = currentTime - this.startTime;
+
+        if (elapsed < DIAMOND_END) {
+          const p = elapsed / DIAMOND_END;
+          const rotProgress = p < 0.5
+            ? 4 * p * p * p
+            : 1 - Math.pow(-2 * p + 2, 3) / 2;
+          const currentAngle = rotProgress * Math.PI * 2;
+          const baseScale = 0.82;
+          const approach = Math.pow(p, 2.85);
+          const scaleFactor = baseScale + approach * 38.0;
+
+          let opacity = 1.0;
+          if (p < 0.06) {
+            opacity = p / 0.06;
+          } else if (p > 0.94) {
+            opacity = Math.max(0, (1.0 - p) / 0.06);
+          }
+
+          this.diamondRenderer.render(currentAngle, scaleFactor, opacity);
+        } else if (elapsed >= DIAMOND_END && !this.phaseFlags.diamondExited) {
+          this.phaseFlags.diamondExited = true;
+          this.diamondViewport.classList.add('hidden');
+          this.diamondRenderer.clear();
+        }
+
+        if (elapsed >= LOGO_REVEAL && !this.phaseFlags.brandingShown) {
+          this.phaseFlags.brandingShown = true;
+          if (this.damaskPattern) this.damaskPattern.classList.add('visible');
+          if (this.brandingStage) this.brandingStage.classList.add('visible');
+        }
+
+        if (elapsed < SEQUENCE_STOP) {
+          this.animFrameId = requestAnimationFrame(this.tick);
+        } else {
+          // Freeze cleanly on final logo state until Flutter reveals Login
+          this.isRunning = false;
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      new SwastikLoadingController();
+    });
+  })();
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

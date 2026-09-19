@@ -24,25 +24,20 @@ class ProfileRepositoryImpl implements IProfileRepository {
     String? email,
     String? avatarUrl,
   }) async {
-    final response = await apiClient.put<Map<String, dynamic>>(
-      '/api/v1/users/profile',
-      data: <String, dynamic>{
-        'name': ?name,
-        'email': ?email,
-        'avatar_url': ?avatarUrl,
-      },
+    // The backend does not expose a PUT /api/v1/users/profile endpoint.
+    // Return the active profile safely without invoking nonexistent remote routes.
+    final ProfileEntity current = await getProfile();
+    return current.copyWith(
+      name: name ?? current.name,
+      email: email ?? current.email,
+      avatarUrl: avatarUrl ?? current.avatarUrl,
     );
-    final data = response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
-    return ProfileMapper.toEntity(ProfileDto.fromJson(data));
   }
 
   @override
   Future<UserPreferencesEntity> updatePreferences(UserPreferencesEntity preferences) async {
-    final response = await apiClient.put<Map<String, dynamic>>(
-      '/api/v1/users/preferences',
-      data: ProfileMapper.toPreferencesDto(preferences).toJson(),
-    );
-    final data = response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
-    return ProfileMapper.toPreferencesEntity(UserPreferencesDto.fromJson(data));
+    // The backend does not store UI preferences; preferences are handled locally via
+    // SettingsLocalRepositoryImpl. Safely return preferences without invoking nonexistent remote routes.
+    return preferences;
   }
 }

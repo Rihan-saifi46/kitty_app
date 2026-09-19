@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/kitty_app.dart';
 import 'core/config/app_config.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Configure system navigation and status bars to seamlessly blend into emerald splash
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Color(0xFF05241C),
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
 
   // Initialize global environment configuration
   AppConfig.initialize();

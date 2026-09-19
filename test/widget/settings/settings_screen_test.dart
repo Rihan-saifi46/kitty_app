@@ -170,7 +170,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Change MPIN'), findsNothing);
-      expect(await fakeStorage.read(key: 'kitty_mpin'), '9876');
+      final String? storedMpin = await fakeStorage.read(key: 'kitty_mpin');
+      expect(storedMpin, isNotNull);
+      expect(storedMpin, startsWith('pbkdf2_sha256\$10000\$'));
+      expect(storedMpin, isNot(equals('9876')));
     });
 
     testWidgets('5. Tapping Theme Appearance opens bottom sheet and changes theme', (WidgetTester tester) async {

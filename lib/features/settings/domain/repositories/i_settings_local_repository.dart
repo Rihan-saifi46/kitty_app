@@ -20,9 +20,15 @@ abstract interface class ISettingsLocalRepository {
   /// Persists chosen app language ('en', 'hi', etc.).
   Future<void> setLanguage(String language);
 
-  /// Persists 4-digit local transaction MPIN.
+  /// Persists 4-digit local transaction MPIN securely using one-way PBKDF2 hashing.
   Future<void> setMpin(String mpin);
 
-  /// Retrieves stored 4-digit MPIN, or null if unconfigured.
+  /// Retrieves stored MPIN hash, or null if unconfigured.
   Future<String?> getMpin();
+
+  /// Whether a transaction MPIN has been configured in local secure storage.
+  Future<bool> hasMpin();
+
+  /// Verifies candidate MPIN against stored hash and auto-migrates legacy plaintext.
+  Future<bool> verifyMpin(String mpin);
 }

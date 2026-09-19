@@ -17,6 +17,17 @@ void main() {
       expect(config.baseUrl, contains('staging-api'));
     });
 
+    test('resolves staging environment with real remote backend when useMockApi is false', () {
+      final AppConfig config = AppConfig(
+        environment: AppEnvironment.staging,
+        baseUrl: 'http://10.0.2.2:5000',
+        useMockApi: false,
+      );
+      expect(config.environment, equals(AppEnvironment.staging));
+      expect(config.baseUrl, equals('http://10.0.2.2:5000'));
+      expect(config.useMockApi, isFalse);
+    });
+
     test('parses environment strings safely', () {
       expect(AppEnvironment.fromString('dev'), equals(AppEnvironment.dev));
       expect(AppEnvironment.fromString('STAGING'), equals(AppEnvironment.staging));

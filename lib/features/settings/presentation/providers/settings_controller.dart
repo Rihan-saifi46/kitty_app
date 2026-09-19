@@ -50,7 +50,7 @@ class SettingsController extends Notifier<SettingsState> {
     try {
       final UserPreferencesEntity preferences = await _settingsRepository.getPreferences();
       if (!ref.mounted) return;
-      final String? mpin = await _settingsRepository.getMpin();
+      final bool hasMpin = await _settingsRepository.hasMpin();
       if (!ref.mounted) return;
 
       UserEntity? user;
@@ -65,7 +65,7 @@ class SettingsController extends Notifier<SettingsState> {
         isLoading: false,
         user: user,
         preferences: preferences,
-        hasMpin: mpin != null && mpin.isNotEmpty,
+        hasMpin: hasMpin,
       );
     } catch (e) {
       if (!ref.mounted) return;
@@ -108,6 +108,11 @@ class SettingsController extends Notifier<SettingsState> {
   Future<void> setMpin(String mpin) async {
     await _settingsRepository.setMpin(mpin);
     state = state.copyWith(hasMpin: true);
+  }
+
+  /// Verifies candidate MPIN against securely hashed storage.
+  Future<bool> verifyMpin(String candidate) async {
+    return _settingsRepository.verifyMpin(candidate);
   }
 
   /// Clears session and logs user out of the app.

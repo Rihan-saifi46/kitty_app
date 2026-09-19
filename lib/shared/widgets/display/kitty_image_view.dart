@@ -67,6 +67,8 @@ class KittyImageView extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
+        cacheWidth: width != null && width! > 0 ? (width! * 2).round() : null,
+        cacheHeight: height != null && height! > 0 ? (height! * 2).round() : null,
         loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? progress) {
           if (progress == null) return child;
           return _buildPlaceholder(effectiveRadius);

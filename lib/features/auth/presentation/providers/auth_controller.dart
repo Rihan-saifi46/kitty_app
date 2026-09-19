@@ -251,8 +251,8 @@ class AuthController extends Notifier<AuthFlowState> {
 
       await ref.read(appAuthStateProvider.notifier).setAuthenticated(
             token: session.token,
-            userName: session.user.name.isNotEmpty ? session.user.name : 'Rihan Patron',
-            userPhone: session.user.phone.isNotEmpty ? session.user.phone : '+91 98765 43210',
+            userName: session.user.name.isNotEmpty ? session.user.name : 'Valued Patron',
+            userPhone: session.user.phone.isNotEmpty ? session.user.phone : '',
           );
 
       state = state.copyWith(

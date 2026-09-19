@@ -55,12 +55,19 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       final bool isAuthRoute = location.startsWith('/auth');
       final bool isSplashRoute = location == RoutePaths.splash;
 
-      // 1. App Booting: Allow splash screen while verifying session
-      if (auth.isInitial) {
-        return isSplashRoute ? null : RoutePaths.splash;
+      // 1. Splash Screen: Allow the luxury 3D loading sequence to complete
+      //    its full animation without premature preemption. SplashScreen internally
+      //    resolves session state and navigates to /home or /auth/login on completion.
+      if (isSplashRoute) {
+        return null;
       }
 
-      // 2. Unauthenticated User: Redirect protected routes & splash to login
+      // 2. App Booting: Default to splash while initial state initializes
+      if (auth.isInitial) {
+        return RoutePaths.splash;
+      }
+
+      // 3. Unauthenticated User: Redirect protected routes to login
       if (auth.isUnauthenticated) {
         if (isAuthRoute) {
           return null; // Allow public auth routes
@@ -68,12 +75,12 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         return RoutePaths.login;
       }
 
-      // 3. Authenticated User: Redirect auth & splash routes to home
+      // 4. Authenticated User: Redirect public auth routes to home
       if (auth.isAuthenticated) {
         if (location == RoutePaths.authSuccess) {
           return null; // Allow welcome / biometric post-auth step
         }
-        if (isAuthRoute || isSplashRoute) {
+        if (isAuthRoute) {
           return RoutePaths.home;
         }
         return null; // Allow protected destinations
@@ -101,6 +108,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         pageBuilder: (BuildContext context, GoRouterState state) {
           return RouteTransitions.fadeTransitionPage(
             key: state.pageKey,
+            duration: const Duration(milliseconds: 150),
             child: const LoginScreen(),
           );
         },

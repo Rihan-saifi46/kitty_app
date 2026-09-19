@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/providers/repository_providers.dart';
 import '../../../../core/services/pdf_launcher_service.dart';
 import '../../../passbook/domain/entities/passbook_entry_entity.dart';
@@ -55,13 +56,21 @@ class ReceiptController extends Notifier<ReceiptState> {
     final double goldRate =
         goldGrams > 0 ? (entry.amount / goldGrams) : 7122.50;
 
+    final AppAuthState authState = ref.read(appAuthStateProvider);
+    final String customerName = authState.userName.isNotEmpty
+        ? authState.userName
+        : 'Valued Patron';
+    final String customerPhone = authState.userPhone.isNotEmpty
+        ? authState.userPhone
+        : '';
+
     final ReceiptEntity receipt = ReceiptEntity(
       receiptId: entry.transactionId ?? (_receiptId ?? 'REC-${entry.month}'),
       transactionId: entry.transactionId ?? 'TXN-SW-00${entry.month}',
       paymentOrderId: 'ORD-SW-00${entry.month}',
       membershipId: 'MEM-SW-042',
-      customerName: 'Rihan Saifi',
-      customerPhone: '+919876543210',
+      customerName: customerName,
+      customerPhone: customerPhone,
       schemeName: 'Swastik Suvarna Varsha (12 Months)',
       installmentNumber: entry.month,
       totalInstallments: 12,

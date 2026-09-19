@@ -89,13 +89,39 @@ void main() {
       expect(prefs.language, 'hi');
     });
 
-    test('setMpin and getMpin round-trip correctly', () async {
+    test('setMpin stores PBKDF2 hashed MPIN without leaking plaintext', () async {
       expect(await repository.getMpin(), isNull);
+      expect(await repository.hasMpin(), isFalse);
 
       await repository.setMpin('1234');
 
-      final String? mpin = await repository.getMpin();
-      expect(mpin, '1234');
+      expect(await repository.hasMpin(), isTrue);
+      final String? stored = await repository.getMpin();
+      expect(stored, isNotNull);
+      expect(stored, isNot(equals('1234')));
+      expect(stored, startsWith('pbkdf2_sha256\$10000\$'));
+
+      expect(await repository.verifyMpin('1234'), isTrue);
+      expect(await repository.verifyMpin('9999'), isFalse);
+    });
+
+    test('verifyMpin automatically migrates legacy plaintext MPIN to PBKDF2 hash', () async {
+      // Seed legacy unhashed 4-digit plaintext PIN
+      await fakeStorage.write(key: AppConstants.mpinKey, value: '5678');
+      expect(await repository.hasMpin(), isTrue);
+      expect(await repository.getMpin(), equals('5678'));
+
+      // Verification succeeds and triggers auto-migration
+      final bool verified = await repository.verifyMpin('5678');
+      expect(verified, isTrue);
+
+      final String? migrated = await repository.getMpin();
+      expect(migrated, isNot(equals('5678')));
+      expect(migrated, startsWith('pbkdf2_sha256\$10000\$'));
+
+      // Subsequent verification succeeds against PBKDF2 hash
+      expect(await repository.verifyMpin('5678'), isTrue);
+      expect(await repository.verifyMpin('0000'), isFalse);
     });
 
     test('savePreferences persists multiple fields in one call', () async {

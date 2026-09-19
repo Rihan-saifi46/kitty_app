@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/enums/app_enums.dart';
 
 /// Custom formatter to insert space every 4 digits for Aadhaar: `1234 5678 9012`.
@@ -31,8 +29,22 @@ class AadhaarInputFormatter extends TextInputFormatter {
   }
 }
 
+/// Formatter to convert text to uppercase.
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return TextEditingValue(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
+  }
+}
+
 /// Document number input field with live validation icons matching `kyc.html`.
-class KycDocNumberField extends StatelessWidget {
+class KycDocNumberField extends StatefulWidget {
   const KycDocNumberField({
     super.key,
     required this.docType,
@@ -51,21 +63,100 @@ class KycDocNumberField extends StatelessWidget {
   final bool enabled;
 
   @override
+  State<KycDocNumberField> createState() => _KycDocNumberFieldState();
+}
+
+class _KycDocNumberFieldState extends State<KycDocNumberField> {
+  final FocusNode _focusNode = FocusNode();
+  bool _isFocused = false;
+
+  static const Color _goldLight = Color(0xFFF4E2AA);
+  static const Color _goldPrimary = Color(0xFFCCA243);
+  static const Color _textDim = Color(0xFF5C7469);
+  static const Color _danger = Color(0xFFEF4444);
+  static const Color _success = Color(0xFF10B981);
+  static const Color _inputBg = Color(0xD9041913); // rgba(4, 25, 19, 0.85)
+  static const Color _inputBgFocus = Color(0xF2062019); // rgba(6, 32, 25, 0.95)
+  static const Color _inputBorder = Color(0x47CCA243); // rgba(204, 162, 65, 0.28)
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  bool _isComplete(bool isAadhaar, String text) {
+    if (isAadhaar) {
+      return text.replaceAll(' ', '').length >= 12;
+    }
+    return text.trim().length >= 10;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bool isAadhaar = docType == DocTypeEnum.aadhaar;
+    final bool isAadhaar = widget.docType == DocTypeEnum.aadhaar;
     final String label = isAadhaar
         ? 'Aadhaar Number (12 Digits)'
         : 'PAN Card Number (10 Characters)';
     final String placeholder = isAadhaar ? 'XXXX XXXX XXXX' : 'ABCDE1234F';
     final String hint = isAadhaar ? '12 Digits' : '10 Characters';
 
-    final bool hasError = errorText != null && errorText!.isNotEmpty;
-    final bool hasText = controller.text.isNotEmpty;
+    final bool hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
+    final bool hasText = widget.controller.text.isNotEmpty;
+    final bool isInvalid = hasError || (hasText && !widget.isValid && _isComplete(isAadhaar, widget.controller.text));
+
+    Color borderColor = _inputBorder;
+    Color bgColor = _inputBg;
+    List<BoxShadow>? boxShadow;
+
+    if (isInvalid) {
+      borderColor = _danger;
+      boxShadow = const <BoxShadow>[
+        BoxShadow(
+          color: Color(0x26EF4444), // rgba(239, 68, 68, 0.15)
+          blurRadius: 6,
+          spreadRadius: 2,
+        ),
+      ];
+    } else if (_isFocused) {
+      borderColor = _goldPrimary;
+      bgColor = _inputBgFocus;
+      boxShadow = const <BoxShadow>[
+        BoxShadow(
+          color: Color(0x2ECCB043), // rgba(204, 162, 65, 0.18)
+          blurRadius: 6,
+          spreadRadius: 2,
+        ),
+      ];
+    } else if (widget.isValid) {
+      borderColor = _success;
+      boxShadow = const <BoxShadow>[
+        BoxShadow(
+          color: Color(0x2610B981),
+          blurRadius: 6,
+          spreadRadius: 1,
+        ),
+      ];
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Field Label Row
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -73,71 +164,46 @@ class KycDocNumberField extends StatelessWidget {
               child: Text(
                 label,
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.emeraldTextSubtle,
-                  letterSpacing: 0.2,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: _goldLight,
+                  letterSpacing: 0.04 * 12,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: AppSpacing.space8),
+            const SizedBox(width: 8),
             Text(
               hint,
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w500,
-                color: AppColors.emeraldTextSubtle.withAlpha(160),
+                fontSize: 11,
+                color: _textDim,
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.space6),
+        const SizedBox(height: 8),
+
+        // Input Field Container with right status icon
         Container(
+          height: 50,
           decoration: BoxDecoration(
-            color: Colors.white.withAlpha(18),
-            borderRadius: AppRadius.border12,
+            color: bgColor,
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: hasError
-                  ? AppColors.statusErrorText
-                  : (isValid
-                      ? AppColors.statusSuccessText
-                      : Colors.white.withAlpha(35)),
-              width: hasError || isValid ? 1.4 : 1.0,
+              color: borderColor,
+              width: 1,
             ),
-            boxShadow: isValid
-                ? <BoxShadow>[
-                    BoxShadow(
-                      color: AppColors.statusSuccessText.withAlpha(30),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : (hasError
-                    ? <BoxShadow>[
-                        BoxShadow(
-                          color: AppColors.statusErrorText.withAlpha(30),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ]
-                    : null),
+            boxShadow: boxShadow,
           ),
           child: Row(
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.only(left: AppSpacing.space14),
-                child: Icon(
-                  Icons.lock_outline,
-                  size: 18,
-                  color: AppColors.goldPrimary,
-                ),
-              ),
               Expanded(
                 child: TextField(
-                  controller: controller,
-                  enabled: enabled,
+                  controller: widget.controller,
+                  focusNode: _focusNode,
+                  enabled: widget.enabled,
                   keyboardType: isAadhaar
                       ? TextInputType.number
                       : TextInputType.text,
@@ -157,112 +223,70 @@ class KycDocNumberField extends StatelessWidget {
                         ],
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: isAadhaar ? 2.0 : 1.5,
-                    color: AppColors.textPrimaryLight,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: isAadhaar ? 1.8 : 1.2,
+                    color: Colors.white,
                   ),
-                  cursorColor: AppColors.goldPrimary,
-                  onChanged: onChanged,
+                  cursorColor: _goldPrimary,
+                  onChanged: widget.onChanged,
                   decoration: InputDecoration(
                     hintText: placeholder,
                     hintStyle: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      letterSpacing: isAadhaar ? 2.0 : 1.5,
-                      color: AppColors.emeraldTextSubtle.withAlpha(120),
+                      letterSpacing: isAadhaar ? 1.8 : 1.2,
+                      color: _textDim,
                     ),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.space12,
-                      vertical: AppSpacing.space14,
+                    contentPadding: const EdgeInsets.only(
+                      left: 16,
+                      right: 12,
+                      top: 14,
+                      bottom: 14,
                     ),
                   ),
                 ),
               ),
-              // Live status indicator icon
-              if (isValid) ...<Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.space12),
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.statusSuccessText.withAlpha(30),
-                    ),
-                    child: const Icon(
-                      Icons.check,
-                      size: 15,
-                      color: AppColors.statusSuccessText,
-                    ),
+
+              // Validation Status Icons on the right
+              if (widget.isValid) ...<Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(right: 14),
+                  child: Icon(
+                    Icons.check_rounded,
+                    size: 20,
+                    color: _success,
                   ),
                 ),
-              ] else if (hasError || (hasText && !isValid && _isComplete(isAadhaar, controller.text))) ...<Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.space12),
-                  child: Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.statusErrorText.withAlpha(30),
-                    ),
-                    child: const Icon(
-                      Icons.error_outline,
-                      size: 15,
-                      color: AppColors.statusErrorText,
-                    ),
+              ] else if (isInvalid) ...<Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(right: 14),
+                  child: Icon(
+                    Icons.error_outline_rounded,
+                    size: 20,
+                    color: _danger,
                   ),
                 ),
               ],
             ],
           ),
         ),
+
+        // Error message row
         if (hasError) ...<Widget>[
-          const SizedBox(height: AppSpacing.space4),
-          Row(
-            children: <Widget>[
-              const Icon(
-                Icons.error_outline,
-                size: 13,
-                color: AppColors.statusErrorText,
+          Padding(
+            padding: const EdgeInsets.only(top: 4, left: 4),
+            child: Text(
+              widget.errorText!,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11.5,
+                color: _danger,
+                height: 1.3,
               ),
-              const SizedBox(width: AppSpacing.space4),
-              Expanded(
-                child: Text(
-                  errorText!,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.statusErrorText,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ],
-    );
-  }
-
-  bool _isComplete(bool isAadhaar, String text) {
-    if (isAadhaar) {
-      return text.replaceAll(' ', '').length >= 12;
-    }
-    return text.trim().length >= 10;
-  }
-}
-
-/// Formatter to convert text to uppercase.
-class UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    return TextEditingValue(
-      text: newValue.text.toUpperCase(),
-      selection: newValue.selection,
     );
   }
 }

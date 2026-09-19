@@ -137,7 +137,11 @@ void main() {
       await controller.setMpin('4321');
 
       expect(container.read(settingsControllerProvider).hasMpin, isTrue);
-      expect(await localSettingsRepo.getMpin(), '4321');
+      expect(await controller.verifyMpin('4321'), isTrue);
+      expect(await controller.verifyMpin('0000'), isFalse);
+      expect(await localSettingsRepo.verifyMpin('4321'), isTrue);
+      expect(await localSettingsRepo.getMpin(), isNot(equals('4321')));
+      expect(await localSettingsRepo.getMpin(), startsWith('pbkdf2_sha256\$10000\$'));
     });
 
     test('logout invokes appAuthStateProvider and clears session', () async {

@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../errors/app_exception.dart';
+import '../utils/logger.dart';
 
 /// Contract for launching external PDF URLs into platform viewer / browser.
 abstract class IPdfLauncherService {
@@ -49,7 +49,7 @@ class PdfLauncherService implements IPdfLauncherService {
       return true;
     } catch (e) {
       if (e is AppException) rethrow;
-      debugPrint('PdfLauncherService launch error: $e');
+      Logger.error('PdfLauncherService launch error', error: e, tag: 'PDF');
       throw const NetworkException(
         'Unable to open receipt PDF. Please verify your connection or try again.',
       );

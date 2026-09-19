@@ -43,7 +43,7 @@ class LoggingInterceptor extends Interceptor {
       Logger.error(
         '<-- HTTP ERROR [${err.response?.statusCode ?? 'N/A'}] ${err.requestOptions.method.toUpperCase()} ${err.requestOptions.uri}\n'
         'Message: ${err.message}\n'
-        'Response: ${_formatJson(err.response?.data)}',
+        'Response: ${_formatJson(_sanitizePayload(err.response?.data))}',
         tag: 'HTTP',
       );
     }
@@ -54,7 +54,16 @@ class LoggingInterceptor extends Interceptor {
   // PII & Credential Sanitization
   // ---------------------------------------------------------------------------
 
+  @visibleForTesting
+  static dynamic sanitizePayload(dynamic data) => _sanitizePayload(data);
+
   static dynamic _sanitizePayload(dynamic data) {
+    if (data is FormData) {
+      return '[Multipart FormData - Binary/File Content Redacted]';
+    }
+    if (data is List) {
+      return data.map(_sanitizePayload).toList();
+    }
     if (data is Map<String, dynamic>) {
       final Map<String, dynamic> copy = Map<String, dynamic>.from(data);
       const List<String> sensitiveKeys = <String>[
@@ -62,11 +71,21 @@ class LoggingInterceptor extends Interceptor {
         'otp',
         'token',
         'jwt',
+        'mpin',
+        'pin',
+        'passcode',
+        'secret',
+        'merchantKey',
+        'appSecret',
+        'webhookSecret',
+        'authorization',
+        'documentNumber',
         'aadhaarNumber',
         'panNumber',
         'documentBase64',
         'cvv',
         'cardNumber',
+        'file',
       ];
 
       for (final String key in sensitiveKeys) {
@@ -74,9 +93,36 @@ class LoggingInterceptor extends Interceptor {
           copy[key] = '[REDACTED]';
         }
       }
+
+      // Safe masking for telephone numbers
+      if (copy.containsKey('phone') && copy['phone'] is String) {
+        copy['phone'] = _maskPhone(copy['phone'] as String);
+      }
+      if (copy.containsKey('customerPhone') && copy['customerPhone'] is String) {
+        copy['customerPhone'] = _maskPhone(copy['customerPhone'] as String);
+      }
+
+      // Recurse into nested structures
+      for (final String key in copy.keys.toList()) {
+        final dynamic value = copy[key];
+        if (value is Map || value is List) {
+          copy[key] = _sanitizePayload(value);
+        }
+      }
+
       return copy;
     }
     return data;
+  }
+
+  static String _maskPhone(String phone) {
+    final String clean = phone.trim();
+    if (clean.length >= 10) {
+      final String last4 = clean.substring(clean.length - 4);
+      final String prefix = clean.startsWith('+91') ? '+91******' : '******';
+      return '$prefix$last4';
+    }
+    return '[REDACTED]';
   }
 
   static String _formatJson(dynamic data) {

@@ -99,7 +99,7 @@ class HomeScreen extends ConsumerWidget {
               // 1. Patron Greeting Bar
               SliverToBoxAdapter(
                 child: HomeGreetingBar(
-                  userName: authState.userName.isNotEmpty ? authState.userName : 'Rihan Saifi',
+                  userName: authState.userName.isNotEmpty ? authState.userName : 'Valued Patron',
                   tier: authState.tier,
                   onProfileTap: () => context.go(RoutePaths.settings),
                 ),

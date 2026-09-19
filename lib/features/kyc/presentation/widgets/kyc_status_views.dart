@@ -1,10 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_spacing.dart';
 import '../../../../shared/widgets/buttons/kitty_primary_button.dart';
 import '../../domain/entities/kyc_entity.dart';
+
+/// Gold and emerald visual constants matching `kyc.html` / `kyc.css`.
+class _KycStatusTokens {
+  static const Color goldLight = Color(0xFFF4E2AA);
+  static const Color goldBright = Color(0xFFFFE899);
+  static const Color goldPrimary = Color(0xFFCCA243);
+  static const Color goldMuted = Color(0x47CCA243); // rgba(204, 162, 65, 0.28)
+  static const Color textMuted = Color(0xFF8FA499);
+  static const Color danger = Color(0xFFEF4444);
+  static const Color dangerBg = Color(0x1AEF4444);
+  static const Color dangerBorder = Color(0x40EF4444);
+
+  static const RadialGradient successOrbGradient = RadialGradient(
+    colors: <Color>[
+      Color(0x40CCA243), // rgba(204, 162, 65, 0.25)
+      Color(0x660D4A3A), // rgba(13, 74, 58, 0.40)
+    ],
+    stops: <double>[0.0, 1.0],
+  );
+
+  static const RadialGradient rejectedOrbGradient = RadialGradient(
+    colors: <Color>[
+      Color(0x40EF4444),
+      Color(0x662A0D0D),
+    ],
+    stops: <double>[0.0, 1.0],
+  );
+}
 
 /// KYC Submitted Successfully view matching `kyc.html`.
 class KycSuccessView extends StatelessWidget {
@@ -25,93 +51,96 @@ class KycSuccessView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 16),
 
-        // Success Badge Orb
+        // Success Badge Orb (72x72) matching kyc.css `.success-badge-orb`
         Container(
           width: 72,
           height: 72,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.statusSuccessText.withAlpha(30),
+            gradient: _KycStatusTokens.successOrbGradient,
             border: Border.all(
-              color: AppColors.statusSuccessText.withAlpha(120),
+              color: _KycStatusTokens.goldPrimary,
               width: 1.5,
             ),
-            boxShadow: <BoxShadow>[
+            boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: AppColors.statusSuccessText.withAlpha(60),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
+                color: Color(0x59CCA243), // rgba(204, 162, 65, 0.35)
+                blurRadius: 30,
               ),
             ],
           ),
           child: const Center(
             child: Icon(
               Icons.check_rounded,
-              size: 38,
-              color: AppColors.statusSuccessText,
+              size: 34,
+              color: _KycStatusTokens.goldBright,
             ),
           ),
         ),
 
-        const SizedBox(height: AppSpacing.space20),
+        const SizedBox(height: 20),
 
+        // Success Heading: Cormorant Garamond 26px
         Text(
           'KYC Submitted Successfully',
           style: GoogleFonts.cormorantGaramond(
-            fontSize: 24,
+            fontSize: 26,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimaryLight,
+            color: _KycStatusTokens.goldLight,
+            letterSpacing: 0.5,
           ),
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: AppSpacing.space8),
+        const SizedBox(height: 8),
 
-        // Reference Chip
+        // Reference Code Chip: .success-ref-chip
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.goldPrimary.withAlpha(25),
-            borderRadius: AppRadius.border20,
+            color: const Color(0x26CCA243), // rgba(204, 162, 65, 0.15)
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: AppColors.goldPrimary.withAlpha(120),
+              color: _KycStatusTokens.goldMuted,
               width: 1,
             ),
           ),
           child: Text(
             'Ref: #$refCode',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w700,
-              color: AppColors.goldPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: _KycStatusTokens.goldBright,
               letterSpacing: 0.5,
             ),
           ),
         ),
 
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 16),
 
+        // Success Paragraph
         Text(
           'Your statutory identity documents have been securely encrypted and submitted. Your Royal Kitty Vault scheme enrollment is authorized.',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 13,
-            height: 1.5,
-            color: AppColors.emeraldTextSubtle,
+            fontSize: 13.5,
+            height: 1.6,
+            color: _KycStatusTokens.textMuted,
           ),
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: AppSpacing.space28),
+        const SizedBox(height: 24),
 
+        // Button: Enter Kitty Vault Dashboard
         KittyPrimaryButton(
           label: 'Enter Kitty Vault Dashboard',
-          icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+          icon: const Icon(Icons.arrow_forward_rounded, size: 16),
           onPressed: onProceed,
         ),
 
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -137,7 +166,7 @@ class KycPendingView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 16),
 
         // Pending Clock Badge Orb
         Container(
@@ -145,84 +174,84 @@ class KycPendingView extends StatelessWidget {
           height: 72,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.goldPrimary.withAlpha(25),
+            gradient: _KycStatusTokens.successOrbGradient,
             border: Border.all(
-              color: AppColors.goldPrimary.withAlpha(120),
+              color: _KycStatusTokens.goldPrimary,
               width: 1.5,
             ),
-            boxShadow: <BoxShadow>[
+            boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: AppColors.goldPrimary.withAlpha(50),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
+                color: Color(0x59CCA243),
+                blurRadius: 30,
               ),
             ],
           ),
           child: const Center(
             child: Icon(
               Icons.hourglass_top_rounded,
-              size: 36,
-              color: AppColors.goldPrimary,
+              size: 34,
+              color: _KycStatusTokens.goldBright,
             ),
           ),
         ),
 
-        const SizedBox(height: AppSpacing.space20),
+        const SizedBox(height: 20),
 
         Text(
           'KYC Under Verification',
           style: GoogleFonts.cormorantGaramond(
-            fontSize: 24,
+            fontSize: 26,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimaryLight,
+            color: _KycStatusTokens.goldLight,
+            letterSpacing: 0.5,
           ),
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: AppSpacing.space8),
+        const SizedBox(height: 8),
 
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.goldPrimary.withAlpha(25),
-            borderRadius: AppRadius.border20,
+            color: const Color(0x26CCA243),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: AppColors.goldPrimary.withAlpha(120),
+              color: _KycStatusTokens.goldMuted,
               width: 1,
             ),
           ),
           child: Text(
             'Ref: #$refCode',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w700,
-              color: AppColors.goldPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: _KycStatusTokens.goldBright,
               letterSpacing: 0.5,
             ),
           ),
         ),
 
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 16),
 
         Text(
           'Your identity documents ($masked) have been submitted and are undergoing statutory review. Verification is typically completed within 2 to 4 business hours.',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 13,
-            height: 1.5,
-            color: AppColors.emeraldTextSubtle,
+            fontSize: 13.5,
+            height: 1.6,
+            color: _KycStatusTokens.textMuted,
           ),
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: AppSpacing.space28),
+        const SizedBox(height: 24),
 
         KittyPrimaryButton(
           label: 'Return to Home',
-          icon: const Icon(Icons.home_outlined, size: 18),
+          icon: const Icon(Icons.home_outlined, size: 16),
           onPressed: onReturnHome,
         ),
 
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -248,7 +277,7 @@ class KycApprovedView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 16),
 
         // Shield Check Orb
         Container(
@@ -256,84 +285,84 @@ class KycApprovedView extends StatelessWidget {
           height: 72,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.statusSuccessText.withAlpha(30),
+            gradient: _KycStatusTokens.successOrbGradient,
             border: Border.all(
-              color: AppColors.statusSuccessText.withAlpha(120),
+              color: _KycStatusTokens.goldPrimary,
               width: 1.5,
             ),
-            boxShadow: <BoxShadow>[
+            boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: AppColors.statusSuccessText.withAlpha(60),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
+                color: Color(0x59CCA243),
+                blurRadius: 30,
               ),
             ],
           ),
           child: const Center(
             child: Icon(
               Icons.verified_user_rounded,
-              size: 38,
-              color: AppColors.statusSuccessText,
+              size: 34,
+              color: _KycStatusTokens.goldBright,
             ),
           ),
         ),
 
-        const SizedBox(height: AppSpacing.space20),
+        const SizedBox(height: 20),
 
         Text(
           'KYC Verified & Approved',
           style: GoogleFonts.cormorantGaramond(
-            fontSize: 24,
+            fontSize: 26,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimaryLight,
+            color: _KycStatusTokens.goldLight,
+            letterSpacing: 0.5,
           ),
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: AppSpacing.space8),
+        const SizedBox(height: 8),
 
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.statusSuccessText.withAlpha(25),
-            borderRadius: AppRadius.border20,
+            color: const Color(0x26CCA243),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: AppColors.statusSuccessText.withAlpha(120),
+              color: _KycStatusTokens.goldMuted,
               width: 1,
             ),
           ),
           child: Text(
             'Ref: #$refCode • $masked',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w700,
-              color: AppColors.statusSuccessText,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: _KycStatusTokens.goldBright,
               letterSpacing: 0.5,
             ),
           ),
         ),
 
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 16),
 
         Text(
           'Your account is fully compliant with statutory gold investment guidelines. You can enroll in schemes and manage your vault without restrictions.',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 13,
-            height: 1.5,
-            color: AppColors.emeraldTextSubtle,
+            fontSize: 13.5,
+            height: 1.6,
+            color: _KycStatusTokens.textMuted,
           ),
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: AppSpacing.space28),
+        const SizedBox(height: 24),
 
         KittyPrimaryButton(
           label: 'Enter Kitty Dashboard',
-          icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+          icon: const Icon(Icons.arrow_forward_rounded, size: 16),
           onPressed: onProceed,
         ),
 
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -358,7 +387,7 @@ class KycRejectedView extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 16),
 
         // Rejected Alert Orb
         Container(
@@ -366,50 +395,50 @@ class KycRejectedView extends StatelessWidget {
           height: 72,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.statusErrorText.withAlpha(30),
+            gradient: _KycStatusTokens.rejectedOrbGradient,
             border: Border.all(
-              color: AppColors.statusErrorText.withAlpha(120),
+              color: _KycStatusTokens.danger,
               width: 1.5,
             ),
-            boxShadow: <BoxShadow>[
+            boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: AppColors.statusErrorText.withAlpha(60),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
+                color: Color(0x4DEF4444),
+                blurRadius: 30,
               ),
             ],
           ),
           child: const Center(
             child: Icon(
               Icons.warning_amber_rounded,
-              size: 38,
-              color: AppColors.statusErrorText,
+              size: 34,
+              color: _KycStatusTokens.danger,
             ),
           ),
         ),
 
-        const SizedBox(height: AppSpacing.space20),
+        const SizedBox(height: 20),
 
         Text(
           'KYC Verification Rejected',
           style: GoogleFonts.cormorantGaramond(
-            fontSize: 24,
+            fontSize: 26,
             fontWeight: FontWeight.w700,
-            color: AppColors.statusErrorText,
+            color: _KycStatusTokens.danger,
+            letterSpacing: 0.5,
           ),
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: AppSpacing.space12),
+        const SizedBox(height: 12),
 
         if (reason != null && reason.isNotEmpty) ...<Widget>[
           Container(
-            padding: AppSpacing.all12,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.statusErrorText.withAlpha(20),
-              borderRadius: AppRadius.border10,
+              color: _KycStatusTokens.dangerBg,
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: AppColors.statusErrorText.withAlpha(80),
+                color: _KycStatusTokens.dangerBorder,
                 width: 1,
               ),
             ),
@@ -417,46 +446,46 @@ class KycRejectedView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Icon(
-                  Icons.info_outline,
+                  Icons.info_outline_rounded,
                   size: 16,
-                  color: AppColors.statusErrorText,
+                  color: _KycStatusTokens.danger,
                 ),
-                const SizedBox(width: AppSpacing.space8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     reason,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.statusErrorText,
+                      fontWeight: FontWeight.w500,
+                      color: _KycStatusTokens.danger,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.space16),
+          const SizedBox(height: 16),
         ],
 
         Text(
           'Your document submission could not be verified by compliance. Please ensure the document is clear, valid, and re-submit your verification.',
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 13,
-            height: 1.5,
-            color: AppColors.emeraldTextSubtle,
+            fontSize: 13.5,
+            height: 1.6,
+            color: _KycStatusTokens.textMuted,
           ),
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: AppSpacing.space28),
+        const SizedBox(height: 24),
 
         KittyPrimaryButton(
           label: 'Retry KYC Submission',
-          icon: const Icon(Icons.refresh_rounded, size: 18),
+          icon: const Icon(Icons.refresh_rounded, size: 16),
           onPressed: onRetry,
         ),
 
-        const SizedBox(height: AppSpacing.space16),
+        const SizedBox(height: 10),
       ],
     );
   }
