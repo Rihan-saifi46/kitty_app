@@ -29,26 +29,19 @@ class OffersSchemeCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.space16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment(-0.8, -0.6),
-          end: Alignment(0.8, 0.6),
-          colors: <Color>[
-            Color(0xFF092B22),
-            Color(0xFF051A14),
-          ],
-        ),
+        color: AppColors.creamIvoryCard,
         borderRadius: AppRadius.border20,
         border: Border.all(
           color: scheme.isPopular
-              ? AppColors.goldPrimary.withValues(alpha: 0.5)
-              : AppColors.goldPrimary.withValues(alpha: 0.25),
-          width: scheme.isPopular ? 1.5 : 1,
+              ? AppColors.honeyGoldAccent.withValues(alpha: 0.6)
+              : AppColors.warmLinenInset,
+          width: scheme.isPopular ? 1.5 : 1.2,
         ),
-        boxShadow: <BoxShadow>[
+        boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: const Color(0xFF092B22).withValues(alpha: 0.28),
-            blurRadius: 28,
-            offset: const Offset(0, 10),
+            color: Color(0x0A2B2521),
+            blurRadius: 20,
+            offset: Offset(0, 6),
           ),
         ],
       ),
@@ -69,7 +62,7 @@ class OffersSchemeCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         scheme.name,
-                        style: AppTypography.cardTitle(color: Colors.white)
+                        style: AppTypography.cardTitle(color: AppColors.espressoCharcoal)
                             .copyWith(
                           fontFamily: 'Cinzel',
                           fontSize: 18,
@@ -81,7 +74,7 @@ class OffersSchemeCard extends StatelessWidget {
                       Text(
                         durationSub,
                         style: AppTypography.bodySmall(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: AppColors.warmTaupeBrown,
                         ).copyWith(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
@@ -107,15 +100,15 @@ class OffersSchemeCard extends StatelessWidget {
                           width: 18,
                           height: 18,
                           margin: const EdgeInsets.only(top: 2),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColors.goldPrimary.withValues(alpha: 0.2),
+                            color: AppColors.champagneFoil,
                           ),
                           alignment: Alignment.center,
                           child: const Text(
                             '✓',
                             style: TextStyle(
-                              color: AppColors.goldPrimary,
+                              color: AppColors.deepUmberBronze,
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
                             ),
@@ -126,10 +119,10 @@ class OffersSchemeCard extends StatelessWidget {
                           child: Text(
                             benefit,
                             style: AppTypography.bodySmall(
-                              color: const Color(0xFFD1DCD6),
+                              color: AppColors.warmTaupeBrown,
                             ).copyWith(
                               fontSize: 12,
-                              height: 1.45,
+                              height: 1.35,
                             ),
                           ),
                         ),
@@ -139,48 +132,36 @@ class OffersSchemeCard extends StatelessWidget {
                 }),
                 const SizedBox(height: AppSpacing.space14),
 
-                // CTA Button
+                // Enrollment CTA Button
                 SizedBox(
                   width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: () => onEnrollTap(scheme),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: AppRadius.border12,
-                      ),
-                    ),
-                    child: Ink(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Color(0xFFE6C275),
-                            Color(0xFFCCA043),
-                          ],
+                  height: 46,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => onEnrollTap(scheme),
+                      borderRadius: AppRadius.border12,
+                      child: Ink(
+                        decoration: const BoxDecoration(
+                          color: AppColors.deepUmberBronze,
+                          borderRadius: AppRadius.border12,
                         ),
-                        borderRadius: AppRadius.border12,
-                      ),
-                      child: Container(
-                        alignment: Alignment.center,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
                               _getCtaLabel(),
                               style: const TextStyle(
-                                color: Color(0xFF092B22),
-                                fontSize: 13.5,
+                                color: AppColors.champagneFoil,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w800,
-                                letterSpacing: 0.4,
+                                letterSpacing: 0.8,
                               ),
                             ),
                             const SizedBox(width: 8),
                             const Icon(
                               Icons.arrow_forward_rounded,
-                              color: Color(0xFF092B22),
+                              color: AppColors.champagneFoil,
                               size: 16,
                             ),
                           ],
@@ -201,20 +182,16 @@ class OffersSchemeCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.goldPrimary,
+                  color: AppColors.champagneFoil,
                   borderRadius: BorderRadius.circular(6),
-                  boxShadow: const <BoxShadow>[
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+                  border: Border.all(
+                    color: AppColors.honeyGoldAccent.withValues(alpha: 0.4),
+                  ),
                 ),
                 child: const Text(
                   'MOST POPULAR',
                   style: TextStyle(
-                    color: Color(0xFF092B22),
+                    color: AppColors.deepUmberBronze,
                     fontSize: 9.5,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.5,
@@ -240,10 +217,10 @@ class OffersSchemeCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(
-        color: const Color(0xFF061F18),
+        color: AppColors.warmLinenInset,
         borderRadius: AppRadius.border12,
         border: Border.all(
-          color: AppColors.goldPrimary.withValues(alpha: 0.8),
+          color: AppColors.warmLinenInset,
           width: 1,
         ),
       ),
@@ -253,7 +230,7 @@ class OffersSchemeCard extends StatelessWidget {
           const Text(
             '✦ ',
             style: TextStyle(
-              color: AppColors.goldPrimary,
+              color: AppColors.honeyGoldAccent,
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -263,14 +240,17 @@ class OffersSchemeCard extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 style: const TextStyle(
-                  color: Color(0xFFFDE68A),
+                  color: AppColors.espressoCharcoal,
                   fontSize: 12,
                   height: 1.4,
                 ),
                 children: <TextSpan>[
                   const TextSpan(
                     text: 'Bonus Privilege: ',
-                    style: TextStyle(fontWeight: FontWeight.w800),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.honeyGoldAccent,
+                    ),
                   ),
                   TextSpan(text: bonusHighlight),
                 ],

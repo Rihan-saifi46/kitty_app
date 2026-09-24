@@ -100,15 +100,24 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Verify your number'), findsOneWidget);
 
-      // 1d. Enter OTP '123456' -> Authenticates and pushes /auth/success
+      // 1d. Enter OTP '123456' -> Navigates to /auth/profile
       final Finder otpFinder = find.byType(KittyOtpInput);
       expect(otpFinder, findsOneWidget);
       final KittyOtpInputState otpState = tester.state(otpFinder);
       otpState.setOtp('123456');
       await tester.pumpAndSettle();
+      expect(find.text('Complete Your Profile'), findsOneWidget);
+
+      // 1e. Complete Profile Form -> Pushes /auth/success
+      await tester.enterText(find.byKey(const Key('input_profile_name')), 'Rihan Saifi');
+      await tester.enterText(find.byKey(const Key('input_profile_email')), 'rihan@swastikjewel.com');
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Complete Profile & Enter Vault'));
+      await tester.pumpAndSettle();
       expect(find.textContaining('Welcome Back'), findsOneWidget);
 
-      // 1e. Tap 'Enter Kitty Vault' -> Navigates to /home
+      // 1f. Tap 'Enter Kitty Vault' -> Navigates to /home
       await tester.tap(find.text('Enter Kitty Vault'));
       await tester.pumpAndSettle();
       expect(find.byType(HomeScreen), findsOneWidget);
@@ -153,28 +162,43 @@ void main() {
       // Tab 0: Home Tab
       expect(find.byType(HomeScreen), findsOneWidget);
 
-      // Tab 1: Switch to My Kitty Tab
-      await tester.tap(find.text('My Kitty').last);
+      // Tab 1: Switch to My Kitty Tab via Drawer
+      await tester.tap(find.byTooltip('Open Menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('My Kitty Scheme'));
       await tester.pumpAndSettle();
       expect(find.byType(DashboardScreen), findsOneWidget);
 
-      // Tab 2: Switch to Passbook Tab
-      await tester.tap(find.text('Passbook').last);
+      // Tab 2: Switch to Passbook Tab via Drawer
+      await tester.tap(find.byTooltip('Open Menu'));
       await tester.pumpAndSettle();
-      expect(find.text('Passbook Ledger'), findsOneWidget);
-
-      // Tab 3: Switch to Offers Tab
-      await tester.tap(find.text('Offers').last);
+      await tester.tap(find.text('Passbook Ledger'));
       await tester.pumpAndSettle();
-      expect(find.text('Kitty Offers & Plans'), findsOneWidget);
+      expect(find.text('Passbook Ledger'), findsWidgets);
 
-      // Tab 4: Switch to Settings Tab
-      await tester.tap(find.text('Settings').last);
+      // Tab 3: Switch to Offers Tab via Drawer
+      await tester.tap(find.byTooltip('Open Menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Kitty Offers & Plans'));
+      await tester.pumpAndSettle();
+      expect(find.text('Kitty Offers & Plans'), findsWidgets);
+
+      // Tab 4: Switch to Settings Tab via Drawer
+      await tester.tap(find.byTooltip('Open Menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Settings & Security'));
       await tester.pumpAndSettle();
       expect(find.text('Patron Settings'), findsOneWidget);
 
-      // Return to Home Tab
-      await tester.tap(find.text('Home').last);
+      // Return to Home Tab via Drawer
+      await tester.tap(find.byTooltip('Open Menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(
+          of: find.byType(Drawer),
+          matching: find.text('Home'),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(find.byType(HomeScreen), findsOneWidget);
     });
@@ -215,8 +239,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Home: Tap 'My Kitty' in quick actions or bottom bar -> Dashboard
-      await tester.tap(find.text('My Kitty').first);
+      // Home: Open Drawer -> Tap 'My Kitty Scheme' -> Dashboard
+      await tester.tap(find.byTooltip('Open Menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('My Kitty Scheme'));
       await tester.pumpAndSettle();
       expect(find.byType(DashboardScreen), findsOneWidget);
 
@@ -336,7 +362,7 @@ void main() {
       // Open Drawer via Menu Button
       await tester.tap(find.byTooltip('Open Menu'));
       await tester.pumpAndSettle();
-      expect(find.text('SWASTIK VAULT'), findsOneWidget);
+      expect(find.byKey(const Key('drawer_swastik_logo')), findsOneWidget);
 
       // Tap 'KYC Compliance' link
       await tester.tap(find.text('KYC Compliance'));
@@ -434,11 +460,15 @@ class _TestAuthNotifier extends AppAuthNotifier {
     required String token,
     String userName = 'Rihan',
     String userPhone = '+91 98765 43210',
+    String tier = 'Tier 1 Verified Member',
+    bool isKycVerified = true,
   }) async {
     state = AppAuthState.authenticated(
       token: token,
       userName: userName,
       userPhone: userPhone,
+      tier: tier,
+      isKycVerified: isKycVerified,
     );
   }
 

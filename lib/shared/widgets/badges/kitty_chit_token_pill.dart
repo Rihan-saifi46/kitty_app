@@ -34,22 +34,22 @@ class KittyChitTokenPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDarkSurface
             ? AppColors.goldSubtle
-            : const Color(0xFFFBF7EE),
+            : AppColors.champagneFoil,
         borderRadius: BorderRadius.circular(AppRadius.radiusPill),
         border: Border.all(
           color: isDarkSurface
               ? AppColors.goldBorder
-              : const Color(0x59C59B27),
+              : AppColors.honeyGoldAccent.withValues(alpha: 0.35),
           width: 1.0,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const Icon(
+          Icon(
             Icons.tag,
             size: 11,
-            color: AppColors.goldPrimary,
+            color: isDarkSurface ? AppColors.goldPrimary : AppColors.honeyGoldAccent,
           ),
           const SizedBox(width: 2),
           Text(
@@ -60,7 +60,7 @@ class KittyChitTokenPill extends StatelessWidget {
               letterSpacing: 0.8,
               color: isDarkSurface
                   ? AppColors.goldLight
-                  : AppColors.textPrimaryDark,
+                  : AppColors.espressoCharcoal,
             ),
           ),
         ],

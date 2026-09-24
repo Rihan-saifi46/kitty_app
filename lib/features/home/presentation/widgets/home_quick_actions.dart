@@ -47,24 +47,24 @@ class HomeQuickActions extends StatelessWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: AppColors.emeraldCard,
+                      color: AppColors.homeNavbarBg,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: AppColors.goldBorder.withValues(alpha: 0.35),
+                        color: AppColors.homeCategoryRingBorder,
                         width: 1.2,
                       ),
                       boxShadow: const <BoxShadow>[
                         BoxShadow(
-                          color: Color(0x20000000),
+                          color: Color(0x0A0C2B24),
                           blurRadius: 8,
-                          offset: Offset(0, 3),
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
                     child: Center(
                       child: Icon(
                         action.icon,
-                        color: AppColors.goldPrimary,
+                        color: AppColors.homeBrandGold,
                         size: 22,
                       ),
                     ),
@@ -73,7 +73,7 @@ class HomeQuickActions extends StatelessWidget {
                   Text(
                     action.title,
                     style: AppTypography.labelMeta(
-                      color: AppColors.textSecondaryLight,
+                      color: AppColors.homeBodySubtitle,
                     ).copyWith(fontWeight: FontWeight.w600),
                   ),
                 ],

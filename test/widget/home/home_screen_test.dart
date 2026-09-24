@@ -11,8 +11,8 @@ import 'package:kitty_app/features/home/presentation/providers/home_controller.d
 import 'package:kitty_app/features/home/presentation/providers/home_state.dart';
 import 'package:kitty_app/features/home/presentation/screens/home_screen.dart';
 import 'package:kitty_app/features/home/presentation/widgets/home_active_kitty_card.dart';
-import 'package:kitty_app/features/home/presentation/widgets/home_category_scroll.dart';
 import 'package:kitty_app/features/home/presentation/widgets/home_curated_product_grid.dart';
+import 'package:kitty_app/features/home/presentation/widgets/home_store_video_section.dart';
 import 'package:kitty_app/features/home/presentation/widgets/home_editorial_banner.dart';
 import 'package:kitty_app/features/home/presentation/widgets/home_gold_rate_strip.dart';
 import 'package:kitty_app/features/home/presentation/widgets/home_greeting_bar.dart';
@@ -72,19 +72,23 @@ void main() {
       await tester.pumpWidget(createSubject());
       await tester.pumpAndSettle();
 
-      // Top Sections
-      expect(find.byType(HomeGreetingBar), findsOneWidget);
-      expect(find.text('Rihan Saifi'), findsOneWidget);
-      expect(find.text('ROYAL CLUB'), findsOneWidget);
+      // Top Sections - Greeting Bar removed per user design request
+      expect(find.byType(HomeGreetingBar), findsNothing);
+      expect(find.text('ROYAL CLUB'), findsNothing);
 
       expect(find.byType(HomeActiveKittyCard), findsOneWidget);
       expect(find.text('ACTIVE JEWEL PLAN'), findsOneWidget);
-      expect(find.text('PAY INSTALLMENT'), findsOneWidget);
+      expect(find.text('SEE ACTIVE SCHEME'), findsOneWidget);
+      expect(find.text('PAY INSTALLMENT'), findsNothing);
 
       expect(find.byType(HomeOffersCarousel), findsOneWidget);
 
-      expect(find.byType(HomeCategoryScroll), findsOneWidget);
-      expect(find.text('SHOP BY CATEGORY'), findsOneWidget);
+      // Video section is placed directly below Kitty Scheme Banners
+      expect(find.byType(HomeStoreVideoSection), findsOneWidget);
+      expect(find.text('Experience Swastik'), findsOneWidget);
+
+      // Shop by Category is removed per design request
+      expect(find.text('SHOP BY CATEGORY'), findsNothing);
 
       expect(find.byType(HomeCuratedProductGrid), findsOneWidget);
       expect(find.text('CURATED FOR YOU'), findsOneWidget);
@@ -116,7 +120,7 @@ void main() {
       expect(find.text('VERIFY'), findsOneWidget);
     });
 
-    testWidgets('3. Category pill selection triggers filtering', (WidgetTester tester) async {
+    testWidgets('3. Store video section renders with play toggle', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(() {
@@ -127,13 +131,9 @@ void main() {
       await tester.pumpWidget(createSubject());
       await tester.pumpAndSettle();
 
-      // Tap 'Rings' category
-      final ringsPill = find.text('Rings');
-      expect(ringsPill, findsOneWidget);
-      await tester.tap(ringsPill);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(HomeCuratedProductGrid), findsOneWidget);
+      expect(find.byType(HomeStoreVideoSection), findsOneWidget);
+      expect(find.text('Experience Swastik'), findsOneWidget);
+      expect(find.byIcon(Icons.play_arrow_rounded), findsWidgets);
     });
 
     testWidgets('4. Displays Error state and retry button when error occurs', (WidgetTester tester) async {

@@ -81,6 +81,77 @@ class KittyCircularProgressGauge extends StatelessWidget {
         ? AppColors.emeraldTextSubtle
         : AppColors.textSecondaryMuted;
 
+    final Widget centerContent = Center(
+      child: Padding(
+        padding: EdgeInsets.all(strokeWidth + 4),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (showPercentageInCenter) ...<Widget>[
+              Text(
+                percentageString,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: size * 0.18,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                  color: primaryTextColor,
+                ),
+              ),
+              Text(
+                fractionString,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: size * 0.09,
+                  fontWeight: FontWeight.w600,
+                  color: secondaryTextColor,
+                ),
+              ),
+            ] else ...<Widget>[
+              Text(
+                fractionString,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: size * 0.16,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.2,
+                  color: primaryTextColor,
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                decoration: BoxDecoration(
+                  color: AppColors.goldSubtle,
+                  borderRadius: BorderRadius.circular(AppRadius.radiusPill),
+                ),
+                child: Text(
+                  percentageString,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: size * 0.08,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.goldLight,
+                  ),
+                ),
+              ),
+            ],
+            if (subtitle != null) ...<Widget>[
+              const SizedBox(height: 2),
+              Text(
+                subtitle!,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: size * 0.07,
+                  fontWeight: FontWeight.w500,
+                  color: secondaryTextColor,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+
     return Semantics(
       label: 'Savings installment progress gauge',
       value: '$currentValue of $totalValue installments paid, $percentage percent complete',
@@ -91,6 +162,7 @@ class KittyCircularProgressGauge extends StatelessWidget {
           tween: Tween<double>(begin: 0.0, end: progressRatio),
           duration: animationDuration,
           curve: Curves.easeOutCubic,
+          child: centerContent,
           builder: (BuildContext context, double animatedRatio, Widget? child) {
             return CustomPaint(
               painter: _CircularGaugePainter(
@@ -98,79 +170,16 @@ class KittyCircularProgressGauge extends StatelessWidget {
                 strokeWidth: strokeWidth,
                 trackColor: isDarkSurface
                     ? Colors.white.withAlpha(20)
-                    : AppColors.surfaceCardBorder,
-                progressGradient: AppColors.goldPrimaryGradient,
-              ),
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.all(strokeWidth + 4),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      if (showPercentageInCenter) ...<Widget>[
-                        Text(
-                          percentageString,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: size * 0.18,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                            color: primaryTextColor,
-                          ),
-                        ),
-                        Text(
-                          fractionString,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: size * 0.09,
-                            fontWeight: FontWeight.w600,
-                            color: secondaryTextColor,
-                          ),
-                        ),
-                      ] else ...<Widget>[
-                        Text(
-                          fractionString,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: size * 0.16,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.2,
-                            color: primaryTextColor,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 2),
-                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                          decoration: BoxDecoration(
-                            color: AppColors.goldSubtle,
-                            borderRadius: BorderRadius.circular(AppRadius.radiusPill),
-                          ),
-                          child: Text(
-                            percentageString,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: size * 0.08,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.goldLight,
-                            ),
-                          ),
-                        ),
-                      ],
-                      if (subtitle != null) ...<Widget>[
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle!,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: size * 0.07,
-                            fontWeight: FontWeight.w500,
-                            color: secondaryTextColor,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ],
-                  ),
+                    : AppColors.warmLinenInset,
+                progressGradient: const LinearGradient(
+                  colors: <Color>[
+                    AppColors.honeyGoldAccent,
+                    Color(0xFFF3D07B),
+                    AppColors.honeyGoldAccent,
+                  ],
                 ),
               ),
+              child: child,
             );
           },
         ),

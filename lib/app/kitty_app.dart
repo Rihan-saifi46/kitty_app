@@ -26,8 +26,11 @@ class KittyApp extends ConsumerWidget {
       themeMode: themeMode,
       routerConfig: router,
       builder: (BuildContext context, Widget? child) {
-        return ConnectivityBannerWrapper(
-          child: child ?? const SizedBox.shrink(),
+        return ColoredBox(
+          color: const Color(0xFF05241C), // Deep Emerald Base: eliminates cold-launch blank frame
+          child: ConnectivityBannerWrapper(
+            child: child ?? const SizedBox.shrink(),
+          ),
         );
       },
     );

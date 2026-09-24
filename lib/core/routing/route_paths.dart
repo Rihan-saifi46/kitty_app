@@ -18,6 +18,9 @@ abstract final class RoutePaths {
   /// 6-digit OTP verification view.
   static const String otp = '/auth/otp';
 
+  /// Profile information registration screen (after phone/OTP verification).
+  static const String profile = '/auth/profile';
+
   /// Authentication confirmation screen.
   static const String authSuccess = '/auth/success';
 
@@ -28,16 +31,28 @@ abstract final class RoutePaths {
   /// Tab 1: Home Screen (Brand showcase, promo carousel, category pills).
   static const String home = '/home';
 
-  /// Tab 2: Active Kitty Scheme Dashboard (Hero card, circular gauge, stats).
+  /// Tab: Coin Rates Screen (1gm to 10gm gold coin prices, bulk coin booking).
+  static const String coinRates = '/coin-rates';
+
+  /// Tab: Jewellery Screen (Gold & Diamond jewellery dropdowns & categories).
+  static const String jewellery = '/jewellery';
+
+  /// Tab: Gold Valuation Calculator Screen (Shop by Gram & Shop by Money).
+  static const String calculator = '/calculator';
+
+  /// Tab: Menu Screen (Patron profile, drawer links, concierge, logout).
+  static const String menu = '/menu';
+
+  /// Tab: Active Kitty Scheme Dashboard (Hero card, circular gauge, stats).
   static const String dashboard = '/dashboard';
 
-  /// Tab 3: Passbook Screen (12-month installment timeline table / cards).
+  /// Tab: Passbook Screen (12-month installment timeline table / cards).
   static const String passbook = '/passbook';
 
-  /// Tab 4: Offers Screen (Curated savings schemes, plan enrollment).
+  /// Tab: Offers Screen (Curated savings schemes, plan enrollment).
   static const String offers = '/offers';
 
-  /// Tab 5: Settings Screen (Security, MPIN, Biometrics, Nominee, Logout).
+  /// Tab: Settings Screen (Security, MPIN, Biometrics, Nominee, Logout).
   static const String settings = '/settings';
 
   // ---------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 /// 3D Jewelry item geometry definition (vertices and triangular faces).
@@ -58,12 +59,12 @@ class _RenderFace {
     required this.specular,
   });
 
-  final List<int> indices;
-  final double zAvg;
-  final bool isFront;
-  final bool isGold;
-  final double dotL;
-  final double specular;
+  List<int> indices;
+  double zAvg;
+  bool isFront;
+  bool isGold;
+  double dotL;
+  double specular;
 }
 
 /// CustomPainter rendering the full 3D luxury jewelry constellation from `diamond-bg.js`:
@@ -91,103 +92,116 @@ class JewelryConstellationPainter extends CustomPainter {
   static final List<double> _lightDir = _normalize(<double>[0.48, 0.72, 0.50]);
   static const double _fov = 420.0;
 
-  // Predefined constellation items matching diamond-bg.js exactly
+  // Predefined constellation items matching diamond-bg.js
+  // Tastefully proportioned luxury jewelry items (3D diamonds, bangles, and rings)
   static final List<_JewelryItem> _items = <_JewelryItem>[
-    // Top-Left: Classic Brilliant Diamond
+    // 1. Top-Left High: Brilliant Diamond
     _JewelryItem(
       geometry: _diamondGeom,
-      baseX: -0.34,
-      baseY: -0.34,
-      baseZ: 90.0,
-      baseScale: 0.65,
-      rotSpeedY: 0.24,
-      rotSpeedX: 0.15,
-      rotSpeedZ: 0.08,
-      basePhase: 0.8,
-    ),
-    // Mid-Left: Solitaire Diamond Ring
-    _JewelryItem(
-      geometry: _ringGeom,
-      baseX: -0.40,
-      baseY: -0.02,
+      baseX: -0.31,
+      baseY: -0.33,
       baseZ: 60.0,
-      baseScale: 1.00,
-      rotSpeedY: -0.22,
+      baseScale: 0.82,
+      rotSpeedY: 0.28,
       rotSpeedX: 0.16,
-      rotSpeedZ: 0.10,
-      basePhase: 2.1,
-    ),
-    // Bottom-Left: Classic Brilliant Diamond
-    _JewelryItem(
-      geometry: _diamondGeom,
-      baseX: -0.32,
-      baseY: 0.36,
-      baseZ: 40.0,
-      baseScale: 0.70,
-      rotSpeedY: 0.26,
-      rotSpeedX: -0.16,
-      rotSpeedZ: 0.10,
-      basePhase: 4.3,
-    ),
-    // Top-Right: Classic Brilliant Diamond
-    _JewelryItem(
-      geometry: _diamondGeom,
-      baseX: 0.34,
-      baseY: -0.34,
-      baseZ: 80.0,
-      baseScale: 0.65,
-      rotSpeedY: -0.24,
-      rotSpeedX: 0.15,
-      rotSpeedZ: -0.10,
-      basePhase: 1.5,
-    ),
-    // Mid-Right: Solitaire Diamond Ring
-    _JewelryItem(
-      geometry: _ringGeom,
-      baseX: 0.40,
-      baseY: -0.02,
-      baseZ: 50.0,
-      baseScale: 1.00,
-      rotSpeedY: 0.22,
-      rotSpeedX: -0.18,
       rotSpeedZ: 0.09,
-      basePhase: 5.1,
+      basePhase: 1.2,
     ),
-    // Bottom-Right: ONE Bangle
+    // 2. Top-Right: Elegant Luxury Gold Bangle with Pavé Collets
     _JewelryItem(
       geometry: _braceletGeom,
       baseX: 0.32,
-      baseY: 0.36,
-      baseZ: 70.0,
-      baseScale: 0.90,
-      rotSpeedY: -0.22,
-      rotSpeedX: 0.16,
-      rotSpeedZ: 0.12,
-      basePhase: 3.2,
+      baseY: -0.27,
+      baseZ: 65.0,
+      baseScale: 0.92,
+      rotSpeedY: -0.25,
+      rotSpeedX: 0.19,
+      rotSpeedZ: 0.14,
+      basePhase: 3.8,
     ),
-    // Subtle Deep Background Layer (Center-top small delicate diamond)
+    // 3. Top-Center: Subtle Floating Diamond
     _JewelryItem(
       geometry: _diamondGeom,
-      baseX: 0.00,
-      baseY: -0.42,
-      baseZ: -160.0,
-      baseScale: 0.46,
-      rotSpeedY: 0.18,
-      rotSpeedX: 0.12,
-      rotSpeedZ: 0.06,
-      basePhase: 2.8,
+      baseX: 0.06,
+      baseY: -0.34,
+      baseZ: 30.0,
+      baseScale: 0.70,
+      rotSpeedY: -0.30,
+      rotSpeedX: -0.14,
+      rotSpeedZ: 0.11,
+      basePhase: 5.3,
     ),
-    // Center-bottom small diamond
+    // 4. Mid-Left: Solitaire Diamond Engagement Ring
+    _JewelryItem(
+      geometry: _ringGeom,
+      baseX: -0.38,
+      baseY: -0.08,
+      baseZ: 45.0,
+      baseScale: 0.78,
+      rotSpeedY: 0.22,
+      rotSpeedX: -0.18,
+      rotSpeedZ: 0.08,
+      basePhase: 2.7,
+    ),
+    // 5. Mid-Right: Brilliant Diamond floating near card right edge
     _JewelryItem(
       geometry: _diamondGeom,
-      baseX: 0.00,
-      baseY: 0.42,
-      baseZ: -160.0,
-      baseScale: 0.50,
-      rotSpeedY: -0.16,
-      rotSpeedX: 0.13,
+      baseX: 0.37,
+      baseY: 0.08,
+      baseZ: 50.0,
+      baseScale: 0.75,
+      rotSpeedY: 0.26,
+      rotSpeedX: 0.15,
+      rotSpeedZ: -0.12,
+      basePhase: 0.9,
+    ),
+    // 6. Bottom-Left: Second Luxury Gold Bangle floating gracefully
+    _JewelryItem(
+      geometry: _braceletGeom,
+      baseX: -0.29,
+      baseY: 0.32,
+      baseZ: 60.0,
+      baseScale: 0.95,
+      rotSpeedY: 0.21,
+      rotSpeedX: -0.17,
+      rotSpeedZ: 0.13,
+      basePhase: 4.6,
+    ),
+    // 7. Bottom-Center-Left: Brilliant Diamond
+    _JewelryItem(
+      geometry: _diamondGeom,
+      baseX: -0.05,
+      baseY: 0.38,
+      baseZ: 35.0,
+      baseScale: 0.82,
+      rotSpeedY: -0.24,
+      rotSpeedX: 0.18,
+      rotSpeedZ: 0.10,
+      basePhase: 2.2,
+    ),
+    // 8. Bottom-Right: Solitaire Diamond Ring
+    _JewelryItem(
+      geometry: _ringGeom,
+      baseX: 0.32,
+      baseY: 0.35,
+      baseZ: 50.0,
+      baseScale: 0.78,
+      rotSpeedY: -0.20,
+      rotSpeedX: 0.15,
+      rotSpeedZ: -0.09,
+      basePhase: 1.8,
+    ),
+    // 9. Top-Left Mid: Secondary Diamond creating organic asymmetry
+    _JewelryItem(
+      geometry: _diamondGeom,
+      baseX: -0.15,
+      baseY: -0.26,
+      baseZ: -20.0,
+      baseScale: 0.65,
+      rotSpeedY: 0.19,
+      rotSpeedX: -0.12,
       rotSpeedZ: 0.07,
-      basePhase: 4.0,
+      basePhase: 4.1,
     ),
   ];
 
@@ -195,14 +209,6 @@ class JewelryConstellationPainter extends CustomPainter {
     final double len = math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     final double d = len == 0.0 ? 1.0 : len;
     return <double>[v[0] / d, v[1] / d, v[2] / d];
-  }
-
-  static List<double> _cross(List<double> a, List<double> b) {
-    return <double>[
-      a[1] * b[2] - a[2] * b[1],
-      a[2] * b[0] - a[0] * b[2],
-      a[0] * b[1] - a[1] * b[0],
-    ];
   }
 
   // ===========================================================================
@@ -497,22 +503,47 @@ class JewelryConstellationPainter extends CustomPainter {
     return _JewelryGeometry(vertices: vertices, faces: faces);
   }
 
+  // Reusable static buffers to avoid GC pressure (0 allocations per frame)
+  static final Float64List _transX = Float64List(256);
+  static final Float64List _transY = Float64List(256);
+  static final Float64List _transZ = Float64List(256);
+  static final Float64List _projX = Float64List(256);
+  static final Float64List _projY = Float64List(256);
+
+  static final Float64List _sparkleX = Float64List(64);
+  static final Float64List _sparkleY = Float64List(64);
+  static final Float64List _sparkleIntensity = Float64List(64);
+
+  static final List<_RenderFace> _facePool = List<_RenderFace>.generate(
+    256,
+    (_) => _RenderFace(
+      indices: const <int>[0, 0, 0],
+      zAvg: 0.0,
+      isFront: false,
+      isGold: false,
+      dotL: 0.0,
+      specular: 0.0,
+    ),
+  );
+  static final List<_RenderFace> _activeFaces = <_RenderFace>[];
+
+  static final Paint _fillPaint = Paint()..style = PaintingStyle.fill;
+  static final Paint _strokePaint = Paint()..style = PaintingStyle.stroke;
+  static final Paint _sparklePaint = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 1.0;
+  static final Path _sharedPath = Path();
+
   @override
   void paint(Canvas canvas, Size size) {
     if (opacity <= 0.001) return;
 
     final double w = size.width;
     final double h = size.height;
-    final double responsiveFactor = (w / 1200.0).clamp(0.65, 1.0);
+    final double responsiveFactor = (w / 420.0).clamp(0.80, 1.05);
 
     // Continuous time in seconds
     final double time = progress * 24.0;
-
-    final Paint fillPaint = Paint()..style = PaintingStyle.fill;
-    final Paint strokePaint = Paint()..style = PaintingStyle.stroke;
-    final Paint sparklePaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
 
     for (final _JewelryItem item in _items) {
       final double rotY = item.basePhase + item.rotSpeedY * time;
@@ -533,9 +564,6 @@ class JewelryConstellationPainter extends CustomPainter {
         rotY: rotY,
         rotX: rotX,
         rotZ: rotZ,
-        fillPaint: fillPaint,
-        strokePaint: strokePaint,
-        sparklePaint: sparklePaint,
       );
     }
   }
@@ -549,19 +577,15 @@ class JewelryConstellationPainter extends CustomPainter {
     required double rotY,
     required double rotX,
     required double rotZ,
-    required Paint fillPaint,
-    required Paint strokePaint,
-    required Paint sparklePaint,
   }) {
     final _JewelryGeometry geom = item.geometry;
     final double cosY = math.cos(rotY), sinY = math.sin(rotY);
     final double cosX = math.cos(rotX), sinX = math.sin(rotX);
     final double cosZ = math.cos(rotZ), sinZ = math.sin(rotZ);
 
-    final List<List<double>> transformed = <List<double>>[];
-    final List<Offset> projected = <Offset>[];
-
+    int vIdx = 0;
     for (final List<double> v in geom.vertices) {
+      if (vIdx >= 256) break;
       final double x = v[0] * scale;
       final double y = v[1] * scale;
       final double z = v[2] * scale;
@@ -581,72 +605,94 @@ class JewelryConstellationPainter extends CustomPainter {
       final double y3 = x2 * sinZ + y2 * cosZ;
       final double z3 = z2;
 
-      transformed.add(<double>[x3, y3, z3]);
+      _transX[vIdx] = x3;
+      _transY[vIdx] = y3;
+      _transZ[vIdx] = z3;
 
       final double zDist = math.max(20.0, _fov + z3 + item.baseZ);
       final double pFactor = _fov / zDist;
-      final double px = cx + x3 * pFactor;
-      final double py = cy - y3 * pFactor;
-      projected.add(Offset(px, py));
+      _projX[vIdx] = cx + x3 * pFactor;
+      _projY[vIdx] = cy - y3 * pFactor;
+      vIdx++;
     }
 
-    final List<_RenderFace> renderFaces = <_RenderFace>[];
-    final List<Map<String, double>> sparkles = <Map<String, double>>[];
+    _activeFaces.clear();
+    int sparkleCount = 0;
+    int faceIdx = 0;
 
     for (final _JewelryFace face in geom.faces) {
+      if (faceIdx >= 256) break;
       final List<int> idx = face.indices;
-      final List<double> v0 = transformed[idx[0]];
-      final List<double> v1 = transformed[idx[1]];
-      final List<double> v2 = transformed[idx[2]];
+      final int i0 = idx[0];
+      final int i1 = idx[1];
+      final int i2 = idx[2];
 
-      final List<double> e1 = <double>[v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]];
-      final List<double> e2 = <double>[v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]];
-      final List<double> norm = _normalize(_cross(e1, e2));
+      final double e1x = _transX[i1] - _transX[i0];
+      final double e1y = _transY[i1] - _transY[i0];
+      final double e1z = _transZ[i1] - _transZ[i0];
 
-      final double zAvg = (v0[2] + v1[2] + v2[2]) / 3.0;
-      final bool isFront = norm[2] > -0.14;
+      final double e2x = _transX[i2] - _transX[i0];
+      final double e2y = _transY[i2] - _transY[i0];
+      final double e2z = _transZ[i2] - _transZ[i0];
 
-      final double dotL = math.max(0.0, norm[0] * _lightDir[0] + norm[1] * _lightDir[1] + norm[2] * _lightDir[2]);
-      final double rz = 2.0 * dotL * norm[2] - _lightDir[2];
+      // Cross product e1 x e2
+      final double crx = e1y * e2z - e1z * e2y;
+      final double cry = e1z * e2x - e1x * e2z;
+      final double crz = e1x * e2y - e1y * e2x;
+
+      final double len = math.sqrt(crx * crx + cry * cry + crz * crz);
+      final double invLen = len == 0.0 ? 1.0 : 1.0 / len;
+      final double normX = crx * invLen;
+      final double normY = cry * invLen;
+      final double normZ = crz * invLen;
+
+      final double zAvg = (_transZ[i0] + _transZ[i1] + _transZ[i2]) / 3.0;
+      final bool isFront = normZ > -0.14;
+
+      final double dotL = math.max(0.0, normX * _lightDir[0] + normY * _lightDir[1] + normZ * _lightDir[2]);
+      final double rz = 2.0 * dotL * normZ - _lightDir[2];
       final double specular = math.pow(math.max(0.0, rz), face.isGold ? 12 : 18).toDouble();
 
-      renderFaces.add(_RenderFace(
-        indices: idx,
-        zAvg: zAvg,
-        isFront: isFront,
-        isGold: face.isGold,
-        dotL: dotL,
-        specular: specular,
-      ));
+      final _RenderFace rf = _facePool[faceIdx];
+      rf.indices = idx;
+      rf.zAvg = zAvg;
+      rf.isFront = isFront;
+      rf.isGold = face.isGold;
+      rf.dotL = dotL;
+      rf.specular = specular;
+      _activeFaces.add(rf);
+      faceIdx++;
 
-      if (isFront && specular > 0.82 && !face.isGold) {
-        final Offset pt = projected[idx[0]];
-        sparkles.add(<String, double>{'x': pt.dx, 'y': pt.dy, 'intensity': specular});
+      if (isFront && specular > 0.82 && !face.isGold && sparkleCount < 64) {
+        _sparkleX[sparkleCount] = _projX[i0];
+        _sparkleY[sparkleCount] = _projY[i0];
+        _sparkleIntensity[sparkleCount] = specular;
+        sparkleCount++;
       }
     }
 
     // Painter's algorithm: sort by depth
-    renderFaces.sort((_RenderFace a, _RenderFace b) => a.zAvg.compareTo(b.zAvg));
+    _activeFaces.sort((_RenderFace a, _RenderFace b) => a.zAvg.compareTo(b.zAvg));
 
-    final Path path = Path();
-    for (final _RenderFace f in renderFaces) {
-      final Offset p0 = projected[f.indices[0]];
-      final Offset p1 = projected[f.indices[1]];
-      final Offset p2 = projected[f.indices[2]];
+    for (final _RenderFace f in _activeFaces) {
+      final List<int> idx = f.indices;
+      final int i0 = idx[0];
+      final int i1 = idx[1];
+      final int i2 = idx[2];
 
-      path.reset();
-      path.moveTo(p0.dx, p0.dy);
-      path.lineTo(p1.dx, p1.dy);
-      path.lineTo(p2.dx, p2.dy);
-      path.close();
+      _sharedPath.reset();
+      _sharedPath.moveTo(_projX[i0], _projY[i0]);
+      _sharedPath.lineTo(_projX[i1], _projY[i1]);
+      _sharedPath.lineTo(_projX[i2], _projY[i2]);
+      _sharedPath.close();
 
       if (f.isGold) {
         if (!f.isFront) {
-          fillPaint.color = Color.fromRGBO(70, 52, 18, 0.22 * opacity);
-          canvas.drawPath(path, fillPaint);
-          strokePaint.color = Color.fromRGBO(204, 162, 67, 0.18 * opacity);
-          strokePaint.strokeWidth = 0.7;
-          canvas.drawPath(path, strokePaint);
+          _fillPaint.color = Color.fromRGBO(70, 52, 18, 0.22 * opacity);
+          canvas.drawPath(_sharedPath, _fillPaint);
+          _strokePaint.color = Color.fromRGBO(204, 162, 67, 0.18 * opacity);
+          _strokePaint.strokeWidth = 0.7;
+          canvas.drawPath(_sharedPath, _strokePaint);
         } else {
           final double lit = f.dotL;
           final double spec = f.specular;
@@ -655,21 +701,21 @@ class JewelryConstellationPainter extends CustomPainter {
           final int b = (67 + lit * 45 + spec * 75).toInt().clamp(0, 255);
           final double a = (0.24 + lit * 0.20 + spec * 0.22).clamp(0.0, 0.58) * opacity;
 
-          fillPaint.color = Color.fromRGBO(r, g, b, a);
-          canvas.drawPath(path, fillPaint);
+          _fillPaint.color = Color.fromRGBO(r, g, b, a);
+          canvas.drawPath(_sharedPath, _fillPaint);
 
           final double edgeAlpha = (0.35 + spec * 0.45).clamp(0.0, 0.85) * opacity;
-          strokePaint.color = Color.fromRGBO(244, 226, 170, edgeAlpha);
-          strokePaint.strokeWidth = 0.9;
-          canvas.drawPath(path, strokePaint);
+          _strokePaint.color = Color.fromRGBO(244, 226, 170, edgeAlpha);
+          _strokePaint.strokeWidth = 0.9;
+          canvas.drawPath(_sharedPath, _strokePaint);
         }
       } else {
         if (!f.isFront) {
-          fillPaint.color = Color.fromRGBO(50, 38, 14, 0.24 * opacity);
-          canvas.drawPath(path, fillPaint);
-          strokePaint.color = Color.fromRGBO(204, 162, 67, 0.22 * opacity);
-          strokePaint.strokeWidth = 0.7;
-          canvas.drawPath(path, strokePaint);
+          _fillPaint.color = Color.fromRGBO(50, 38, 14, 0.24 * opacity);
+          canvas.drawPath(_sharedPath, _fillPaint);
+          _strokePaint.color = Color.fromRGBO(204, 162, 67, 0.22 * opacity);
+          _strokePaint.strokeWidth = 0.7;
+          canvas.drawPath(_sharedPath, _strokePaint);
         } else {
           final double lit = f.dotL;
           final double spec = f.specular;
@@ -678,27 +724,27 @@ class JewelryConstellationPainter extends CustomPainter {
           final int b = (72 + lit * 55 + spec * 75).toInt().clamp(0, 255);
           final double a = (0.22 + lit * 0.20 + spec * 0.24).clamp(0.0, 0.55) * opacity;
 
-          fillPaint.color = Color.fromRGBO(r, g, b, a);
-          canvas.drawPath(path, fillPaint);
+          _fillPaint.color = Color.fromRGBO(r, g, b, a);
+          canvas.drawPath(_sharedPath, _fillPaint);
 
           final double edgeAlpha = (0.42 + spec * 0.45).clamp(0.0, 0.90) * opacity;
-          strokePaint.color = Color.fromRGBO(244, 226, 170, edgeAlpha);
-          strokePaint.strokeWidth = 1.05;
-          canvas.drawPath(path, strokePaint);
+          _strokePaint.color = Color.fromRGBO(244, 226, 170, edgeAlpha);
+          _strokePaint.strokeWidth = 1.05;
+          canvas.drawPath(_sharedPath, _strokePaint);
         }
       }
     }
 
     // Sparkles on facet vertices in warm logo gold
-    for (final Map<String, double> sp in sparkles) {
-      final double sx = sp['x']!;
-      final double sy = sp['y']!;
-      final double intensity = sp['intensity']!;
-      final double size = 4.2 * intensity;
-      sparklePaint.color = Color.fromRGBO(255, 238, 175, (0.85 * intensity).clamp(0.0, 1.0) * opacity);
+    for (int s = 0; s < sparkleCount; s++) {
+      final double sx = _sparkleX[s];
+      final double sy = _sparkleY[s];
+      final double intensity = _sparkleIntensity[s];
+      final double size = 3.2 * intensity;
+      _sparklePaint.color = Color.fromRGBO(255, 238, 175, (0.85 * intensity).clamp(0.0, 1.0) * opacity);
 
-      canvas.drawLine(Offset(sx - size, sy), Offset(sx + size, sy), sparklePaint);
-      canvas.drawLine(Offset(sx, sy - size), Offset(sx, sy + size), sparklePaint);
+      canvas.drawLine(Offset(sx - size, sy), Offset(sx + size, sy), _sparklePaint);
+      canvas.drawLine(Offset(sx, sy - size), Offset(sx, sy + size), _sparklePaint);
     }
   }
 

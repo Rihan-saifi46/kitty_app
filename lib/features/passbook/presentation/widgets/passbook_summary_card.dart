@@ -58,7 +58,7 @@ class PassbookSummaryCard extends StatelessWidget {
           Container(
             width: 1,
             height: 36,
-            color: const Color(0xFFF1F5F9),
+            color: AppColors.warmLinenInset,
             margin: const EdgeInsets.symmetric(horizontal: 8),
           ),
 
@@ -69,7 +69,7 @@ class PassbookSummaryCard extends StatelessWidget {
               label: 'TOTAL PAID',
               value: CurrencyFormatter.formatRupees(summary.totalPaid),
               icon: Icons.account_balance_wallet_outlined,
-              iconColor: AppColors.deepEmeraldBase,
+              iconColor: AppColors.honeyGoldAccent,
             ),
           ),
 
@@ -77,7 +77,7 @@ class PassbookSummaryCard extends StatelessWidget {
           Container(
             width: 1,
             height: 36,
-            color: const Color(0xFFF1F5F9),
+            color: AppColors.warmLinenInset,
             margin: const EdgeInsets.symmetric(horizontal: 8),
           ),
 
@@ -88,8 +88,8 @@ class PassbookSummaryCard extends StatelessWidget {
               label: '24K GOLD',
               value: '${summary.accumulatedGoldGrams.toStringAsFixed(3)} g',
               icon: Icons.auto_awesome_outlined,
-              iconColor: AppColors.goldPrimary,
-              valueColor: AppColors.goldPrimary,
+              iconColor: AppColors.honeyGoldAccent,
+              valueColor: AppColors.honeyGoldAccent,
             ),
           ),
         ],

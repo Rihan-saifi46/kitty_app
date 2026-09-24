@@ -12,6 +12,7 @@ import '../providers/payment_state.dart';
 import '../widgets/payment_checkout_modal.dart';
 import '../widgets/payment_processing_view.dart';
 import '../widgets/payment_result_view.dart';
+import '../widgets/pick_cash_sheet.dart';
 
 /// Arguments optionally passed to `/checkout` route.
 class CheckoutArgs {
@@ -154,8 +155,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     // 3. Initial / Initiating Modal View
     return PaymentCheckoutModal(
       state: state,
+      onSelectChannel: (PaymentChannel channel) => controller.selectPaymentChannel(channel),
       onSelectMethod: (PaymentMethodEnum method) => controller.selectPaymentMethod(method),
       onConfirmPayment: () => controller.initiateAndPay(context),
+      onProceedPickCash: () => PickCashSheet.show(
+        context,
+        paymentState: state,
+        onPickupScheduled: (CashPickupRequest req) {
+          // Future backend submission: POST /api/v1/payments/cash-pickup
+        },
+      ),
       onClose: () => context.pop(),
     );
   }

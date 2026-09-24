@@ -175,7 +175,7 @@ class Diamond3DPainter extends CustomPainter {
 
       transformed.add(<double>[x3, y3, z3]);
 
-      final double zDist = math.max(20.0, _fov + z3);
+      final double zDist = math.max(60.0, _fov + z3);
       final double pFactor = _fov / zDist;
       final double px = cx + x3 * pFactor;
       final double py = cy - y3 * pFactor;

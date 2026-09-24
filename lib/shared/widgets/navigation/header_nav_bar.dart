@@ -1,106 +1,202 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/routing/route_paths.dart';
+import '../../../features/notifications/presentation/providers/notifications_controller.dart';
 
 /// Sticky luxury top application header matching the approved Swastik prototype.
 ///
-/// Features the royal brand crest, live 24K gold rate benchmark pill,
+/// Features the authentic Swastik Jewellers brand crest, live 24K gold rate benchmark pill,
 /// notifications bell with unread badge, and the navigation drawer hamburger toggle.
 class HeaderNavBar extends StatelessWidget implements PreferredSizeWidget {
   const HeaderNavBar({
     super.key,
     this.onMenuPressed,
-    this.unreadNotificationsCount = 2,
+    this.unreadNotificationsCount,
     this.goldRate24k = 7485.50,
   });
 
   /// Callback to open the slide-out luxury navigation drawer.
   final VoidCallback? onMenuPressed;
 
-  /// Count of unread transactional notifications.
-  final int unreadNotificationsCount;
+  /// Optional override for unread transactional notifications count.
+  final int? unreadNotificationsCount;
 
   /// Daily benchmark gold rate per gram.
   final double goldRate24k;
 
   @override
-  Size get preferredSize => const Size.fromHeight(62);
+  Size get preferredSize => const Size.fromHeight(66);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: AppColors.deepEmeraldBase,
+      decoration: const BoxDecoration(
+        color: AppColors.homeNavbarBg,
         border: Border(
           bottom: BorderSide(
-            color: AppColors.goldBorder.withValues(alpha: 0.35),
+            color: AppColors.homeNavbarBorder,
             width: 1,
           ),
         ),
-        boxShadow: const <BoxShadow>[
+        boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Color(0x40000000),
-            blurRadius: 16,
-            offset: Offset(0, 4),
+            color: Color(0x082B2521),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          child: Stack(
+            alignment: Alignment.center,
             children: <Widget>[
-              // Left: Brand Crest & Logo
-              GestureDetector(
-                onTap: () => context.go(RoutePaths.home),
-                behavior: HitTestBehavior.opaque,
+              // Center: Authentic Swastik Jewellers Brand Logo
+              Center(
+                child: GestureDetector(
+                  key: const Key('swastik_header_logo'),
+                  onTap: () => context.go(RoutePaths.home),
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2.0),
+                    child: SvgPicture.asset(
+                      'assets/icons/swastiklogo.svg',
+                      height: 38,
+                      fit: BoxFit.contain,
+                      semanticsLabel: 'Swastik Jewellers',
+                    ),
+                  ),
+                ),
+              ),
+
+              // Left & Right Controls Row
+              Positioned.fill(
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+                    // Left: Live Gold Rate Ticker Pill (Aligned to LEFT, slightly smaller)
                     Container(
-                      width: 34,
-                      height: 34,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                       decoration: BoxDecoration(
-                        color: AppColors.goldSubtle,
-                        shape: BoxShape.circle,
+                        color: AppColors.champagneFoil,
+                        borderRadius: AppRadius.border20,
                         border: Border.all(
-                          color: AppColors.goldBorder,
-                          width: 1.2,
+                          color: AppColors.honeyGoldAccent.withValues(alpha: 0.35),
+                          width: 0.9,
                         ),
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.diamond_outlined,
-                          color: AppColors.goldPrimary,
-                          size: 18,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                              color: AppColors.statusSuccessText,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '24K: ₹${goldRate24k.toInt()}/g',
+                            style: AppTypography.kickerCaps(
+                              color: AppColors.espressoCharcoal,
+                            ).copyWith(
+                              fontSize: 11.0,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.space8),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+
+                    // Right: Notification Bell + Hamburger Navigation Toggle Button
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(
-                          'SWASTIK',
-                          style: AppTypography.kickerCaps(
-                            color: AppColors.goldLight,
-                          ).copyWith(
-                            letterSpacing: 2.2,
-                            fontWeight: FontWeight.w800,
+                        Tooltip(
+                          message: 'Notifications',
+                          child: InkWell(
+                            onTap: () => context.push(RoutePaths.notifications),
+                            borderRadius: AppRadius.border20,
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              children: <Widget>[
+                                Container(
+                                  width: 38,
+                                  height: 38,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.homeNavbarBg,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppColors.homeNavbarBorder,
+                                      width: 1,
+                                    ),
+                                    boxShadow: const <BoxShadow>[
+                                      BoxShadow(
+                                        color: Color(0x0A0C2B24),
+                                        blurRadius: 6,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.notifications_none_rounded,
+                                      color: AppColors.homePrimaryHeading,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: -2,
+                                  top: -2,
+                                  child: NotificationBellBadge(unreadCountOverride: unreadNotificationsCount),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        Text(
-                          'JEWELLERS',
-                          style: AppTypography.labelMeta(
-                            color: AppColors.emeraldTextSubtle,
-                          ).copyWith(
-                            fontSize: 8.5,
-                            letterSpacing: 1.8,
+                        const SizedBox(width: AppSpacing.space8),
+                        Tooltip(
+                          message: 'Open Menu',
+                          child: InkWell(
+                            onTap: onMenuPressed,
+                            borderRadius: AppRadius.border20,
+                            child: Container(
+                              width: 38,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: AppColors.homeNavbarBg,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.homeNavbarBorder,
+                                  width: 1,
+                                ),
+                                boxShadow: const <BoxShadow>[
+                                  BoxShadow(
+                                    color: Color(0x0A0C2B24),
+                                    blurRadius: 6,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.menu_rounded,
+                                  color: AppColors.homePrimaryHeading,
+                                  size: 22,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -108,105 +204,43 @@ class HeaderNavBar extends StatelessWidget implements PreferredSizeWidget {
                   ],
                 ),
               ),
-
-              const Spacer(),
-
-              // Middle-Right: Live Gold Rate Ticker Pill
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: AppColors.goldSubtle,
-                  borderRadius: AppRadius.border20,
-                  border: Border.all(
-                    color: AppColors.goldBorder.withValues(alpha: 0.5),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: AppColors.statusSuccessText,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '24K: ₹${goldRate24k.toInt()}/g',
-                      style: AppTypography.kickerCaps(
-                        color: AppColors.goldLight,
-                      ).copyWith(fontSize: 10.5),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: AppSpacing.space8),
-
-              // Right: Notifications Bell Icon with Badge
-              IconButton(
-                onPressed: () => context.push(RoutePaths.notifications),
-                icon: Stack(
-                  clipBehavior: Clip.none,
-                  children: <Widget>[
-                    const Icon(
-                      Icons.notifications_outlined,
-                      color: AppColors.textPrimaryLight,
-                      size: 22,
-                    ),
-                    if (unreadNotificationsCount > 0)
-                      Positioned(
-                        right: -2,
-                        top: -2,
-                        child: Container(
-                          padding: const EdgeInsets.all(3),
-                          decoration: const BoxDecoration(
-                            color: AppColors.goldPrimary,
-                            shape: BoxShape.circle,
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 14,
-                            minHeight: 14,
-                          ),
-                          child: Center(
-                            child: Text(
-                              '$unreadNotificationsCount',
-                              style: const TextStyle(
-                                color: AppColors.deepEmeraldBase,
-                                fontSize: 8.5,
-                                fontWeight: FontWeight.bold,
-                                height: 1,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-                splashRadius: 20,
-                tooltip: 'Notifications',
-              ),
-
-              const SizedBox(width: AppSpacing.space4),
-
-              // Far Right: 3-Lines Navigation Hamburger Toggle Button
-              IconButton(
-                onPressed: onMenuPressed,
-                icon: const Icon(
-                  Icons.menu_rounded,
-                  color: AppColors.goldPrimary,
-                  size: 24,
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-                splashRadius: 20,
-                tooltip: 'Open Menu',
-              ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Isolated notification count badge widget to prevent full app shell rebuilds.
+class NotificationBellBadge extends ConsumerWidget {
+  const NotificationBellBadge({super.key, this.unreadCountOverride});
+
+  final int? unreadCountOverride;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final int count = unreadCountOverride ?? ref.watch(unreadNotificationsCountProvider);
+    if (count <= 0) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: const BoxDecoration(
+        color: AppColors.honeyGoldAccent,
+        shape: BoxShape.circle,
+      ),
+      constraints: const BoxConstraints(
+        minWidth: 14,
+        minHeight: 14,
+      ),
+      child: Center(
+        child: Text(
+          '$count',
+          style: const TextStyle(
+            color: AppColors.deepUmberBronze,
+            fontSize: 8.5,
+            fontWeight: FontWeight.bold,
+            height: 1,
           ),
         ),
       ),

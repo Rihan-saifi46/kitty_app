@@ -28,12 +28,12 @@ class HomeKycReminderBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: isRejected
             ? AppColors.statusErrorBg
-            : AppColors.goldSubtle,
+            : AppColors.homeCategoryRingBg,
         borderRadius: AppRadius.border12,
         border: Border.all(
           color: isRejected
               ? AppColors.statusErrorBorder
-              : AppColors.goldBorder.withValues(alpha: 0.5),
+              : AppColors.homeCategoryRingBorder,
           width: 1,
         ),
       ),
@@ -44,14 +44,14 @@ class HomeKycReminderBanner extends StatelessWidget {
             decoration: BoxDecoration(
               color: isRejected
                   ? AppColors.statusErrorBorder
-                  : AppColors.goldPrimary.withValues(alpha: 0.15),
+                  : AppColors.homeCategoryRingBorder.withValues(alpha: 0.5),
               shape: BoxShape.circle,
             ),
             child: Icon(
               isRejected
                   ? Icons.error_outline_rounded
                   : Icons.shield_outlined,
-              color: isRejected ? AppColors.statusErrorText : AppColors.goldPrimary,
+              color: isRejected ? AppColors.statusErrorText : AppColors.homeBrandGold,
               size: 18,
             ),
           ),
@@ -64,7 +64,7 @@ class HomeKycReminderBanner extends StatelessWidget {
                 Text(
                   isRejected ? 'KYC Verification Needed' : 'Statutory KYC Pending',
                   style: AppTypography.bodySmall(
-                    color: AppColors.textPrimaryLight,
+                    color: AppColors.homePrimaryHeading,
                   ).copyWith(fontWeight: FontWeight.w700),
                 ),
                 Text(
@@ -72,7 +72,7 @@ class HomeKycReminderBanner extends StatelessWidget {
                       ? 'Please re-upload your document to enable payouts.'
                       : 'Complete your 1-min KYC to activate full scheme maturity.',
                   style: AppTypography.labelMeta(
-                    color: AppColors.textSecondaryLight,
+                    color: AppColors.homeBodySubtitle,
                   ),
                 ),
               ],
@@ -85,7 +85,7 @@ class HomeKycReminderBanner extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: isRejected ? AppColors.statusErrorText : AppColors.goldPrimary,
+                color: isRejected ? AppColors.statusErrorText : AppColors.homeBrandGold,
                 borderRadius: AppRadius.border10,
               ),
               child: Row(
@@ -94,14 +94,14 @@ class HomeKycReminderBanner extends StatelessWidget {
                   Text(
                     'VERIFY',
                     style: AppTypography.labelMeta(
-                      color: isRejected ? Colors.white : AppColors.deepEmeraldBase,
+                      color: Colors.white,
                     ).copyWith(fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(width: 2),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 10,
-                    color: isRejected ? Colors.white : AppColors.deepEmeraldBase,
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.white,
+                    size: 14,
                   ),
                 ],
               ),

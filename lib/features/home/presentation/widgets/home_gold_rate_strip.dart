@@ -29,12 +29,19 @@ class HomeGoldRateStrip extends StatelessWidget {
         vertical: AppSpacing.space12,
       ),
       decoration: BoxDecoration(
-        color: AppColors.emeraldCard,
+        color: AppColors.homeNavbarBg,
         borderRadius: AppRadius.border16,
         border: Border.all(
-          color: AppColors.goldBorder.withValues(alpha: 0.3),
+          color: AppColors.homeNavbarBorder,
           width: 1,
         ),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x080C2B24),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: <Widget>[
@@ -42,16 +49,16 @@ class HomeGoldRateStrip extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.goldSubtle,
+              color: AppColors.homeCategoryRingBg,
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.goldBorder.withValues(alpha: 0.5),
+                color: AppColors.homeCategoryRingBorder,
                 width: 1,
               ),
             ),
             child: const Icon(
               Icons.monetization_on_outlined,
-              color: AppColors.goldPrimary,
+              color: AppColors.homeBrandGold,
               size: 20,
             ),
           ),
@@ -66,7 +73,7 @@ class HomeGoldRateStrip extends StatelessWidget {
                 Text(
                   "TODAY'S GOLD RATE (PER G)",
                   style: AppTypography.kickerCaps(
-                    color: AppColors.goldPrimary,
+                    color: AppColors.homeBodySubtitle,
                   ).copyWith(letterSpacing: 1.2),
                 ),
                 const SizedBox(height: 2),
@@ -75,21 +82,21 @@ class HomeGoldRateStrip extends StatelessWidget {
                     Text(
                       '22K: ${CurrencyFormatter.formatRupees(rate22k.round())}',
                       style: AppTypography.bodySmall(
-                        color: AppColors.textPrimaryLight,
+                        color: AppColors.homePrimaryHeading,
                       ).copyWith(fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(width: 6),
-                    Text(
+                    const Text(
                       '•',
                       style: TextStyle(
-                        color: AppColors.goldBorder.withValues(alpha: 0.6),
+                        color: AppColors.homeBrandGold,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       '24K: ${CurrencyFormatter.formatRupees(rate24k.round())}',
                       style: AppTypography.bodySmall(
-                        color: AppColors.goldLight,
+                        color: AppColors.homePrimaryHeading,
                       ).copyWith(fontWeight: FontWeight.w700),
                     ),
                   ],
@@ -108,14 +115,14 @@ class HomeGoldRateStrip extends StatelessWidget {
                 children: <Widget>[
                   const Icon(
                     Icons.check_circle_rounded,
-                    color: AppColors.statusSuccessText,
+                    color: Color(0xFF059669),
                     size: 13,
                   ),
                   const SizedBox(width: 3),
                   Text(
                     '100% BIS',
                     style: AppTypography.labelMeta(
-                      color: AppColors.statusSuccessText,
+                      color: AppColors.homePrimaryHeading,
                     ).copyWith(fontWeight: FontWeight.w700),
                   ),
                 ],
@@ -124,7 +131,7 @@ class HomeGoldRateStrip extends StatelessWidget {
               Text(
                 'Hallmarked',
                 style: AppTypography.labelMeta(
-                  color: AppColors.textSecondaryLight,
+                  color: AppColors.homeBodySubtitle,
                 ),
               ),
             ],

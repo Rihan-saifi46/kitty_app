@@ -171,5 +171,14 @@ void main() {
       final AppAuthState globalAuth = container.read(appAuthStateProvider);
       expect(globalAuth.isAuthenticated, isTrue);
     });
+
+    test('loginWithInstagram succeeds and authenticates user via abstraction', () async {
+      final AuthController controller = container.read(authControllerProvider.notifier);
+      final bool success = await controller.loginWithInstagram();
+      expect(success, isTrue);
+
+      final AppAuthState globalAuth = container.read(appAuthStateProvider);
+      expect(globalAuth.isAuthenticated, isTrue);
+    });
   });
 }

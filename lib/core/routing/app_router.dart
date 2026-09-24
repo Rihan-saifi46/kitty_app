@@ -5,11 +5,16 @@ import '../../features/auth/presentation/screens/auth_success_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/otp_screen.dart';
 import '../../features/auth/presentation/screens/phone_screen.dart';
+import '../../features/auth/presentation/screens/register_profile_screen.dart';
 import '../../features/checkout/domain/entities/payment_order_entity.dart';
+import '../../features/calculator/presentation/screens/calculator_screen.dart';
 import '../../features/checkout/presentation/screens/checkout_screen.dart';
+import '../../features/coin_rates/presentation/screens/coin_rates_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/jewellery/presentation/screens/jewellery_screen.dart';
 import '../../features/kyc/presentation/screens/kyc_screen.dart';
+import '../../features/menu/presentation/screens/menu_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/offers/presentation/screens/offers_screen.dart';
 import '../../features/passbook/presentation/screens/passbook_screen.dart';
@@ -30,6 +35,14 @@ final GlobalKey<NavigatorState> rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _homeNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'home');
+final GlobalKey<NavigatorState> _coinRatesNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'coinRates');
+final GlobalKey<NavigatorState> _jewelleryNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'jewellery');
+final GlobalKey<NavigatorState> _calculatorNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'calculator');
+final GlobalKey<NavigatorState> _menuNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'menu');
 final GlobalKey<NavigatorState> _dashboardNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'dashboard');
 final GlobalKey<NavigatorState> _passbookNavigatorKey =
@@ -53,11 +66,12 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       final String location = state.uri.path;
 
       final bool isAuthRoute = location.startsWith('/auth');
-      final bool isSplashRoute = location == RoutePaths.splash;
+      final bool isSplashRoute = location == RoutePaths.splash || location == '/';
 
-      // 1. Splash Screen: Allow the luxury 3D loading sequence to complete
-      //    its full animation without premature preemption. SplashScreen internally
-      //    resolves session state and navigates to /home or /auth/login on completion.
+      // 1. Splash Screen & Root Entry: Allow the luxury 3D loading sequence to complete
+      //    its full animation without premature preemption on Android and Web.
+      //    SplashScreen internally resolves session state and navigates to /home or
+      //    /auth/login upon visual completion.
       if (isSplashRoute) {
         return null;
       }
@@ -75,14 +89,25 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         return RoutePaths.login;
       }
 
-      // 4. Authenticated User: Redirect public auth routes to home
+      // 4. Authenticated User: Route according to statutory KYC status
       if (auth.isAuthenticated) {
-        if (location == RoutePaths.authSuccess) {
-          return null; // Allow welcome / biometric post-auth step
+        if (location == RoutePaths.authSuccess || location == RoutePaths.profile) {
+          return null; // Allow welcome / biometric post-auth step or profile registration
         }
+
+        // Statutory KYC Guard: If KYC is not completed, redirect to KYC screen
+        if (!auth.isKycVerified) {
+          if (location == RoutePaths.kyc) {
+            return null; // Allow KYC screen
+          }
+          return RoutePaths.kyc; // Enforce KYC verification
+        }
+
+        // Verified User: Redirect auth routes to home
         if (isAuthRoute) {
           return RoutePaths.home;
         }
+
         return null; // Allow protected destinations
       }
 
@@ -93,8 +118,17 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       // 1. PUBLIC & AUTHENTICATION STACK ROUTES
       // =======================================================================
       GoRoute(
-        path: RoutePaths.splash,
+        path: '/',
         name: AppRoute.splash.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.fadeTransitionPage(
+            key: state.pageKey,
+            child: const SplashScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.splash,
         pageBuilder: (BuildContext context, GoRouterState state) {
           return RouteTransitions.fadeTransitionPage(
             key: state.pageKey,
@@ -134,6 +168,16 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         },
       ),
       GoRoute(
+        path: RoutePaths.profile,
+        name: AppRoute.profile.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const RegisterProfileScreen(),
+          );
+        },
+      ),
+      GoRoute(
         path: RoutePaths.authSuccess,
         name: AppRoute.authSuccess.name,
         pageBuilder: (BuildContext context, GoRouterState state) {
@@ -167,6 +211,74 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
                   return RouteTransitions.fadeTransitionPage(
                     key: state.pageKey,
                     child: const HomeScreen(),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          // Branch 1: Coin Rates
+          StatefulShellBranch(
+            navigatorKey: _coinRatesNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: RoutePaths.coinRates,
+                name: AppRoute.coinRates.name,
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return RouteTransitions.fadeTransitionPage(
+                    key: state.pageKey,
+                    child: const CoinRatesScreen(),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          // Branch 2: Jewellery
+          StatefulShellBranch(
+            navigatorKey: _jewelleryNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: RoutePaths.jewellery,
+                name: AppRoute.jewellery.name,
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return RouteTransitions.fadeTransitionPage(
+                    key: state.pageKey,
+                    child: const JewelleryScreen(),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          // Branch 3: Calculator
+          StatefulShellBranch(
+            navigatorKey: _calculatorNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: RoutePaths.calculator,
+                name: AppRoute.calculator.name,
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return RouteTransitions.fadeTransitionPage(
+                    key: state.pageKey,
+                    child: const CalculatorScreen(),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          // Branch: Menu
+          StatefulShellBranch(
+            navigatorKey: _menuNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: RoutePaths.menu,
+                name: AppRoute.menu.name,
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return RouteTransitions.fadeTransitionPage(
+                    key: state.pageKey,
+                    child: const MenuScreen(),
                   );
                 },
               ),

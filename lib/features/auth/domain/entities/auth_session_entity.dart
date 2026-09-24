@@ -9,6 +9,16 @@ class AuthSessionEntity {
 
   final String token;
   final UserEntity user;
+
+  AuthSessionEntity copyWith({
+    String? token,
+    UserEntity? user,
+  }) {
+    return AuthSessionEntity(
+      token: token ?? this.token,
+      user: user ?? this.user,
+    );
+  }
 }
 
 /// Result of sending an SMS OTP.

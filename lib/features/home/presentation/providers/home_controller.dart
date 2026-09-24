@@ -24,6 +24,9 @@ class HomeController extends Notifier<HomeState> {
   late ISchemeRepository _schemeRepository;
   late IDashboardRepository _dashboardRepository;
 
+  DateTime? _lastLoadedTime;
+  static const Duration _cacheTtl = Duration(seconds: 60);
+
   @override
   HomeState build() {
     _goldRateRepository = ref.watch(goldRateRepositoryProvider);
@@ -37,8 +40,16 @@ class HomeController extends Notifier<HomeState> {
     return const HomeState(status: HomeStatus.loading);
   }
 
-  /// Fetches all required home screen datasets concurrently.
-  Future<void> loadHomeData() async {
+  /// Fetches all required home screen datasets concurrently with 60s TTL caching.
+  Future<void> loadHomeData({bool force = false}) async {
+    if (!force &&
+        state.status == HomeStatus.loaded &&
+        state.data != null &&
+        _lastLoadedTime != null &&
+        DateTime.now().difference(_lastLoadedTime!) < _cacheTtl) {
+      return;
+    }
+
     state = state.copyWith(
       status: HomeStatus.loading,
       errorMessage: null,
@@ -70,6 +81,7 @@ class HomeController extends Notifier<HomeState> {
         selectedCategory: 'All',
       );
 
+      _lastLoadedTime = DateTime.now();
       state = state.copyWith(
         status: HomeStatus.loaded,
         data: homeData,
@@ -122,6 +134,7 @@ class HomeController extends Notifier<HomeState> {
         selectedCategory: currentCategory,
       );
 
+      _lastLoadedTime = DateTime.now();
       state = state.copyWith(
         status: HomeStatus.loaded,
         data: homeData,

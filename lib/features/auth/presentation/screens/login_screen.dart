@@ -20,6 +20,7 @@ enum LoginStep {
   initial,
   phone,
   otp,
+  profile,
   success,
 }
 
@@ -82,6 +83,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   late final List<TextEditingController> _otpControllers;
   late final List<FocusNode> _otpFocusNodes;
 
+  // Profile Form Controls (View 2.5)
+  late final TextEditingController _nameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _cityController;
+  final GlobalKey<FormState> _profileFormKey = GlobalKey<FormState>();
+
   // Inline Toast State
   String? _toastMessage;
   bool _isToastError = false;
@@ -96,12 +103,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     <String, String>{'code': '+61', 'flag': '🇦🇺', 'name': 'Australia (+61)'},
   ];
 
-  static const String _googleSvg = '''
-<svg viewBox="0 0 24 24">
-  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.97 0 12s.45 3.84 1.25 5.42l4.03-3.15z"/>
-  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+  static const String _instagramSvg = '''
+<svg viewBox="0 0 24 24" fill="none">
+  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" fill="url(#ig-grad)"/>
+  <defs>
+    <linearGradient id="ig-grad" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD600"/>
+      <stop offset="0.25" stop-color="#FF7A00"/>
+      <stop offset="0.5" stop-color="#FF0069"/>
+      <stop offset="0.75" stop-color="#D300C5"/>
+      <stop offset="1" stop-color="#7638FA"/>
+    </linearGradient>
+  </defs>
 </svg>''';
 
   static const String _phoneIconSvg = '''
@@ -116,8 +129,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     final AuthFlowState currentAuth = ref.read(authControllerProvider);
     _phoneController = TextEditingController(text: currentAuth.phone);
-    _phoneController.addListener(() => setState(() {}));
-    _phoneFocusNode.addListener(() => setState(() {}));
 
     _otpControllers = List<TextEditingController>.generate(
       6,
@@ -127,15 +138,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       6,
       (int index) => FocusNode(),
     );
-    for (int i = 0; i < 6; i++) {
-      _otpControllers[i].addListener(() => setState(() {}));
-      _otpFocusNodes[i].addListener(() => setState(() {}));
-    }
 
-    // 1. Card Entrance Animation (0.8s cubic-bezier(0.16, 1, 0.3, 1))
+    final AppAuthState appAuth = ref.read(appAuthStateProvider);
+    _nameController = TextEditingController(
+      text: appAuth.userName.isNotEmpty && appAuth.userName != 'Rihan'
+          ? appAuth.userName
+          : (currentAuth.authSession?.user.name ?? ''),
+    );
+    _emailController = TextEditingController(
+      text: currentAuth.authSession?.user.email ?? '',
+    );
+    _cityController = TextEditingController();
+
+    // 1. Card Entrance Animation (Fast luxury ease ~260ms)
     _cardEntranceController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 260),
     );
 
     final CurvedAnimation cardCurved = CurvedAnimation(
@@ -163,15 +181,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       _bgConstellationController.value = 0.5;
     }
 
-    // 3. Success Pulse Badge Animation (2s loop)
+    // 3. Success Pulse Badge Animation (active strictly on success step)
     _successPulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
-    if (!_isInTest) {
-      _successPulseController.repeat(reverse: true);
-    } else {
+    if (_isInTest) {
       _successPulseController.value = 0.5;
+    } else if (_currentStep == LoginStep.success) {
+      _successPulseController.repeat(reverse: true);
     }
 
     // 4. OTP Error Shake Animation (0.45s)
@@ -221,6 +239,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     for (final FocusNode f in _otpFocusNodes) {
       f.dispose();
     }
+    _nameController.dispose();
+    _emailController.dispose();
+    _cityController.dispose();
     super.dispose();
   }
 
@@ -232,6 +253,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       _currentStep = step;
       _isCountryDropdownOpen = false;
     });
+
+    if (step == LoginStep.success && !_isInTest) {
+      if (!_successPulseController.isAnimating) {
+        _successPulseController.repeat(reverse: true);
+      }
+    } else if (step != LoginStep.success) {
+      if (_successPulseController.isAnimating) {
+        _successPulseController.stop();
+      }
+    }
 
     if (step == LoginStep.phone) {
       Future<void>.delayed(const Duration(milliseconds: 150), () {
@@ -359,13 +390,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final AuthController controller = ref.read(authControllerProvider.notifier);
     final bool success = await controller.verifyOtp(code);
     if (success && mounted) {
-      _goToStep(LoginStep.success);
+      _goToStep(LoginStep.profile);
     } else if (mounted) {
       _otpShakeController.forward(from: 0.0);
       final String? err = ref.read(authControllerProvider).otpError;
       if (err != null) {
         _showToast(err, isError: true);
       }
+    }
+  }
+
+  Future<void> _handleSubmitProfile() async {
+    if (!_profileFormKey.currentState!.validate()) return;
+
+    final String name = _nameController.text.trim();
+    final String email = _emailController.text.trim();
+    final String city = _cityController.text.trim();
+
+    try {
+      await ref.read(appAuthStateProvider.notifier).updateProfile(
+            userName: name,
+            userEmail: email,
+            city: city,
+          );
+    } catch (_) {}
+
+    try {
+      final AuthController authController = ref.read(authControllerProvider.notifier);
+      final AuthFlowState currentFlow = ref.read(authControllerProvider);
+      if (currentFlow.authSession != null) {
+        final updatedUser = currentFlow.authSession!.user.copyWith(
+          name: name,
+          email: email,
+        );
+        final updatedSession = currentFlow.authSession!.copyWith(user: updatedUser);
+        authController.updateSession(updatedSession);
+      }
+    } catch (_) {}
+
+    if (mounted) {
+      _goToStep(LoginStep.success);
     }
   }
 
@@ -389,16 +453,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   // ===========================================================================
-  // GOOGLE SINGLE SIGN-ON
+  // INSTAGRAM AUTHENTICATION ABSTRACTION
   // ===========================================================================
-  Future<void> _handleGoogleSignIn() async {
+  Future<void> _handleInstagramSignIn() async {
     final AuthController controller = ref.read(authControllerProvider.notifier);
-    final bool success = await controller.loginWithGoogle();
+    final bool success = await controller.loginWithInstagram();
     if (success && mounted) {
       _goToStep(LoginStep.success);
     } else if (mounted) {
       final String? err = ref.read(authControllerProvider).phoneError;
-      _showToast(err ?? 'Google Sign-in failed. Please try again.', isError: true);
+      _showToast(err ?? 'Instagram authentication failed. Please try again.', isError: true);
     }
   }
 
@@ -493,7 +557,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       canPop: _currentStep == LoginStep.initial,
       onPopInvokedWithResult: (bool didPop, dynamic result) {
         if (didPop) return;
-        if (_currentStep == LoginStep.otp) {
+        if (_currentStep == LoginStep.profile) {
+          _goToStep(LoginStep.otp);
+        } else if (_currentStep == LoginStep.otp) {
           _goToStep(LoginStep.phone);
         } else if (_currentStep == LoginStep.phone) {
           _goToStep(LoginStep.initial);
@@ -530,35 +596,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
               // 2. 3D Faceted Jewelry Constellation Canvas (#diamond-bg-canvas)
               Positioned.fill(
-                child: AnimatedBuilder(
-                  animation: _bgConstellationController,
-                  builder: (BuildContext context, Widget? child) {
-                    return CustomPaint(
-                      painter: JewelryConstellationPainter(
-                        progress: _bgConstellationController.value,
-                        opacity: 0.90,
-                      ),
-                    );
-                  },
+                child: RepaintBoundary(
+                  child: AnimatedBuilder(
+                    animation: _bgConstellationController,
+                    builder: (BuildContext context, Widget? child) {
+                      return CustomPaint(
+                        painter: JewelryConstellationPainter(
+                          progress: _bgConstellationController.value,
+                          opacity: 0.90,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
 
               // 3. Ambient Emerald & Gold Radial Glow Orb (.ambient-glow-orb)
               Center(
-                child: ImageFiltered(
-                  imageFilter: ui.ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-                  child: Container(
-                    width: orbSize,
-                    height: orbSize,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: <Color>[
-                          const Color(0xFFCCA243).withValues(alpha: 0.12),
-                          const Color(0xFF0D4A3A).withValues(alpha: 0.18),
-                          Colors.transparent,
-                        ],
-                        stops: const <double>[0.0, 0.45, 0.70],
+                child: RepaintBoundary(
+                  child: ImageFiltered(
+                    imageFilter: ui.ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                    child: Container(
+                      width: orbSize,
+                      height: orbSize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: <Color>[
+                            const Color(0xFFCCA243).withValues(alpha: 0.12),
+                            const Color(0xFF0D4A3A).withValues(alpha: 0.18),
+                            Colors.transparent,
+                          ],
+                          stops: const <double>[0.0, 0.45, 0.70],
+                        ),
                       ),
                     ),
                   ),
@@ -568,46 +638,47 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               // 4. Glassmorphic Login Card with Entrance Animation (.login-card-container)
               SafeArea(
                 child: Center(
-                  child: SingleChildScrollView(
-                    physics: const ClampingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 12.0 : 16.0,
-                      vertical: isMobile ? 16.0 : 24.0,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 440),
-                      child: FadeTransition(
-                        opacity: _cardFadeAnimation,
-                        child: SlideTransition(
-                          position: _cardSlideAnimation,
-                          child: ScaleTransition(
-                            scale: _cardScaleAnimation,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(cardRadius),
-                              child: BackdropFilter(
-                                filter: ui.ImageFilter.blur(sigmaX: 44, sigmaY: 44),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xC7062018), // rgba(6, 32, 24, 0.78)
-                                    borderRadius: BorderRadius.circular(cardRadius),
-                                    border: Border.all(
-                                      color: const Color(0x47CCA243), // var(--gold-muted)
-                                      width: 1.0,
+                  child: RepaintBoundary(
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 12.0 : 16.0,
+                        vertical: isMobile ? 16.0 : 24.0,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 440),
+                        child: FadeTransition(
+                          opacity: _cardFadeAnimation,
+                          child: SlideTransition(
+                            position: _cardSlideAnimation,
+                            child: ScaleTransition(
+                              scale: _cardScaleAnimation,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(cardRadius),
+                                child: BackdropFilter(
+                                  filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xD9062018), // rgba(6, 32, 24, 0.85) luxury emerald glass
+                                      borderRadius: BorderRadius.circular(cardRadius),
+                                      border: Border.all(
+                                        color: const Color(0x47CCA243), // var(--gold-muted)
+                                        width: 1.0,
+                                      ),
+                                      boxShadow: const <BoxShadow>[
+                                        BoxShadow(
+                                          color: Color(0xA6000000), // rgba(0,0,0,0.65)
+                                          blurRadius: 60,
+                                          spreadRadius: -12,
+                                          offset: Offset(0, 24),
+                                        ),
+                                        BoxShadow(
+                                          color: Color(0x14CCA243), // rgba(204, 162, 65, 0.08)
+                                          blurRadius: 35,
+                                          offset: Offset(0, 0),
+                                        ),
+                                      ],
                                     ),
-                                    boxShadow: const <BoxShadow>[
-                                      BoxShadow(
-                                        color: Color(0xA6000000), // rgba(0,0,0,0.65)
-                                        blurRadius: 60,
-                                        spreadRadius: -12,
-                                        offset: Offset(0, 24),
-                                      ),
-                                      BoxShadow(
-                                        color: Color(0x14CCA243), // rgba(204, 162, 65, 0.08)
-                                        blurRadius: 35,
-                                        offset: Offset(0, 0),
-                                      ),
-                                    ],
-                                  ),
                                   child: Stack(
                                     children: <Widget>[
                                       // Top Specular Hairline Highlight (inset 0 1px 1px rgba(255,255,255,0.12))
@@ -678,6 +749,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   ),
                 ),
               ),
+            ),
 
               // 5. Toast Notification (.swastik-toast)
               _buildFloatingToast(),
@@ -728,7 +800,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             ).createShader(bounds);
           },
           child: Text(
-            'Sign in to continue',
+            _currentStep == LoginStep.profile
+                ? 'Complete Your Profile'
+                : (_currentStep == LoginStep.success
+                    ? 'Vault Access Granted'
+                    : 'Sign in to continue'),
             textAlign: TextAlign.center,
             style: GoogleFonts.cormorantGaramond(
               fontSize: 21.0,
@@ -754,6 +830,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         return _buildViewPhone(context, isMobile, authState);
       case LoginStep.otp:
         return _buildViewOtp(context, isMobile, isTiny, authState);
+      case LoginStep.profile:
+        return _buildViewProfile(context, isMobile, authState);
       case LoginStep.success:
         return _buildViewSuccess(context, isMobile, authState);
     }
@@ -770,7 +848,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // 1. Google Single Sign-On Button (.btn-google)
+        // 1. Instagram Authentication Button (.btn-instagram)
         Container(
           height: buttonHeight,
           decoration: BoxDecoration(
@@ -791,7 +869,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: authState.isSubmitting ? null : _handleGoogleSignIn,
+              onTap: authState.isSubmitting ? null : _handleInstagramSignIn,
               borderRadius: BorderRadius.circular(14.0),
               child: Center(
                 child: Padding(
@@ -812,7 +890,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               ),
                               const SizedBox(width: 10),
                               Text(
-                                'Connecting with Google...',
+                                'Connecting with Instagram...',
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w500,
@@ -825,16 +903,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: SvgPicture.string(_googleSvg),
+                                width: 22,
+                                height: 22,
+                                child: SvgPicture.string(_instagramSvg),
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                'Continue with Google',
+                                'Continue with Instagram',
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14.0,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                   color: const Color(0xFF1F2937),
                                 ),
                               ),
@@ -1007,7 +1085,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Widget _buildViewPhone(BuildContext context, bool isMobile, AuthFlowState authState) {
     final double buttonHeight = isMobile ? 48.0 : 52.0;
     final bool hasError = authState.phoneError != null && authState.phoneError!.isNotEmpty;
-    final bool isPhoneFocused = _phoneFocusNode.hasFocus;
 
     return Column(
       key: const ValueKey<String>('view-phone'),
@@ -1134,82 +1211,88 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
                 // Phone Input Field (.phone-field-wrapper)
                 Expanded(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: buttonHeight,
-                    decoration: BoxDecoration(
-                      color: isPhoneFocused
-                          ? const Color(0xF2062019) // rgba(6, 32, 25, 0.95)
-                          : const Color(0xD8041913),
-                      border: Border.all(
-                        color: hasError
-                            ? const Color(0xFFEF4444)
-                            : (isPhoneFocused
-                                ? const Color(0xFFCCA243)
-                                : const Color(0x47CCA243)),
-                        width: isPhoneFocused || hasError ? 1.5 : 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(14.0),
-                      boxShadow: isPhoneFocused && !hasError
-                          ? const <BoxShadow>[
-                              BoxShadow(
-                                color: Color(0x2ECCAC43), // 0 0 0 3px rgba(204, 162, 65, 0.18)
-                                blurRadius: 6,
-                                spreadRadius: 1,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextField(
-                            controller: _phoneController,
-                            focusNode: _phoneFocusNode,
-                            keyboardType: TextInputType.phone,
-                            textInputAction: TextInputAction.done,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.allow(RegExp(r'[\d\s]')),
-                            ],
-                            onChanged: _formatPhoneInput,
-                            onSubmitted: (_) => _handleSendOtp(),
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 15.5,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.77,
-                              color: Colors.white,
-                            ),
-                            cursorColor: const Color(0xFFCCA243),
-                            decoration: InputDecoration(
-                              hintText: '98765 43210',
-                              hintStyle: GoogleFonts.plusJakartaSans(
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w400,
-                                color: const Color(0xFF5C7469),
-                                letterSpacing: 0.0,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                            ),
+                  child: ListenableBuilder(
+                    listenable: Listenable.merge(<Listenable>[_phoneController, _phoneFocusNode]),
+                    builder: (BuildContext context, _) {
+                      final bool isPhoneFocused = _phoneFocusNode.hasFocus;
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        height: buttonHeight,
+                        decoration: BoxDecoration(
+                          color: isPhoneFocused
+                              ? const Color(0xF2062019) // rgba(6, 32, 25, 0.95)
+                              : const Color(0xD8041913),
+                          border: Border.all(
+                            color: hasError
+                                ? const Color(0xFFEF4444)
+                                : (isPhoneFocused
+                                    ? const Color(0xFFCCA243)
+                                    : const Color(0x47CCA243)),
+                            width: isPhoneFocused || hasError ? 1.5 : 1.0,
                           ),
+                          borderRadius: BorderRadius.circular(14.0),
+                          boxShadow: isPhoneFocused && !hasError
+                              ? const <BoxShadow>[
+                                  BoxShadow(
+                                    color: Color(0x2ECCAC43), // 0 0 0 3px rgba(204, 162, 65, 0.18)
+                                    blurRadius: 6,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                              : null,
                         ),
-                        if (_phoneController.text.isNotEmpty)
-                          GestureDetector(
-                            onTap: () {
-                              _phoneController.clear();
-                              ref.read(authControllerProvider.notifier).setPhone('');
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.only(right: 12.0),
-                              child: Icon(
-                                Icons.close_rounded,
-                                size: 16,
-                                color: Color(0xFF5C7469),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: TextField(
+                                controller: _phoneController,
+                                focusNode: _phoneFocusNode,
+                                keyboardType: TextInputType.phone,
+                                textInputAction: TextInputAction.done,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(RegExp(r'[\d\s]')),
+                                ],
+                                onChanged: _formatPhoneInput,
+                                onSubmitted: (_) => _handleSendOtp(),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 15.5,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.77,
+                                  color: Colors.white,
+                                ),
+                                cursorColor: const Color(0xFFCCA243),
+                                decoration: InputDecoration(
+                                  hintText: '98765 43210',
+                                  hintStyle: GoogleFonts.plusJakartaSans(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: const Color(0xFF5C7469),
+                                    letterSpacing: 0.0,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                ),
                               ),
                             ),
-                          ),
-                      ],
-                    ),
+                            if (_phoneController.text.isNotEmpty)
+                              GestureDetector(
+                                onTap: () {
+                                  _phoneController.clear();
+                                  ref.read(authControllerProvider.notifier).setPhone('');
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.only(right: 12.0),
+                                  child: Icon(
+                                    Icons.close_rounded,
+                                    size: 16,
+                                    color: Color(0xFF5C7469),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -1310,14 +1393,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         const SizedBox(height: 10),
 
         // Primary Gold Action Button: Continue (#btn-send-otp)
-        _buildGoldButton(
-          height: buttonHeight,
-          text: 'Continue',
-          icon: Icons.arrow_forward_rounded,
-          isLoading: authState.isSubmitting,
-          loadingText: 'Sending OTP...',
-          isEnabled: _canSubmitPhone && !authState.isSubmitting,
-          onTap: _handleSendOtp,
+        ListenableBuilder(
+          listenable: _phoneController,
+          builder: (BuildContext context, _) {
+            return _buildGoldButton(
+              height: buttonHeight,
+              text: 'Continue',
+              icon: Icons.arrow_forward_rounded,
+              isLoading: authState.isSubmitting,
+              loadingText: 'Sending OTP...',
+              isEnabled: _canSubmitPhone && !authState.isSubmitting,
+              onTap: _handleSendOtp,
+            );
+          },
         ),
       ],
     );
@@ -1329,7 +1417,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Widget _buildViewOtp(BuildContext context, bool isMobile, bool isTiny, AuthFlowState authState) {
     final double buttonHeight = isMobile ? 48.0 : 52.0;
     final bool hasError = authState.otpError != null && authState.otpError!.isNotEmpty;
-    final bool canVerify = _currentOtp.length == 6 && !authState.isVerifying;
 
     return Column(
       key: const ValueKey<String>('view-otp'),
@@ -1437,73 +1524,79 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 children: List<Widget>.generate(6, (int index) {
                   final TextEditingController controller = _otpControllers[index];
                   final FocusNode focusNode = _otpFocusNodes[index];
-                  final bool isFilled = controller.text.isNotEmpty;
-                  final bool isFocused = focusNode.hasFocus;
 
-                  return Container(
-                    width: boxWidth,
-                    height: boxHeight,
-                    decoration: BoxDecoration(
-                      color: isFilled
-                          ? const Color(0xE6082A21) // rgba(8, 42, 33, 0.9)
-                          : (isFocused ? const Color(0xF207241C) : const Color(0xD8041913)),
-                      border: Border.all(
-                        color: hasError
-                            ? const Color(0xFFEF4444)
-                            : (isFocused
-                                ? const Color(0xFFFFE899)
-                                : (isFilled ? const Color(0xFFCCA243) : const Color(0x47CCA243))),
-                        width: isFocused || hasError ? 1.8 : 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(isMobile ? 8.0 : 14.0),
-                      boxShadow: isFocused && !hasError
-                          ? const <BoxShadow>[
-                              BoxShadow(
-                                color: Color(0x40CCA243),
-                                blurRadius: 16,
-                                spreadRadius: 1,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Center(
-                      child: KeyboardListener(
-                        focusNode: FocusNode(), // Auxiliary listener for backspace
-                        onKeyEvent: (KeyEvent event) {
-                          if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.backspace) {
-                            if (controller.text.isEmpty && index > 0) {
-                              _otpFocusNodes[index - 1].requestFocus();
-                              _otpControllers[index - 1].clear();
-                            }
-                          }
-                        },
-                        child: TextField(
-                          controller: controller,
-                          focusNode: focusNode,
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.number,
-                          textInputAction: index == 5 ? TextInputAction.done : TextInputAction.next,
-                          maxLength: 1,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          onChanged: (String val) => _handleOtpDigitChange(index, val),
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: isTiny ? 18.0 : (isMobile ? 19.0 : 22.0),
-                            fontWeight: FontWeight.w600,
+                  return ListenableBuilder(
+                    listenable: Listenable.merge(<Listenable>[controller, focusNode]),
+                    builder: (BuildContext context, _) {
+                      final bool isFilled = controller.text.isNotEmpty;
+                      final bool isFocused = focusNode.hasFocus;
+
+                      return Container(
+                        width: boxWidth,
+                        height: boxHeight,
+                        decoration: BoxDecoration(
+                          color: isFilled
+                              ? const Color(0xE6082A21) // rgba(8, 42, 33, 0.9)
+                              : (isFocused ? const Color(0xF207241C) : const Color(0xD8041913)),
+                          border: Border.all(
                             color: hasError
-                                ? const Color(0xFFFCA5A5)
-                                : const Color(0xFFF4E2AA),
+                                ? const Color(0xFFEF4444)
+                                : (isFocused
+                                    ? const Color(0xFFFFE899)
+                                    : (isFilled ? const Color(0xFFCCA243) : const Color(0x47CCA243))),
+                            width: isFocused || hasError ? 1.8 : 1.5,
                           ),
-                          cursorColor: const Color(0xFFCCA243),
-                          decoration: const InputDecoration(
-                            counterText: '',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.zero,
+                          borderRadius: BorderRadius.circular(isMobile ? 8.0 : 14.0),
+                          boxShadow: isFocused && !hasError
+                              ? const <BoxShadow>[
+                                  BoxShadow(
+                                    color: Color(0x40CCA243),
+                                    blurRadius: 16,
+                                    spreadRadius: 1,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Center(
+                          child: KeyboardListener(
+                            focusNode: FocusNode(), // Auxiliary listener for backspace
+                            onKeyEvent: (KeyEvent event) {
+                              if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.backspace) {
+                                if (controller.text.isEmpty && index > 0) {
+                                  _otpFocusNodes[index - 1].requestFocus();
+                                  _otpControllers[index - 1].clear();
+                                }
+                              }
+                            },
+                            child: TextField(
+                              controller: controller,
+                              focusNode: focusNode,
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              textInputAction: index == 5 ? TextInputAction.done : TextInputAction.next,
+                              maxLength: 1,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              onChanged: (String val) => _handleOtpDigitChange(index, val),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: isTiny ? 18.0 : (isMobile ? 19.0 : 22.0),
+                                fontWeight: FontWeight.w600,
+                                color: hasError
+                                    ? const Color(0xFFFCA5A5)
+                                    : const Color(0xFFF4E2AA),
+                              ),
+                              cursorColor: const Color(0xFFCCA243),
+                              decoration: const InputDecoration(
+                                counterText: '',
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 }),
               );
@@ -1586,16 +1679,323 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         const SizedBox(height: 18),
 
         // Primary Gold Action Button: Verify & Continue (#btn-verify-otp)
-        _buildGoldButton(
-          height: buttonHeight,
-          text: 'Verify & Continue',
-          icon: Icons.check_rounded,
-          isLoading: authState.isVerifying,
-          loadingText: 'Verifying...',
-          isEnabled: canVerify,
-          onTap: _handleVerifyOtp,
+        ListenableBuilder(
+          listenable: Listenable.merge(_otpControllers),
+          builder: (BuildContext context, _) {
+            final bool canVerify = _currentOtp.length == 6 && !authState.isVerifying;
+            return _buildGoldButton(
+              height: buttonHeight,
+              text: 'Verify & Continue',
+              icon: Icons.check_rounded,
+              isLoading: authState.isVerifying,
+              loadingText: 'Verifying...',
+              isEnabled: canVerify,
+              onTap: _handleVerifyOtp,
+            );
+          },
         ),
       ],
+    );
+  }
+
+  // ===========================================================================
+  // VIEW 2.5: USER PROFILE INFORMATION COLLECTION (.flow-step-view)
+  // ===========================================================================
+  Widget _buildViewProfile(BuildContext context, bool isMobile, AuthFlowState authState) {
+    final double buttonHeight = isMobile ? 48.0 : 52.0;
+
+    return Form(
+      key: _profileFormKey,
+      child: Column(
+        key: const ValueKey<String>('view-profile'),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // Step Heading
+          Text(
+            'Personal Details',
+            style: GoogleFonts.cormorantGaramond(
+              fontSize: 22.0,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFFF4E2AA),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Enter your name and email to configure your bullion passbook & certificates',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12.0,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF8FA499),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Name Input
+          Row(
+            children: <Widget>[
+              Text(
+                'Full Name',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFFE2D6BE),
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Text(
+                '*',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFFCCA243)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          TextFormField(
+            key: const Key('input_profile_name'),
+            controller: _nameController,
+            textCapitalization: TextCapitalization.words,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14.0,
+              color: const Color(0xFFF4E2AA),
+              fontWeight: FontWeight.w500,
+            ),
+            cursorColor: const Color(0xFFCCA243),
+            decoration: InputDecoration(
+              hintText: 'e.g. Rihan Saifi',
+              hintStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 13.0,
+                color: const Color(0xFF5C7469),
+              ),
+              prefixIcon: const Icon(
+                Icons.person_outline_rounded,
+                color: Color(0xFFCCA243),
+                size: 18,
+              ),
+              filled: true,
+              fillColor: const Color(0x66031A13),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0x55CCA243),
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFCCA243),
+                  width: 1.5,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFEF4444),
+                  width: 1.0,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFEF4444),
+                  width: 1.5,
+                ),
+              ),
+              errorStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 11.0,
+                color: const Color(0xFFEF4444),
+              ),
+            ),
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Please enter your full name';
+              }
+              if (value.trim().length < 2) {
+                return 'Name must be at least 2 characters';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+
+          // Email Input
+          Row(
+            children: <Widget>[
+              Text(
+                'Email Address',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFFE2D6BE),
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Text(
+                '*',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFFCCA243)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          TextFormField(
+            key: const Key('input_profile_email'),
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14.0,
+              color: const Color(0xFFF4E2AA),
+              fontWeight: FontWeight.w500,
+            ),
+            cursorColor: const Color(0xFFCCA243),
+            decoration: InputDecoration(
+              hintText: 'e.g. patron@swastikjewel.com',
+              hintStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 13.0,
+                color: const Color(0xFF5C7469),
+              ),
+              prefixIcon: const Icon(
+                Icons.email_outlined,
+                color: Color(0xFFCCA243),
+                size: 18,
+              ),
+              filled: true,
+              fillColor: const Color(0x66031A13),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0x55CCA243),
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFCCA243),
+                  width: 1.5,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFEF4444),
+                  width: 1.0,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFEF4444),
+                  width: 1.5,
+                ),
+              ),
+              errorStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 11.0,
+                color: const Color(0xFFEF4444),
+              ),
+            ),
+            validator: (String? value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Please enter your email address';
+              }
+              final RegExp emailRegex = RegExp(
+                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+              );
+              if (!emailRegex.hasMatch(value.trim())) {
+                return 'Please enter a valid email address';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+
+          // City Input (Optional)
+          Text(
+            'City / Region',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12.0,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFFE2D6BE),
+            ),
+          ),
+          const SizedBox(height: 6),
+          TextFormField(
+            key: const Key('input_profile_city'),
+            controller: _cityController,
+            textCapitalization: TextCapitalization.words,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14.0,
+              color: const Color(0xFFF4E2AA),
+              fontWeight: FontWeight.w500,
+            ),
+            cursorColor: const Color(0xFFCCA243),
+            decoration: InputDecoration(
+              hintText: 'e.g. Mumbai, Maharashtra',
+              hintStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 13.0,
+                color: const Color(0xFF5C7469),
+              ),
+              prefixIcon: const Icon(
+                Icons.location_city_outlined,
+                color: Color(0xFFCCA243),
+                size: 18,
+              ),
+              filled: true,
+              fillColor: const Color(0x66031A13),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0x55CCA243),
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xFFCCA243),
+                  width: 1.5,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          // Primary Gold Action Button: Complete Profile & Enter Vault
+          _buildGoldButton(
+            height: buttonHeight,
+            text: 'Save & Enter Vault',
+            icon: Icons.arrow_forward_rounded,
+            isLoading: false,
+            isEnabled: true,
+            onTap: _handleSubmitProfile,
+          ),
+
+          const SizedBox(height: 10),
+
+          // Back to OTP Step Option
+          Center(
+            child: GestureDetector(
+              onTap: () => _goToStep(LoginStep.otp),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Text(
+                  'Back to OTP Verification',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF8FA499),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1617,6 +2017,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         : (authState.authSession?.user.tier.isNotEmpty == true
             ? authState.authSession!.user.tier
             : 'Tier 1 Verified Member');
+
+    final bool isKycVerified = appAuth.isKycVerified;
 
     return Column(
       key: const ValueKey<String>('view-success'),
@@ -1702,7 +2104,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
         // Subtitle
         Text(
-          'Accessing your Kitty schemes and bullion vault...',
+          isKycVerified
+              ? 'Accessing your Kitty schemes and bullion vault...'
+              : 'Statutory KYC verification required to access schemes.',
           textAlign: TextAlign.center,
           style: GoogleFonts.plusJakartaSans(
             fontSize: 13.5,
@@ -1714,14 +2118,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
         const SizedBox(height: 24),
 
-        // Enter Kitty Vault Button (#btn-enter-app)
+        // Action Button: Home vs KYC (#btn-enter-app)
         _buildGoldButton(
           height: buttonHeight,
-          text: 'Enter Kitty Vault',
+          text: isKycVerified ? 'Enter Kitty Vault' : 'Complete Verification',
           icon: Icons.arrow_forward_rounded,
           isLoading: false,
           isEnabled: true,
-          onTap: () => context.go(RoutePaths.home),
+          onTap: () {
+            if (isKycVerified) {
+              context.go(RoutePaths.home);
+            } else {
+              context.go(RoutePaths.kyc);
+            }
+          },
         ),
       ],
     );

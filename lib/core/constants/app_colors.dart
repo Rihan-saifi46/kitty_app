@@ -59,33 +59,135 @@ abstract final class AppColors {
   static const Color goldBorder = Color(0x47C59B27);
 
   // ---------------------------------------------------------------------------
+  // Official Warm Luxury Palette (Warm Alabaster Silk & Polished Cream Ivory)
+  // ---------------------------------------------------------------------------
+
+  /// Warm Alabaster Silk (#FAF7F2): Full-screen base / canvas behind cards.
+  static const Color alabasterSilk = Color(0xFFFAF7F2);
+
+  /// Polished Cream Ivory (#F4F0EA): Active Jewel Plan card & Bottom Offers card background.
+  static const Color creamIvoryCard = Color(0xFFF4F0EA);
+
+  /// Soft Warm Linen (#EDE8DF): The subtle inner box around "Total Deposited" & "Monthly EMI".
+  static const Color warmLinenInset = Color(0xFFEDE8DF);
+
+  /// Rich Warm Ochre / Honey Gold (#DCA237): "PAY INSTALLMENT" button, progress ring, active plan title, icon badge.
+  static const Color honeyGoldAccent = Color(0xFFDCA237);
+
+  /// Champagne Gold Foil (#F3E0B5): #SW-042 chip pill, 24K price banner pill, "Royal Club" badge.
+  static const Color champagneFoil = Color(0xFFF3E0B5);
+
+  /// Espresso Charcoal (#2B2521): High-contrast numbers (₹40,000), "Namaste, Rihan Saifi", main headings.
+  static const Color espressoCharcoal = Color(0xFF2B2521);
+
+  /// Warm Taupe Brown (#6E6259): Labels ("TOTAL DEPOSITED", "MONTHLY EMI", "8 of 12 installments").
+  static const Color warmTaupeBrown = Color(0xFF6E6259);
+
+  /// Dark Contrast CTA: Deep Umber Bronze (#26211E): "Explore Plan" button at the bottom.
+  static const Color deepUmberBronze = Color(0xFF26211E);
+
+  // ---------------------------------------------------------------------------
+  // Settings & Warm Luxury Palette (Exact User-Specified Hex Codes)
+  // ---------------------------------------------------------------------------
+
+  /// Warm Alabaster Silk (#FAF7F2): Screen base background.
+  static const Color settingsBg = Color(0xFFFAF7F2);
+
+  /// Polished Cream Ivory (#F5F1EB): Profile card, settings group cards background.
+  static const Color settingsCardBg = Color(0xFFF5F1EB);
+
+  /// Soft Warm Linen (#EAE4D9): Rounded icon boxes (UPI, Nominee, MPIN icons).
+  static const Color settingsIconBg = Color(0xFFEAE4D9);
+
+  /// Espresso Charcoal (#241E1A): Primary text & headings.
+  static const Color settingsTextPrimary = Color(0xFF241E1A);
+
+  /// Warm Taupe Brown (#6E6259): Secondary & subtitle captions.
+  static const Color settingsTextSecondary = Color(0xFF6E6259);
+
+  /// Warm Antique Gold (#B88B4A): Section titles & accents.
+  static const Color settingsAccentGold = Color(0xFFB88B4A);
+
+  /// Sage Mint Tint (#E1F2E9): Status pill background (Registered, Verified).
+  static const Color settingsBadgeBg = Color(0xFFE1F2E9);
+
+  /// Forest Jade Green (#1E7A4D): Status pill text and checkmark.
+  static const Color settingsBadgeText = Color(0xFF1E7A4D);
+
+  /// Light Sand Beige (#E6DFD5): Divider lines and 1px subtle borders.
+  static const Color settingsBorder = Color(0xFFE6DFD5);
+
+  // ---------------------------------------------------------------------------
+  // Luxury Design Tokens mapped to Warm Luxury Palette
+  // ---------------------------------------------------------------------------
+
+  /// Canvas background canvas matching Warm Alabaster Silk (#FAF7F2).
+  static const Color homeCanvasBg = alabasterSilk;
+
+  /// Top luxury navbar & product card background matching Polished Cream Ivory (#F4F0EA).
+  static const Color homeNavbarBg = creamIvoryCard;
+
+  /// Header & footer border matching Soft Warm Linen (#EDE8DF).
+  static const Color homeNavbarBorder = warmLinenInset;
+
+  /// Primary heading font color matching Espresso Charcoal (#2B2521).
+  static const Color homePrimaryHeading = espressoCharcoal;
+
+  /// Body & subtitle font color matching Warm Taupe Brown (#6E6259).
+  static const Color homeBodySubtitle = warmTaupeBrown;
+
+  /// Brand gold accent matching Rich Warm Ochre / Honey Gold (#DCA237).
+  static const Color homeBrandGold = honeyGoldAccent;
+
+  /// Brand gold hover matching Rich Warm Ochre / Honey Gold (#C8902A).
+  static const Color homeBrandGoldHover = Color(0xFFC8902A);
+
+  /// Category ring background matching Polished Cream Ivory (#F4F0EA).
+  static const Color homeCategoryRingBg = creamIvoryCard;
+
+  /// Category ring border matching Soft Warm Linen (#EDE8DF).
+  static const Color homeCategoryRingBorder = warmLinenInset;
+
+  /// Product card background matching Polished Cream Ivory (#F4F0EA).
+  static const Color homeProductCardBg = creamIvoryCard;
+
+  /// Product card border matching Soft Warm Linen (#EDE8DF).
+  static const Color homeProductCardBorder = warmLinenInset;
+
+  /// Promo banner emerald card.
+  static const Color homePromoBannerEmerald = creamIvoryCard;
+
+  /// Promo golden button matching Honey Gold (#DCA237).
+  static const Color homePromoGoldenBtn = honeyGoldAccent;
+
+  // ---------------------------------------------------------------------------
   // Refined Light Surface Palette (Passbook & Settings)
   // ---------------------------------------------------------------------------
 
-  /// Soft modern off-white page background canvas (#F8F9FA).
-  static const Color surfacePageBg = Color(0xFFF8F9FA);
+  /// Soft modern off-white page background canvas (#FAF7F2).
+  static const Color surfacePageBg = alabasterSilk;
 
-  /// Crisp white container card background (#FFFFFF).
-  static const Color surfaceCardBg = Color(0xFFFFFFFF);
+  /// Crisp cream container card background (#F4F0EA).
+  static const Color surfaceCardBg = creamIvoryCard;
 
-  /// Subtle modern gray border for cards and inputs (#E5E7EB).
-  static const Color surfaceCardBorder = Color(0xFFE5E7EB);
+  /// Subtle modern warm border for cards and inputs (#EDE8DF).
+  static const Color surfaceCardBorder = warmLinenInset;
 
-  /// Secondary modern border gray (#EAECEF).
-  static const Color surfaceCardBorderAlt = Color(0xFFEAECEF);
+  /// Secondary modern border (#EDE8DF).
+  static const Color surfaceCardBorderAlt = warmLinenInset;
 
-  /// Table row separator and section divider (#F1F5F9).
-  static const Color surfaceDivider = Color(0xFFF1F5F9);
+  /// Table row separator and section divider (#EDE8DF).
+  static const Color surfaceDivider = warmLinenInset;
 
   // ---------------------------------------------------------------------------
   // Neutral Text Palette
   // ---------------------------------------------------------------------------
 
-  /// Primary high-contrast text on light cards (#0F172A).
-  static const Color textPrimaryDark = Color(0xFF0F172A);
+  /// Primary high-contrast text on light cards (#2B2521 Espresso Charcoal).
+  static const Color textPrimaryDark = espressoCharcoal;
 
-  /// Subtitles, helper text, and timestamps on light cards (#64748B).
-  static const Color textSecondaryMuted = Color(0xFF64748B);
+  /// Subtitles, helper text, and timestamps on light cards (#6E6259 Warm Taupe Brown).
+  static const Color textSecondaryMuted = warmTaupeBrown;
 
   /// Tertiary placeholder and disabled text (#94A3B8).
   static const Color textTertiary = Color(0xFF94A3B8);

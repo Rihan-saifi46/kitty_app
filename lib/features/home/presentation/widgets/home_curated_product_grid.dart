@@ -73,7 +73,7 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
             eyebrow: 'HANDCRAFTED LUXURY',
             actionLabel: 'View All →',
             onAction: widget.onViewAllTap,
-            isDarkSurface: true,
+            isDarkSurface: false,
           ),
         ),
         const SizedBox(height: AppSpacing.space12),
@@ -98,7 +98,11 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
                       ? '${product.purity} • ${product.weightGrams}g'
                       : fallback['purity'] as String;
                   final int price = product?.estimatedPrice ?? fallback['price'] as int;
-                  final String assetImage = product?.imageUrl ?? fallback['asset'] as String;
+                  String assetImage = product?.imageUrl ?? fallback['asset'] as String;
+                  if (!assetImage.startsWith('assets/images/') && assetImage.startsWith('assets/')) {
+                    assetImage = assetImage.replaceFirst('assets/', 'assets/images/');
+                  }
+                  final String fallbackAsset = fallback['asset'] as String;
                   final bool isWishlisted = _wishlist.contains(id);
 
                   return SizedBox(
@@ -109,6 +113,7 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
                       purity: purity,
                       price: price,
                       assetImage: assetImage,
+                      fallbackAsset: fallbackAsset,
                       isWishlisted: isWishlisted,
                       onTap: () {
                         if (product != null) {
@@ -143,22 +148,23 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
     required String purity,
     required int price,
     required String assetImage,
+    required String fallbackAsset,
     required bool isWishlisted,
     required VoidCallback onTap,
     required VoidCallback onWishlistToggle,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.emeraldCard,
+        color: AppColors.homeNavbarBg,
         borderRadius: AppRadius.border16,
         border: Border.all(
-          color: AppColors.goldBorder.withValues(alpha: 0.25),
+          color: AppColors.homeProductCardBorder,
           width: 1,
         ),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x24000000),
-            blurRadius: 10,
+            color: Color(0x0A0C2B24),
+            blurRadius: 16,
             offset: Offset(0, 4),
           ),
         ],
@@ -169,27 +175,33 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
           // Image Container + Floating Wishlist Heart
           Stack(
             children: <Widget>[
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(AppRadius.radius16),
+              Container(
+                height: 112,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: AppColors.warmLinenInset,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(AppRadius.radius16),
+                  ),
                 ),
-                child: AspectRatio(
-                  aspectRatio: 1.05,
-                  child: Image.asset(
-                    assetImage,
-                    fit: BoxFit.cover,
-                    errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                      return Container(
-                        color: AppColors.deepEmeraldBase,
-                        child: const Center(
-                          child: Icon(
-                            Icons.diamond_outlined,
-                            color: AppColors.goldPrimary,
-                            size: 36,
-                          ),
-                        ),
-                      );
-                    },
+                padding: const EdgeInsets.all(8),
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: AppRadius.border10,
+                    child: Image.asset(
+                      assetImage,
+                      cacheWidth: 320,
+                      cacheHeight: 320,
+                      fit: BoxFit.cover,
+                      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                        return Image.asset(
+                          fallbackAsset,
+                          cacheWidth: 320,
+                          cacheHeight: 320,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -204,7 +216,7 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.45),
+                      color: Colors.black.withValues(alpha: 0.35),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -227,7 +239,7 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
                 Text(
                   title,
                   style: AppTypography.bodySmall(
-                    color: AppColors.textPrimaryLight,
+                    color: AppColors.homePrimaryHeading,
                   ).copyWith(fontWeight: FontWeight.w700),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -236,7 +248,7 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
                 Text(
                   purity,
                   style: AppTypography.labelMeta(
-                    color: AppColors.textSecondaryLight,
+                    color: AppColors.homeBodySubtitle,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -252,7 +264,7 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
                       child: Text(
                         CurrencyFormatter.formatRupees(price),
                         style: AppTypography.bodyBold(
-                          color: AppColors.goldLight,
+                          color: AppColors.homeBrandGold,
                         ),
                       ),
                     ),
@@ -262,17 +274,17 @@ class _HomeCuratedProductGridState extends State<HomeCuratedProductGrid> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppColors.goldSubtle,
+                          color: AppColors.homeCategoryRingBg,
                           borderRadius: AppRadius.border6,
                           border: Border.all(
-                            color: AppColors.goldBorder.withValues(alpha: 0.5),
+                            color: AppColors.homeCategoryRingBorder,
                             width: 1,
                           ),
                         ),
                         child: Text(
                           'View',
                           style: AppTypography.labelMeta(
-                            color: AppColors.goldLight,
+                            color: AppColors.homeBrandGold,
                           ).copyWith(fontWeight: FontWeight.w700),
                         ),
                       ),

@@ -1,10 +1,18 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 
-/// Fixed luxury bottom navigation dock strictly matching the approved prototype.
+/// Fixed luxury frosted-glass bottom navigation dock matching the Warm Luxury aesthetic.
+///
+/// Features 5 items:
+/// 1. Home
+/// 2. Coin Rates
+/// 3. Jewellery
+/// 4. KYC
+/// 5. Menu
 class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({
     required this.currentIndex,
@@ -22,61 +30,61 @@ class AppBottomNavBar extends StatelessWidget {
       activeIcon: Icons.storefront_rounded,
     ),
     _NavItemData(
-      label: 'My Kitty',
+      label: 'Coin Rates',
+      icon: Icons.monetization_on_outlined,
+      activeIcon: Icons.monetization_on_rounded,
+    ),
+    _NavItemData(
+      label: 'Jewellery',
       icon: Icons.diamond_outlined,
       activeIcon: Icons.diamond_rounded,
     ),
     _NavItemData(
-      label: 'Passbook',
-      icon: Icons.menu_book_outlined,
-      activeIcon: Icons.menu_book_rounded,
-    ),
-    _NavItemData(
-      label: 'Offers',
-      icon: Icons.card_giftcard_outlined,
-      activeIcon: Icons.card_giftcard_rounded,
-    ),
-    _NavItemData(
-      label: 'Settings',
-      icon: Icons.settings_outlined,
-      activeIcon: Icons.settings_rounded,
+      label: 'Calculator',
+      icon: Icons.calculate_outlined,
+      activeIcon: Icons.calculate_rounded,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.deepEmeraldBase,
-        border: Border(
-          top: BorderSide(
-            color: AppColors.goldBorder.withValues(alpha: 0.35),
-            width: 1,
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.creamIvoryCard.withValues(alpha: 0.85),
+            border: const Border(
+              top: BorderSide(
+                color: AppColors.warmLinenInset,
+                width: 1.2,
+              ),
+            ),
+            boxShadow: const <BoxShadow>[
+              BoxShadow(
+                color: Color(0x122B2521),
+                blurRadius: 20,
+                offset: Offset(0, -6),
+              ),
+            ],
           ),
-        ),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            color: Color(0x59000000),
-            blurRadius: 30,
-            offset: Offset(0, -8),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List<Widget>.generate(
-              _items.length,
-              (int index) => _DockNavItem(
-                data: _items[index],
-                isSelected: currentIndex == index,
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  onTap(index);
-                },
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List<Widget>.generate(
+                  _items.length,
+                  (int index) => _DockNavItem(
+                    data: _items[index],
+                    isSelected: currentIndex == index,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      onTap(index);
+                    },
+                  ),
+                ),
               ),
             ),
           ),
@@ -111,7 +119,8 @@ class _DockNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color itemColor = isSelected ? AppColors.goldLight : AppColors.emeraldTextSubtle;
+    final Color itemColor = isSelected ? AppColors.espressoCharcoal : AppColors.warmTaupeBrown;
+    final Color iconColor = isSelected ? AppColors.honeyGoldAccent : AppColors.warmTaupeBrown;
 
     return GestureDetector(
       onTap: onTap,
@@ -120,14 +129,14 @@ class _DockNavItem extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         padding: isSelected
-            ? const EdgeInsets.symmetric(horizontal: 14, vertical: 6)
-            : const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            ? const EdgeInsets.symmetric(horizontal: 10, vertical: 5)
+            : const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.goldSubtle : Colors.transparent,
+          color: isSelected ? AppColors.champagneFoil.withValues(alpha: 0.55) : Colors.transparent,
           borderRadius: AppRadius.border16,
           border: Border.all(
             color: isSelected
-                ? AppColors.goldBorder.withValues(alpha: 0.4)
+                ? AppColors.honeyGoldAccent.withValues(alpha: 0.35)
                 : Colors.transparent,
             width: 1,
           ),
@@ -137,17 +146,18 @@ class _DockNavItem extends StatelessWidget {
           children: <Widget>[
             Icon(
               isSelected ? data.activeIcon : data.icon,
-              color: itemColor,
-              size: 20,
+              color: iconColor,
+              size: 21,
             ),
-            const SizedBox(height: 3),
+            const SizedBox(height: 2),
             Text(
               data.label,
               style: AppTypography.labelMeta(
                 color: itemColor,
               ).copyWith(
                 fontSize: 10,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                letterSpacing: isSelected ? 0.2 : 0,
               ),
             ),
           ],

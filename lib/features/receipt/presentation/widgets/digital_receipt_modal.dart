@@ -31,7 +31,7 @@ class DigitalReceiptModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(maxWidth: 460),
+      constraints: const BoxConstraints(maxWidth: 480),
       decoration: BoxDecoration(
         color: const Color(0xFF05241C),
         borderRadius: BorderRadius.circular(24),
@@ -47,7 +47,7 @@ class DigitalReceiptModal extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(AppSpacing.space20),
+      padding: const EdgeInsets.all(AppSpacing.space16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -65,7 +65,7 @@ class DigitalReceiptModal extends StatelessWidget {
                       key: const Key('receipt_modal_title'),
                       style: AppTypography.cardTitle(
                         color: Colors.white,
-                      ).copyWith(fontSize: 20, fontWeight: FontWeight.w700),
+                      ).copyWith(fontSize: 19, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -73,14 +73,14 @@ class DigitalReceiptModal extends StatelessWidget {
                       key: const Key('receipt_modal_subtitle'),
                       style: AppTypography.bodySmall(
                         color: AppColors.goldLight,
-                      ),
+                      ).copyWith(fontSize: 11.5),
                     ),
                   ],
                 ),
               ),
               IconButton(
                 key: const Key('receipt_close_btn'),
-                icon: const Icon(Icons.close_rounded, color: Colors.white70, size: 20),
+                icon: const Icon(Icons.close_rounded, color: Colors.white70, size: 22),
                 onPressed: onClose,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -88,20 +88,20 @@ class DigitalReceiptModal extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: AppSpacing.space16),
+          const SizedBox(height: AppSpacing.space14),
 
           // Luxury Parchment Receipt Paper Container (.receipt-paper)
           Container(
             key: const Key('receipt_paper_card'),
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: const Color(0xFFFAF8F2),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE5DECF), width: 1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE5DECF), width: 1.2),
               boxShadow: const <BoxShadow>[
                 BoxShadow(
-                  color: Color(0x0D000000),
-                  blurRadius: 10,
+                  color: Color(0x14000000),
+                  blurRadius: 14,
                   offset: Offset(0, 4),
                 ),
               ],
@@ -109,7 +109,7 @@ class DigitalReceiptModal extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                // Top Row: Transaction ID & Status Badge
+                // 1. Top Bar: Transaction ID & Status Badge
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -122,8 +122,9 @@ class DigitalReceiptModal extends StatelessWidget {
                             key: const Key('receipt_txn_id'),
                             style: const TextStyle(
                               fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.3,
                               color: Color(0xFF047857),
                             ),
                           ),
@@ -134,6 +135,7 @@ class DigitalReceiptModal extends StatelessWidget {
                             style: const TextStyle(
                               fontFamily: 'Plus Jakarta Sans',
                               fontSize: 11,
+                              fontWeight: FontWeight.w600,
                               color: Color(0xFF556B62),
                             ),
                           ),
@@ -143,26 +145,34 @@ class DigitalReceiptModal extends StatelessWidget {
                     const SizedBox(width: 8),
                     Container(
                       key: const Key('receipt_status_badge'),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE6F7F0),
                         borderRadius: BorderRadius.circular(999),
+                        border: Border.all(color: const Color(0xFFBBE5D4), width: 0.8),
                       ),
-                      child: const Text(
-                        'PAYMENT CONFIRMED',
-                        style: TextStyle(
-                          fontFamily: 'Plus Jakarta Sans',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.6,
-                          color: Color(0xFF047857),
-                        ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(Icons.check_circle_rounded, size: 12, color: Color(0xFF047857)),
+                          SizedBox(width: 4),
+                          Text(
+                            'PAYMENT CONFIRMED',
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.5,
+                              color: Color(0xFF047857),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
 
                 // Dashed Line Divider
                 const CustomPaint(
@@ -170,33 +180,57 @@ class DigitalReceiptModal extends StatelessWidget {
                   painter: _DashedLinePainter(color: Color(0xFFD6CEC0)),
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
 
-                // Line Items
+                // 2. Section: Scheme & Patron Details
                 _buildReceiptRow('Chit Token Number:', '#SW-042', isHighlight: true),
-                _buildReceiptRow('Scheme Name:', receipt.schemeName),
+                _buildReceiptRow('Scheme Name:', receipt.schemeName, allowWrap: true),
                 _buildReceiptRow('Customer Name:', receipt.customerName),
-                _buildReceiptRow('Payment Date:', _formatDate(receipt.paidAt)),
-                _buildReceiptRow('Payment Mode:', _formatPaymentMethod(receipt)),
-                _buildReceiptRow(
-                  '24K Gold Allocated:',
-                  '+${receipt.goldWeightCreditedGrams.toStringAsFixed(3)} grams',
-                  valueColor: const Color(0xFFB45309), // Warm amber/gold
-                  isBold: true,
-                ),
-                _buildReceiptRow(
-                  'Gold Benchmark Rate:',
-                  '₹${receipt.goldRateAtPayment.toStringAsFixed(2)} / g',
-                ),
-                _buildReceiptRow(
-                  'Statutory GST (3% Bullion):',
-                  '₹0.00 (Covered by Jeweler)',
-                  valueColor: const Color(0xFF047857),
+
+                const SizedBox(height: 6),
+
+                // 3. Section: 24K Gold Allocation Banner
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFBF6EB),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xFFE8DCC2), width: 0.9),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      _buildReceiptRow(
+                        '24K Gold Allocated:',
+                        '+${receipt.goldWeightCreditedGrams.toStringAsFixed(3)} grams',
+                        valueColor: const Color(0xFFB45309), // Warm gold amber
+                        isBold: true,
+                        fontSize: 12.0,
+                      ),
+                      _buildReceiptRow(
+                        'Gold Benchmark Rate:',
+                        '₹${receipt.goldRateAtPayment.toStringAsFixed(2)} / g',
+                        fontSize: 11.0,
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 6),
 
-                // Total Amount Paid Row
+                // 4. Section: Statutory GST & Payment Info
+                _buildReceiptRow(
+                  'Statutory GST (3% Bullion):',
+                  '₹0.00 (Covered by Jeweler)',
+                  valueColor: const Color(0xFF047857),
+                  isBold: true,
+                  allowWrap: true,
+                ),
+                _buildReceiptRow('Payment Mode:', _formatPaymentMethod(receipt)),
+                _buildReceiptRow('Payment Date:', _formatDate(receipt.paidAt)),
+
+                const SizedBox(height: 6),
+
+                // 5. Total Amount Paid Row
                 Container(
                   padding: const EdgeInsets.only(top: 8),
                   decoration: const BoxDecoration(
@@ -221,8 +255,8 @@ class DigitalReceiptModal extends StatelessWidget {
                         key: const Key('receipt_total_amount'),
                         style: const TextStyle(
                           fontFamily: 'Plus Jakarta Sans',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 16.5,
+                          fontWeight: FontWeight.w900,
                           color: Color(0xFF05241C),
                         ),
                       ),
@@ -230,17 +264,17 @@ class DigitalReceiptModal extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
 
-                // BIS 999 Hallmark Disclaimer Footnote
+                // 6. BIS 999 Hallmark Disclaimer Footnote
                 const Text(
                   'This is an official digital passbook receipt issued by Swastik Jewellers Pvt Ltd. '
                   'All accumulated gold is physically backed and audited under BIS 999 Hallmark certification.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 10,
-                    height: 1.4,
+                    fontSize: 9.5,
+                    height: 1.35,
                     color: Color(0xFF7A8B83),
                   ),
                 ),
@@ -248,13 +282,13 @@ class DigitalReceiptModal extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: AppSpacing.space16),
+          const SizedBox(height: AppSpacing.space14),
 
           // Async Receipt Generation Notice (if receiptUrl == null)
           if (isGenerating)
             Container(
               key: const Key('receipt_generating_banner'),
-              margin: const EdgeInsets.only(bottom: AppSpacing.space14),
+              margin: const EdgeInsets.only(bottom: AppSpacing.space12),
               padding: const EdgeInsets.all(AppSpacing.space12),
               decoration: BoxDecoration(
                 color: AppColors.goldPrimary.withValues(alpha: 0.12),
@@ -266,8 +300,8 @@ class DigitalReceiptModal extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   const SizedBox(
-                    width: 20,
-                    height: 20,
+                    width: 18,
+                    height: 18,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(AppColors.goldPrimary),
@@ -282,7 +316,7 @@ class DigitalReceiptModal extends StatelessWidget {
                           'Generating Official Tax PDF...',
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 12.5,
+                            fontSize: 12.0,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFFFFE28A),
                           ),
@@ -292,7 +326,7 @@ class DigitalReceiptModal extends StatelessWidget {
                           'Receipt is being generated. Your PDF invoice is being signed and uploaded. Tap check status to refresh.',
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 11,
+                            fontSize: 10.5,
                             color: Colors.white70,
                           ),
                         ),
@@ -390,28 +424,34 @@ class DigitalReceiptModal extends StatelessWidget {
     Color? valueColor,
     bool isBold = false,
     bool isHighlight = false,
+    double fontSize = 11.5,
+    bool allowWrap = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 7),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Row(
+        crossAxisAlignment: allowWrap ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Plus Jakarta Sans',
-              fontSize: 11.5,
-              color: Color(0xFF556B62),
+              fontSize: fontSize,
+              color: const Color(0xFF556B62),
             ),
           ),
+          const SizedBox(width: 8),
           Flexible(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              overflow: TextOverflow.ellipsis,
+              softWrap: allowWrap,
+              maxLines: allowWrap ? 2 : 1,
+              overflow: allowWrap ? TextOverflow.visible : TextOverflow.ellipsis,
               style: TextStyle(
                 fontFamily: 'Plus Jakarta Sans',
-                fontSize: 11.5,
+                fontSize: fontSize,
                 fontWeight: isBold || isHighlight ? FontWeight.w700 : FontWeight.w500,
                 color: valueColor ??
                     (isHighlight ? const Color(0xFF047857) : const Color(0xFF05241C)),

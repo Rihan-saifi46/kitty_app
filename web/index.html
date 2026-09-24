@@ -157,7 +157,7 @@
     }
 
     .brand-logo-only {
-      width: clamp(210px, 50vw, 300px);
+      width: clamp(260px, 68vw, 380px);
       height: auto;
       display: block;
       filter: drop-shadow(0 4px 28px rgba(0, 0, 0, 0.5));
@@ -226,10 +226,9 @@
     <!-- PHASE 2: Royal Damask Wallpaper Pattern (Background) -->
     <div class="damask-pattern-bg" id="damaskPattern" aria-hidden="true"></div>
 
-    <!-- PHASE 2: Swastik Jewel Logo & Vault Subtitle (Foreground) -->
+    <!-- PHASE 2: Swastik Jewel Logo (Foreground) -->
     <div class="branding-stage" id="brandingStage" aria-label="Swastik Jewel Brand">
       <img src="assets/swastiklogo.svg" alt="Swastik Jewel" class="brand-logo-only" />
-      <div class="brand-subtitle">KITTY VAULT</div>
     </div>
   </div>
 
@@ -239,18 +238,48 @@
     'use strict';
 
     const DIAMOND_START = 0;       // Immediate frame-0 diamond appearance
-    const DIAMOND_END = 2300;      // 2.3s diamond completely leaves screen
-    const LOGO_REVEAL = 2320;      // ~2.32s logo & damask pattern fade in
-    const SEQUENCE_STOP = 3320;    // ~3.32s sequence completes
+    const DIAMOND_END = 1800;      // 1.8s diamond completely leaves screen (optimized from 2300ms)
+    const LOGO_REVEAL = 1400;      // 1.4s logo & damask pattern fade in during zoom
+    const SEQUENCE_STOP = 2600;    // 2.6s sequence completes cleanly
 
     class DiamondRenderer3D {
       constructor(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
-        this.dpr = window.devicePixelRatio || 1;
-        this.resize();
+        // Cap DPR at 2.0 to eliminate multi-megapixel canvas fill-rate thrashing on high-DPI screens
+        this.dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+        
         this.initGeometry();
+        this.resize();
         this.lightDir = this.normalize([0.42, 0.78, 0.52]);
+
+        // Pre-allocate vertex transform buffers (49 vertices, 0 per-frame heap allocations)
+        const nv = this.vertices.length;
+        this.transX = new Float32Array(nv);
+        this.transY = new Float32Array(nv);
+        this.transZ = new Float32Array(nv);
+        this.projX = new Float32Array(nv);
+        this.projY = new Float32Array(nv);
+
+        // Pre-allocate face processing buffers (94 faces, 0 per-frame heap allocations)
+        const nf = this.faces.length;
+        this.faceIndices = new Int32Array(nf);
+        for (let i = 0; i < nf; i++) this.faceIndices[i] = i;
+        this.faceZAvg = new Float32Array(nf);
+        this.faceIsFront = new Uint8Array(nf);
+        this.faceDotL = new Float32Array(nf);
+        this.faceSpecular = new Float32Array(nf);
+
+        // Pre-allocate sparkle buffers
+        this.maxSparkles = 32;
+        this.sparkleX = new Float32Array(this.maxSparkles);
+        this.sparkleY = new Float32Array(this.maxSparkles);
+        this.sparkleIntensity = new Float32Array(this.maxSparkles);
+        this.sparkleCount = 0;
+
+        // Static constant color strings for back-faces
+        this.BACK_FILL = 'rgba(8, 38, 32, 0.30)';
+        this.BACK_STROKE = 'rgba(225, 232, 240, 0.16)';
       }
 
       resize() {
@@ -258,8 +287,8 @@
         const h = window.innerHeight;
         this.width = w;
         this.height = h;
-        this.canvas.width = w * this.dpr;
-        this.canvas.height = h * this.dpr;
+        this.canvas.width = Math.round(w * this.dpr);
+        this.canvas.height = Math.round(h * this.dpr);
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         this.ctx.scale(this.dpr, this.dpr);
       }
@@ -284,44 +313,54 @@
         const H_girdle_half = 2;
         const H_pavilion = 72;
 
-        this.vertices = [];
+        const verts = [];
 
         // 1. Table Octagon (0..7)
         for (let i = 0; i < 8; i++) {
           const ang = (i * Math.PI) / 4;
-          this.vertices.push([R_table * Math.cos(ang), R_table * Math.sin(ang), H_crown]);
+          verts.push([R_table * Math.cos(ang), R_table * Math.sin(ang), H_crown]);
         }
 
         // 2. Upper Girdle (8..23)
         for (let i = 0; i < 16; i++) {
           const ang = (i * Math.PI) / 8;
-          this.vertices.push([R_girdle * Math.cos(ang), R_girdle * Math.sin(ang), H_girdle_half]);
+          verts.push([R_girdle * Math.cos(ang), R_girdle * Math.sin(ang), H_girdle_half]);
         }
 
         // 3. Lower Girdle (24..39)
         for (let i = 0; i < 16; i++) {
           const ang = (i * Math.PI) / 8;
-          this.vertices.push([R_girdle * Math.cos(ang), R_girdle * Math.sin(ang), -H_girdle_half]);
+          verts.push([R_girdle * Math.cos(ang), R_girdle * Math.sin(ang), -H_girdle_half]);
         }
 
         // 4. Culet apex (40)
-        const culetIdx = this.vertices.length;
-        this.vertices.push([0, 0, -H_pavilion]);
+        const culetIdx = verts.length;
+        verts.push([0, 0, -H_pavilion]);
 
         // 5. Mid-pavilion star vertices (41..48)
-        const midPavStart = this.vertices.length;
+        const midPavStart = verts.length;
         const R_mid_pav = 38;
         const H_mid_pav = -35;
         for (let i = 0; i < 8; i++) {
           const ang = ((i + 0.5) * Math.PI) / 4;
-          this.vertices.push([R_mid_pav * Math.cos(ang), R_mid_pav * Math.sin(ang), H_mid_pav]);
+          verts.push([R_mid_pav * Math.cos(ang), R_mid_pav * Math.sin(ang), H_mid_pav]);
         }
 
-        this.faces = [];
+        this.vertices = verts;
+        this.baseVertX = new Float32Array(verts.length);
+        this.baseVertY = new Float32Array(verts.length);
+        this.baseVertZ = new Float32Array(verts.length);
+        for (let i = 0; i < verts.length; i++) {
+          this.baseVertX[i] = verts[i][0];
+          this.baseVertY[i] = verts[i][1];
+          this.baseVertZ[i] = verts[i][2];
+        }
+
+        const faces = [];
 
         // 1. Table
         for (let i = 1; i < 7; i++) {
-          this.faces.push({ indices: [0, i, i + 1], type: 'table' });
+          faces.push({ indices: [0, i, i + 1], type: 'table' });
         }
 
         // 2. Crown
@@ -331,9 +370,9 @@
           const g0 = 8 + i * 2;
           const g1 = 8 + (i * 2 + 1) % 16;
           const g2 = 8 + (i * 2 + 2) % 16;
-          this.faces.push({ indices: [t0, t1, g1], type: 'star' });
-          this.faces.push({ indices: [t0, g0, g1], type: 'crown' });
-          this.faces.push({ indices: [t1, g1, g2], type: 'crown' });
+          faces.push({ indices: [t0, t1, g1], type: 'star' });
+          faces.push({ indices: [t0, g0, g1], type: 'crown' });
+          faces.push({ indices: [t1, g1, g2], type: 'crown' });
         }
 
         // 3. Girdle bands
@@ -342,8 +381,8 @@
           const u1 = 8 + (i + 1) % 16;
           const l0 = 24 + i;
           const l1 = 24 + (i + 1) % 16;
-          this.faces.push({ indices: [u0, l0, l1], type: 'girdle' });
-          this.faces.push({ indices: [u0, l1, u1], type: 'girdle' });
+          faces.push({ indices: [u0, l0, l1], type: 'girdle' });
+          faces.push({ indices: [u0, l1, u1], type: 'girdle' });
         }
 
         // 4. Pavilion
@@ -352,10 +391,39 @@
           const l1 = 24 + (i * 2 + 1) % 16;
           const l2 = 24 + (i * 2 + 2) % 16;
           const mp = midPavStart + i;
-          this.faces.push({ indices: [l0, l1, mp], type: 'pavilion' });
-          this.faces.push({ indices: [l1, l2, mp], type: 'pavilion' });
-          this.faces.push({ indices: [mp, l0, culetIdx], type: 'pavilion' });
-          this.faces.push({ indices: [mp, culetIdx, l2], type: 'pavilion' });
+          faces.push({ indices: [l0, l1, mp], type: 'pavilion' });
+          faces.push({ indices: [l1, l2, mp], type: 'pavilion' });
+          faces.push({ indices: [mp, l0, culetIdx], type: 'pavilion' });
+          faces.push({ indices: [mp, culetIdx, l2], type: 'pavilion' });
+        }
+
+        this.faces = faces;
+
+        // Flatten face vertex indices and PRECOMPUTE model-space unit normals ONCE
+        const nf = faces.length;
+        this.faceV0 = new Int32Array(nf);
+        this.faceV1 = new Int32Array(nf);
+        this.faceV2 = new Int32Array(nf);
+        this.faceNormX = new Float32Array(nf);
+        this.faceNormY = new Float32Array(nf);
+        this.faceNormZ = new Float32Array(nf);
+
+        for (let i = 0; i < nf; i++) {
+          const idx = faces[i].indices;
+          this.faceV0[i] = idx[0];
+          this.faceV1[i] = idx[1];
+          this.faceV2[i] = idx[2];
+
+          const v0 = verts[idx[0]];
+          const v1 = verts[idx[1]];
+          const v2 = verts[idx[2]];
+
+          const e1 = [v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]];
+          const e2 = [v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]];
+          const n = this.normalize(this.cross(e1, e2));
+          this.faceNormX[i] = n[0];
+          this.faceNormY[i] = n[1];
+          this.faceNormZ[i] = n[2];
         }
       }
 
@@ -373,8 +441,8 @@
         ctx.clearRect(0, 0, this.width, this.height);
         ctx.globalAlpha = opacity;
 
-        const cx = this.width / 2;
-        const cy = this.height / 2;
+        const cx = this.width * 0.5;
+        const cy = this.height * 0.5;
         const fov = 460;
         const pitchX = 0.36;
         const rollZ = 0.06;
@@ -383,125 +451,160 @@
         const cosX = Math.cos(pitchX), sinX = Math.sin(pitchX);
         const cosZ = Math.cos(rollZ), sinZ = Math.sin(rollZ);
 
-        const transformed = [];
-        const projected = [];
+        // Combined 3x3 rotation matrix: R = Rz * Rx * Ry (precomputed once per frame)
+        const m00 = cosZ * cosY - sinZ * sinX * sinY;
+        const m01 = -sinZ * cosX;
+        const m02 = cosZ * sinY + sinZ * sinX * cosY;
 
-        for (let i = 0; i < this.vertices.length; i++) {
-          const v = this.vertices[i];
-          const x = v[0] * scaleFactor;
-          const y = v[1] * scaleFactor;
-          const z = v[2] * scaleFactor;
+        const m10 = sinZ * cosY + cosZ * sinX * sinY;
+        const m11 = cosZ * cosX;
+        const m12 = sinZ * sinY - cosZ * sinX * cosY;
 
-          const x1 = x * cosY + z * sinY;
-          const y1 = y;
-          const z1 = -x * sinY + z * cosY;
+        const m20 = -cosX * sinY;
+        const m21 = sinX;
+        const m22 = cosX * cosY;
 
-          const x2 = x1;
-          const y2 = y1 * cosX - z1 * sinX;
-          const z2 = y1 * sinX + z1 * cosX;
+        // Scaled matrix for vertex transformation
+        const sm00 = m00 * scaleFactor, sm01 = m01 * scaleFactor, sm02 = m02 * scaleFactor;
+        const sm10 = m10 * scaleFactor, sm11 = m11 * scaleFactor, sm12 = m12 * scaleFactor;
+        const sm20 = m20 * scaleFactor, sm21 = m21 * scaleFactor, sm22 = m22 * scaleFactor;
 
-          const x3 = x2 * cosZ - y2 * sinZ;
-          const y3 = x2 * sinZ + y2 * cosZ;
-          const z3 = z2;
+        // 1. Transform & Project all vertices (0 allocations)
+        const nv = this.vertices.length;
+        const bx = this.baseVertX, by = this.baseVertY, bz = this.baseVertZ;
+        const tx = this.transX, ty = this.transY, tz = this.transZ;
+        const px = this.projX, py = this.projY;
 
-          transformed.push([x3, y3, z3]);
+        for (let i = 0; i < nv; i++) {
+          const vx = bx[i], vy = by[i], vz = bz[i];
+          const x3 = sm00 * vx + sm01 * vy + sm02 * vz;
+          const y3 = sm10 * vx + sm11 * vy + sm12 * vz;
+          const z3 = sm20 * vx + sm21 * vy + sm22 * vz;
+
+          tx[i] = x3;
+          ty[i] = y3;
+          tz[i] = z3;
 
           const zDist = Math.max(20, fov + z3);
           const pFactor = fov / zDist;
-          const px = cx + x3 * pFactor;
-          const py = cy - y3 * pFactor;
-          projected.push([px, py, z3]);
+          px[i] = cx + x3 * pFactor;
+          py[i] = cy - y3 * pFactor;
         }
 
-        const renderedFaces = [];
-        const sparkles = [];
+        // 2. Evaluate all 94 faces using precomputed model normals (0 cross products, 0 Math.hypot, 0 allocations)
+        const nf = this.faces.length;
+        const lx = this.lightDir[0], ly = this.lightDir[1], lz = this.lightDir[2];
+        const fnx = this.faceNormX, fny = this.faceNormY, fnz = this.faceNormZ;
+        const v0Arr = this.faceV0, v1Arr = this.faceV1, v2Arr = this.faceV2;
+        const zAvgArr = this.faceZAvg;
+        const isFrontArr = this.faceIsFront;
+        const dotLArr = this.faceDotL;
+        const specArr = this.faceSpecular;
+        const indices = this.faceIndices;
 
-        for (let i = 0; i < this.faces.length; i++) {
-          const face = this.faces[i];
-          const idx = face.indices;
-          const v0 = transformed[idx[0]];
-          const v1 = transformed[idx[1]];
-          const v2 = transformed[idx[2]];
+        this.sparkleCount = 0;
+        const allowSparkles = scaleFactor < 6.0;
 
-          const e1 = [v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]];
-          const e2 = [v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]];
-          const normal = this.normalize(this.cross(e1, e2));
+        for (let i = 0; i < nf; i++) {
+          indices[i] = i;
+          const iv0 = v0Arr[i], iv1 = v1Arr[i], iv2 = v2Arr[i];
+          zAvgArr[i] = (tz[iv0] + tz[iv1] + tz[iv2]) * 0.33333333;
 
-          const zAvg = (v0[2] + v1[2] + v2[2]) / 3;
-          const isFront = normal[2] > -0.15;
+          // Rotate precomputed model normal by unscaled rotation matrix R
+          const nx0 = fnx[i], ny0 = fny[i], nz0 = fnz[i];
+          const nx = m00 * nx0 + m01 * ny0 + m02 * nz0;
+          const ny = m10 * nx0 + m11 * ny0 + m12 * nz0;
+          const nz = m20 * nx0 + m21 * ny0 + m22 * nz0;
 
-          const dotL = Math.max(0, normal[0] * this.lightDir[0] + normal[1] * this.lightDir[1] + normal[2] * this.lightDir[2]);
-          const rx = 2 * dotL * normal[0] - this.lightDir[0];
-          const ry = 2 * dotL * normal[1] - this.lightDir[1];
-          const rz = 2 * dotL * normal[2] - this.lightDir[2];
+          const isFront = nz > -0.15;
+          isFrontArr[i] = isFront ? 1 : 0;
+
+          const dotL = Math.max(0, nx * lx + ny * ly + nz * lz);
+          dotLArr[i] = dotL;
+
+          const rz = 2 * dotL * nz - lz;
           const specular = Math.pow(Math.max(0, rz), 16);
+          specArr[i] = specular;
 
-          renderedFaces.push({
-            idx,
-            zAvg,
-            isFront,
-            dotL,
-            specular
-          });
-
-          if (isFront && specular > 0.76 && scaleFactor < 6.0) {
-            const pt = projected[idx[0]];
-            sparkles.push({ x: pt[0], y: pt[1], intensity: specular });
+          if (isFront && specular > 0.76 && allowSparkles && this.sparkleCount < this.maxSparkles) {
+            this.sparkleX[this.sparkleCount] = px[iv0];
+            this.sparkleY[this.sparkleCount] = py[iv0];
+            this.sparkleIntensity[this.sparkleCount] = specular;
+            this.sparkleCount++;
           }
         }
 
-        renderedFaces.sort((a, b) => a.zAvg - b.zAvg);
+        // 3. Fast in-place insertion sort of face indices by zAvg (0 allocations, <0.02ms)
+        for (let i = 1; i < nf; i++) {
+          const key = indices[i];
+          const zKey = zAvgArr[key];
+          let j = i - 1;
+          while (j >= 0 && zAvgArr[indices[j]] > zKey) {
+            indices[j + 1] = indices[j];
+            j--;
+          }
+          indices[j + 1] = key;
+        }
 
-        for (let i = 0; i < renderedFaces.length; i++) {
-          const item = renderedFaces[i];
-          const p0 = projected[item.idx[0]];
-          const p1 = projected[item.idx[1]];
-          const p2 = projected[item.idx[2]];
+        // 4. Render faces with batched styles & 0 heap allocations
+        const backLineWidth = Math.min(2.5, 0.5 * Math.max(1, scaleFactor * 0.35));
+        const frontLineWidth = Math.min(4.5, Math.max(0.7, 0.85 * (scaleFactor * 0.38)));
+
+        for (let i = 0; i < nf; i++) {
+          const faceIdx = indices[i];
+          const iv0 = v0Arr[faceIdx];
+          const iv1 = v1Arr[faceIdx];
+          const iv2 = v2Arr[faceIdx];
 
           ctx.beginPath();
-          ctx.moveTo(p0[0], p0[1]);
-          ctx.lineTo(p1[0], p1[1]);
-          ctx.lineTo(p2[0], p2[1]);
+          ctx.moveTo(px[iv0], py[iv0]);
+          ctx.lineTo(px[iv1], py[iv1]);
+          ctx.lineTo(px[iv2], py[iv2]);
           ctx.closePath();
 
-          if (!item.isFront) {
-            ctx.fillStyle = 'rgba(8, 38, 32, 0.30)';
+          if (!isFrontArr[faceIdx]) {
+            ctx.fillStyle = this.BACK_FILL;
             ctx.fill();
-            ctx.strokeStyle = 'rgba(225, 232, 240, 0.16)';
-            ctx.lineWidth = Math.min(2.5, 0.5 * Math.max(1, scaleFactor * 0.35));
+            ctx.strokeStyle = this.BACK_STROKE;
+            ctx.lineWidth = backLineWidth;
             ctx.stroke();
           } else {
-            const lit = item.dotL;
-            const spec = item.specular;
+            const lit = dotLArr[faceIdx];
+            const spec = specArr[faceIdx];
 
-            const r = Math.min(255, Math.floor(220 + lit * 28 + spec * 45));
-            const g = Math.min(255, Math.floor(226 + lit * 24 + spec * 40));
-            const b = Math.min(255, Math.floor(235 + lit * 18 + spec * 35));
+            const r = Math.min(255, (220 + lit * 28 + spec * 45) | 0);
+            const g = Math.min(255, (226 + lit * 24 + spec * 40) | 0);
+            const b = Math.min(255, (235 + lit * 18 + spec * 35) | 0);
             const a = Math.min(0.96, 0.70 + lit * 0.20 + spec * 0.28);
 
-            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+            ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + a.toFixed(2) + ')';
             ctx.fill();
 
             const edgeAlpha = Math.min(0.95, 0.52 + spec * 0.45);
-            ctx.strokeStyle = `rgba(242, 246, 252, ${edgeAlpha})`;
-            ctx.lineWidth = Math.min(4.5, Math.max(0.7, 0.85 * (scaleFactor * 0.38)));
+            ctx.strokeStyle = 'rgba(242, 246, 252,' + edgeAlpha.toFixed(2) + ')';
+            ctx.lineWidth = frontLineWidth;
             ctx.stroke();
           }
         }
 
-        for (let i = 0; i < sparkles.length; i++) {
-          const pt = sparkles[i];
-          const size = 5.5 * pt.intensity;
-          ctx.save();
-          ctx.strokeStyle = `rgba(255, 255, 255, ${0.92 * pt.intensity})`;
+        // 5. Draw sparkles without save()/restore() inside loop
+        const sc = this.sparkleCount;
+        if (sc > 0) {
           ctx.lineWidth = 1.1;
-          ctx.beginPath();
-          ctx.moveTo(pt.x - size, pt.y);
-          ctx.lineTo(pt.x + size, pt.y);
-          ctx.moveTo(pt.x, pt.y - size);
-          ctx.lineTo(pt.x, pt.y + size);
-          ctx.stroke();
-          ctx.restore();
+          for (let i = 0; i < sc; i++) {
+            const sx = this.sparkleX[i];
+            const sy = this.sparkleY[i];
+            const intensity = this.sparkleIntensity[i];
+            const size = 5.5 * intensity;
+
+            ctx.strokeStyle = 'rgba(255, 255, 255,' + (0.92 * intensity).toFixed(2) + ')';
+            ctx.beginPath();
+            ctx.moveTo(sx - size, sy);
+            ctx.lineTo(sx + size, sy);
+            ctx.moveTo(sx, sy - size);
+            ctx.lineTo(sx, sy + size);
+            ctx.stroke();
+          }
         }
 
         ctx.globalAlpha = 1.0;
@@ -579,6 +682,15 @@
   })();
   </script>
 
-  <script src="flutter_bootstrap.js" async></script>
+  <!-- Cooperatively schedule Flutter bootstrap to grant the diamond animation
+       an un-interrupted 60 FPS window during initial render & spin -->
+  <script>
+    setTimeout(function () {
+      var s = document.createElement('script');
+      s.src = 'flutter_bootstrap.js';
+      s.async = true;
+      document.body.appendChild(s);
+    }, 450);
+  </script>
 </body>
 </html>

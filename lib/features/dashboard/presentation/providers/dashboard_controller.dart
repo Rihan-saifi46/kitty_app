@@ -13,6 +13,8 @@ final NotifierProvider<DashboardController, DashboardState> dashboardControllerP
 /// Controller managing active scheme dashboard metrics, loading, refresh, and error handling.
 class DashboardController extends Notifier<DashboardState> {
   late IDashboardRepository _dashboardRepository;
+  DateTime? _lastLoadedTime;
+  static const Duration _cacheTtl = Duration(seconds: 60);
 
   @override
   DashboardState build() {
@@ -26,6 +28,15 @@ class DashboardController extends Notifier<DashboardState> {
 
   /// Fetches active kitty dashboard summary from repository.
   Future<void> loadDashboard({bool refresh = false}) async {
+    // Return cached data if still valid within TTL and not a force refresh
+    if (!refresh &&
+        state.status == DashboardStatus.loaded &&
+        state.data != null &&
+        _lastLoadedTime != null &&
+        DateTime.now().difference(_lastLoadedTime!) < _cacheTtl) {
+      return;
+    }
+
     final DashboardSummaryEntity? cachedData = state.data;
 
     if (refresh && cachedData != null) {
@@ -36,6 +47,7 @@ class DashboardController extends Notifier<DashboardState> {
 
     try {
       final DashboardSummaryEntity summary = await _dashboardRepository.getMyDashboard();
+      _lastLoadedTime = DateTime.now();
 
       if (!summary.hasActiveScheme) {
         state = const DashboardState.empty();
@@ -69,6 +81,6 @@ class DashboardController extends Notifier<DashboardState> {
 
   /// Retries loading dashboard data.
   Future<void> retry() async {
-    await loadDashboard();
+    await loadDashboard(refresh: true);
   }
 }

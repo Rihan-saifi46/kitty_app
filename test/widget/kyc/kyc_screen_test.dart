@@ -42,7 +42,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('SWASTIK JEWEL'), findsOneWidget);
+      expect(find.bySemanticsLabel('Swastik Jewellers'), findsOneWidget);
       expect(find.text('KYC Document Verification'), findsOneWidget);
       expect(find.text('Aadhaar Card'), findsOneWidget);
       expect(find.text('PAN Card'), findsOneWidget);

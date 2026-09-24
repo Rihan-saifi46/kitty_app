@@ -61,6 +61,8 @@ class KittyAvatar extends StatelessWidget {
     if (imageUrl != null && imageUrl!.isNotEmpty) {
       avatarContent = Image.network(
         imageUrl!,
+        cacheWidth: 120,
+        cacheHeight: 120,
         fit: BoxFit.cover,
         errorBuilder: (BuildContext context, Object error, StackTrace? stack) =>
             _buildInitials(effectiveText),
@@ -68,6 +70,8 @@ class KittyAvatar extends StatelessWidget {
     } else if (assetPath != null && assetPath!.isNotEmpty) {
       avatarContent = Image.asset(
         assetPath!,
+        cacheWidth: 120,
+        cacheHeight: 120,
         fit: BoxFit.cover,
         errorBuilder: (BuildContext context, Object error, StackTrace? stack) =>
             _buildInitials(effectiveText),

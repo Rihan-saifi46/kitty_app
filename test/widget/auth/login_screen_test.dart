@@ -17,7 +17,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 850)); // let entrance animation complete
 
     expect(find.text('Sign in to continue'), findsOneWidget);
-    expect(find.text('Continue with Google'), findsOneWidget);
+    expect(find.text('Continue with Instagram'), findsOneWidget);
     expect(find.text('OR'), findsOneWidget);
     expect(find.text('Continue with Mobile'), findsOneWidget);
     expect(find.textContaining('Protected by bank-grade 256-bit encryption'), findsOneWidget);
@@ -34,7 +34,7 @@ void main() {
     // Tap "Back" -> navigates back to View 0
     await tester.tap(find.text('Back'));
     await tester.pump(const Duration(milliseconds: 350));
-    expect(find.text('Continue with Google'), findsOneWidget);
+    expect(find.text('Continue with Instagram'), findsOneWidget);
   });
 
   testWidgets('LoginScreen View 2 renders OTP step with 6 boxes and change number', (WidgetTester tester) async {
@@ -93,7 +93,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 850));
 
     expect(find.text('Sign in to continue'), findsOneWidget);
-    expect(find.text('Continue with Google'), findsOneWidget);
+    expect(find.text('Continue with Instagram'), findsOneWidget);
     expect(find.text('Continue with Mobile'), findsOneWidget);
 
     // Navigate to phone view on small screen

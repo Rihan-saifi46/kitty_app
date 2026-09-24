@@ -7,10 +7,15 @@ enum AppRoute {
   login('login'),
   phone('phone'),
   otp('otp'),
+  profile('profile'),
   authSuccess('authSuccess'),
 
   // Shell Tabs
   home('home'),
+  coinRates('coinRates'),
+  jewellery('jewellery'),
+  calculator('calculator'),
+  menu('menu'),
   dashboard('dashboard'),
   passbook('passbook'),
   offers('offers'),

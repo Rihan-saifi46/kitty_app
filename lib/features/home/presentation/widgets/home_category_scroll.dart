@@ -53,7 +53,7 @@ class HomeCategoryScroll extends StatelessWidget {
             eyebrow: 'CURATED COLLECTIONS',
             actionLabel: 'View All →',
             onAction: onViewAllTap,
-            isDarkSurface: true,
+            isDarkSurface: false,
           ),
         ),
         const SizedBox(height: AppSpacing.space12),
@@ -84,15 +84,15 @@ class HomeCategoryScroll extends StatelessWidget {
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isSelected ? AppColors.goldSubtle : Colors.transparent,
+                        color: isSelected ? AppColors.homeCategoryRingBg : Colors.transparent,
                         border: Border.all(
-                          color: isSelected ? AppColors.goldPrimary : AppColors.goldBorder.withValues(alpha: 0.35),
+                          color: isSelected ? AppColors.homeBrandGold : AppColors.homeCategoryRingBorder,
                           width: isSelected ? 2.0 : 1.2,
                         ),
                         boxShadow: isSelected
                             ? <BoxShadow>[
                                 BoxShadow(
-                                  color: AppColors.goldPrimary.withValues(alpha: 0.25),
+                                  color: AppColors.homeBrandGold.withValues(alpha: 0.25),
                                   blurRadius: 10,
                                   offset: const Offset(0, 3),
                                 ),
@@ -102,13 +102,15 @@ class HomeCategoryScroll extends StatelessWidget {
                       child: ClipOval(
                         child: Image.asset(
                           item.assetImage,
+                          cacheWidth: 160,
+                          cacheHeight: 160,
                           fit: BoxFit.cover,
                           errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
                             return Container(
-                              color: AppColors.deepEmeraldBase,
+                              color: AppColors.homeCategoryRingBg,
                               child: const Icon(
                                 Icons.diamond_outlined,
-                                color: AppColors.goldPrimary,
+                                color: AppColors.homeBrandGold,
                                 size: 24,
                               ),
                             );
@@ -122,9 +124,9 @@ class HomeCategoryScroll extends StatelessWidget {
                     Text(
                       item.name,
                       style: AppTypography.labelMeta(
-                        color: isSelected ? AppColors.goldLight : AppColors.textSecondaryLight,
+                        color: isSelected ? AppColors.homeBrandGold : AppColors.homePrimaryHeading,
                       ).copyWith(
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                       ),
                     ),
                   ],

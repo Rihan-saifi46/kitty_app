@@ -8,10 +8,8 @@ import 'package:kitty_app/features/home/domain/entities/product_entity.dart';
 import 'package:kitty_app/features/offers/data/repositories/mock_scheme_repository.dart';
 import 'package:kitty_app/features/offers/domain/entities/scheme_entity.dart';
 import 'package:kitty_app/features/offers/presentation/screens/offers_screen.dart';
-import 'package:kitty_app/features/offers/presentation/widgets/offers_catalog_grid.dart';
 import 'package:kitty_app/features/offers/presentation/widgets/offers_enrollment_dialog.dart';
 import 'package:kitty_app/features/offers/presentation/widgets/offers_hero_header.dart';
-import 'package:kitty_app/features/offers/presentation/widgets/offers_product_detail_sheet.dart';
 import 'package:kitty_app/features/offers/presentation/widgets/offers_scheme_card.dart';
 import 'package:kitty_app/features/offers/presentation/widgets/offers_trust_strip.dart';
 import 'package:kitty_app/shared/widgets/feedback/kitty_empty_state.dart';
@@ -61,9 +59,9 @@ void main() {
       expect(find.text('Kitty Offers & Plans'), findsOneWidget);
       expect(find.text('Curated Gold Kitty Plans'), findsOneWidget);
 
-      // Section Switcher
-      expect(find.text('✦ Savings Schemes'), findsOneWidget);
-      expect(find.text('💎 Jewellery Catalog'), findsOneWidget);
+      // Section Switcher removed per Change 10
+      expect(find.text('✦ Savings Schemes'), findsNothing);
+      expect(find.text('💎 Jewellery Catalog'), findsNothing);
 
       // Duration Tabs
       expect(find.text('All Plans (3)'), findsOneWidget);
@@ -156,7 +154,7 @@ void main() {
       expect(find.byType(OffersEnrollmentDialog), findsNothing);
     });
 
-    testWidgets('4. Section switcher toggles between Schemes and Jewellery Catalog',
+    testWidgets('4. Kitty Schemes page dedicated to savings: Jewellery catalog option is removed',
         (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1080, 2340);
       tester.view.devicePixelRatio = 2.0;
@@ -176,67 +174,15 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Initially in Schemes
+      // Schemes cards are shown
       expect(find.byType(OffersSchemeCard), findsWidgets);
-      expect(find.byType(OffersCatalogGrid), findsNothing);
 
-      // Switch to Jewellery Catalog
-      await tester.tap(find.text('💎 Jewellery Catalog'));
-      await tester.pumpAndSettle();
+      // Jewellery Catalog switcher/option is removed per Change 10
+      expect(find.text('💎 Jewellery Catalog'), findsNothing);
+      expect(find.text('✦ Savings Schemes'), findsNothing);
 
-      expect(find.byType(OffersCatalogGrid), findsOneWidget);
-      expect(find.byType(OffersSchemeCard), findsNothing);
-      expect(find.text('Royal Mayura Gold Choker'), findsOneWidget);
-
-      // Switch back to Savings Schemes
-      await tester.tap(find.text('✦ Savings Schemes'));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(OffersSchemeCard), findsWidgets);
-      expect(find.byType(OffersCatalogGrid), findsNothing);
-    });
-
-    testWidgets('5. In Jewellery Catalog, tapping product card opens OffersProductDetailSheet',
-        (WidgetTester tester) async {
-      tester.view.physicalSize = const Size(1080, 2340);
-      tester.view.devicePixelRatio = 2.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
-      final MockSchemeRepository schemeRepo =
-          MockSchemeRepository(engineConfig: instantConfig);
-      final MockProductRepository productRepo =
-          MockProductRepository(engineConfig: instantConfig);
-
-      await tester.pumpWidget(
-        buildTestApp(
-          schemeRepository: schemeRepo,
-          productRepository: productRepo,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      // Switch to Catalog
-      await tester.tap(find.text('💎 Jewellery Catalog'));
-      await tester.pumpAndSettle();
-
-      // Tap on product
-      final Finder productFinder = find.text('Royal Mayura Gold Choker');
-      expect(productFinder, findsOneWidget);
-
-      await tester.tap(productFinder);
-      await tester.pumpAndSettle();
-
-      // Bottom sheet opens
-      expect(find.byType(OffersProductDetailSheet), findsOneWidget);
-      expect(find.text('ENQUIRE AT SHOWROOM'), findsOneWidget);
-      expect(find.text('Weight: 28.45 g'), findsOneWidget);
-
-      // Dismiss sheet
-      await tester.tap(find.byIcon(Icons.close_rounded));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(OffersProductDetailSheet), findsNothing);
+      // Swastik Trust Strip is rendered
+      expect(find.text('100% BIS Hallmarked'), findsOneWidget);
     });
 
     testWidgets('6. Renders Empty State when no schemes or products exist',

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
+import '../../../features/notifications/presentation/providers/notifications_controller.dart';
 
 /// Luxury slide-out navigation drawer strictly matching the approved prototype.
 class LuxuryNavDrawer extends ConsumerWidget {
@@ -15,41 +17,28 @@ class LuxuryNavDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppAuthState authState = ref.watch(appAuthStateProvider);
     final String currentPath = GoRouterState.of(context).uri.path;
+    final int unreadNotificationsCount = ref.watch(unreadNotificationsCountProvider);
 
     return Drawer(
       backgroundColor: AppColors.deepEmeraldBase,
       child: SafeArea(
         child: Column(
           children: <Widget>[
-            // 1. Drawer Header & Brand Row
+            // 1. Drawer Header: Brand Crest & Close Button
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 12, 16),
               child: Row(
                 children: <Widget>[
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: AppColors.goldSubtle,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.goldBorder),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.diamond_outlined,
-                        color: AppColors.goldPrimary,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.space8),
                   Expanded(
-                    child: Text(
-                      'SWASTIK VAULT',
-                      style: AppTypography.displaySubtitle(
-                        color: AppColors.goldLight,
-                      ).copyWith(letterSpacing: 1.5, fontSize: 16),
-                      overflow: TextOverflow.ellipsis,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: SvgPicture.asset(
+                        'assets/icons/swastiklogo.svg',
+                        key: const Key('drawer_swastik_logo'),
+                        height: 28,
+                        fit: BoxFit.contain,
+                        semanticsLabel: 'Swastik Jewellers',
+                      ),
                     ),
                   ),
                   IconButton(
@@ -190,6 +179,8 @@ class LuxuryNavDrawer extends ConsumerWidget {
                     icon: Icons.notifications_outlined,
                     routePath: RoutePaths.notifications,
                     isActive: currentPath == RoutePaths.notifications,
+                    badgeText: unreadNotificationsCount > 0 ? '$unreadNotificationsCount' : null,
+                    badgeColor: AppColors.goldLight,
                     onTap: () => _navigateTo(context, RoutePaths.notifications),
                   ),
                   _DrawerNavItem(

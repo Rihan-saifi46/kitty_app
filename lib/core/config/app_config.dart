@@ -45,7 +45,7 @@ class AppConfig {
     final bool resolvedMock = useMockApi ??
         (hasMockDefine
             ? useMockApiDefine
-            : (resolvedEnv.isMock || (!kReleaseMode && resolvedEnv == AppEnvironment.mock)));
+            : (resolvedEnv.isMock || baseUrlDefine.isEmpty || (!kReleaseMode && resolvedEnv == AppEnvironment.mock)));
 
     return AppConfig._(
       environment: resolvedEnv,

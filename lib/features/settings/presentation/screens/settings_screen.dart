@@ -22,12 +22,11 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final SettingsState state = ref.watch(settingsControllerProvider);
     final SettingsController controller = ref.read(settingsControllerProvider.notifier);
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final Color pageBg = isDark ? AppColors.deepEmeraldBase : const Color(0xFFF8F9FA);
-    final Color headerBg = isDark ? AppColors.deepEmeraldBase : Colors.white;
-    final Color headerBorder = isDark ? AppColors.emeraldBorder : const Color(0xFFF1F3F5);
-    final Color titleColor = isDark ? AppColors.textPrimaryLight : const Color(0xFF0F172A);
+    const bool isDark = false;
+    const Color pageBg = AppColors.settingsBg;
+    const Color headerBg = AppColors.settingsCardBg;
+    const Color headerBorder = AppColors.settingsBorder;
+    const Color titleColor = AppColors.settingsTextPrimary;
 
     return Scaffold(
       backgroundColor: pageBg,
@@ -98,10 +97,10 @@ class SettingsScreen extends ConsumerWidget {
                           subtitle: 'Auto-deduct ₹5,000 on 15th every month',
                           trailing: Switch(
                             value: state.preferences.autoPayEnabled,
-                            activeThumbColor: isDark ? AppColors.goldPrimary : const Color(0xFF0C2B24),
-                            activeTrackColor: isDark
-                                ? AppColors.emeraldPrimary
-                                : const Color(0xFF0C2B24).withValues(alpha: 0.3),
+                            activeThumbColor: AppColors.settingsAccentGold,
+                            activeTrackColor: AppColors.settingsAccentGold.withValues(alpha: 0.35),
+                            inactiveThumbColor: AppColors.settingsTextSecondary,
+                            inactiveTrackColor: AppColors.settingsBorder,
                             onChanged: (bool value) => controller.toggleAutoPay(value),
                           ),
                         ),
@@ -138,10 +137,10 @@ class SettingsScreen extends ConsumerWidget {
                           subtitle: 'Fingerprint / Face ID for Passbook',
                           trailing: Switch(
                             value: state.preferences.biometricEnabled,
-                            activeThumbColor: isDark ? AppColors.goldPrimary : const Color(0xFF0C2B24),
-                            activeTrackColor: isDark
-                                ? AppColors.emeraldPrimary
-                                : const Color(0xFF0C2B24).withValues(alpha: 0.3),
+                            activeThumbColor: AppColors.settingsAccentGold,
+                            activeTrackColor: AppColors.settingsAccentGold.withValues(alpha: 0.35),
+                            inactiveThumbColor: AppColors.settingsTextSecondary,
+                            inactiveTrackColor: AppColors.settingsBorder,
                             onChanged: (bool value) => controller.toggleBiometric(value),
                           ),
                         ),
@@ -206,7 +205,7 @@ class SettingsScreen extends ConsumerWidget {
 
                     // Footer Legal Text
                     _buildFooterLegal(),
-                    const SizedBox(height: AppSpacing.space24),
+                    const SizedBox(height: AppSpacing.space64),
                   ],
                 ),
               );
@@ -228,7 +227,7 @@ class SettingsScreen extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          // Back Button Circle: #0C2B24 with #FFFFFF arrow
+          // Back Button Circle (Soft Warm Linen #EAE4D9 with subtle border)
           GestureDetector(
             onTap: () {
               if (Navigator.of(context).canPop()) {
@@ -241,21 +240,25 @@ class SettingsScreen extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isDark ? AppColors.goldSubtle : const Color(0xFF0C2B24),
+                color: AppColors.settingsIconBg,
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.settingsBorder,
+                  width: 1,
+                ),
                 boxShadow: const <BoxShadow>[
                   BoxShadow(
-                    color: Color(0x1F0C2B24),
-                    blurRadius: 8,
-                    offset: Offset(0, 3),
+                    color: Color(0x0F241E1A),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),
-              child: Center(
+              child: const Center(
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   size: 16,
-                  color: isDark ? AppColors.goldPrimary : Colors.white,
+                  color: AppColors.settingsTextPrimary,
                 ),
               ),
             ),
@@ -282,17 +285,18 @@ class SettingsScreen extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isDark ? AppColors.emeraldCard : Colors.white,
+                color: AppColors.settingsIconBg,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDark ? AppColors.emeraldBorder : const Color(0xFFE2E8F0),
+                  color: AppColors.settingsBorder,
+                  width: 1,
                 ),
               ),
-              child: Center(
+              child: const Center(
                 child: Icon(
                   Icons.menu_rounded,
                   size: 20,
-                  color: isDark ? AppColors.goldPrimary : const Color(0xFF0C2B24),
+                  color: AppColors.settingsTextPrimary,
                 ),
               ),
             ),
@@ -406,17 +410,24 @@ class SettingsScreen extends ConsumerWidget {
       builder: (BuildContext ctx) {
         final bool isDark = Theme.of(ctx).brightness == Brightness.dark;
         return Material(
-          color: isDark ? AppColors.emeraldCard : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          color: isDark ? AppColors.emeraldCard : AppColors.settingsCardBg,
+          shape: RoundedRectangleBorder(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            side: BorderSide(color: isDark ? AppColors.emeraldBorder : AppColors.settingsBorder),
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
+                Text(
                   'Choose Theme',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? AppColors.textPrimaryLight : AppColors.settingsTextPrimary,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 _buildThemeOption(ctx, controller, 'System Default', 'system', currentMode == 'system'),
@@ -439,7 +450,7 @@ class SettingsScreen extends ConsumerWidget {
   ) {
     return ListTile(
       title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-      trailing: isSelected ? const Icon(Icons.check_rounded, color: AppColors.goldPrimary) : null,
+      trailing: isSelected ? const Icon(Icons.check_rounded, color: AppColors.settingsAccentGold) : null,
       onTap: () {
         controller.setThemeMode(mode);
         Navigator.of(ctx).pop();
@@ -454,22 +465,29 @@ class SettingsScreen extends ConsumerWidget {
       builder: (BuildContext ctx) {
         final bool isDark = Theme.of(ctx).brightness == Brightness.dark;
         return Material(
-          color: isDark ? AppColors.emeraldCard : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          color: isDark ? AppColors.emeraldCard : AppColors.settingsCardBg,
+          shape: RoundedRectangleBorder(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            side: BorderSide(color: isDark ? AppColors.emeraldBorder : AppColors.settingsBorder),
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
+                Text(
                   'Select App Language',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? AppColors.textPrimaryLight : AppColors.settingsTextPrimary,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 ListTile(
                   title: const Text('English (UK)', style: TextStyle(fontWeight: FontWeight.w600)),
-                  trailing: currentLang == 'en' ? const Icon(Icons.check_rounded, color: AppColors.goldPrimary) : null,
+                  trailing: currentLang == 'en' ? const Icon(Icons.check_rounded, color: AppColors.settingsAccentGold) : null,
                   onTap: () {
                     controller.setLanguage('en');
                     Navigator.of(ctx).pop();
@@ -477,7 +495,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 ListTile(
                   title: const Text('Hindi (हिन्दी)', style: TextStyle(fontWeight: FontWeight.w600)),
-                  trailing: currentLang == 'hi' ? const Icon(Icons.check_rounded, color: AppColors.goldPrimary) : null,
+                  trailing: currentLang == 'hi' ? const Icon(Icons.check_rounded, color: AppColors.settingsAccentGold) : null,
                   onTap: () {
                     controller.setLanguage('hi');
                     Navigator.of(ctx).pop();

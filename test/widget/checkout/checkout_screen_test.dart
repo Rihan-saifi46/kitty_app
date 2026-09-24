@@ -90,6 +90,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap confirm & pay
+      await tester.ensureVisible(find.byKey(const Key('btn_confirm_payment')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('btn_confirm_payment')));
       await tester.pumpAndSettle();
 
@@ -100,6 +102,32 @@ void main() {
       expect(find.text('Installment Paid Successfully'), findsOneWidget);
       expect(find.byKey(const Key('btn_payment_view_passbook')), findsOneWidget);
       expect(find.byKey(const Key('btn_payment_back_dashboard')), findsOneWidget);
+    });
+
+    testWidgets('3b. Payment Method Selection: switching channels updates selection state and CTA', (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Initially UPI is selected
+      expect(find.text('Confirm & Pay ₹5,000'), findsOneWidget);
+
+      // Select Net Banking
+      await tester.ensureVisible(find.byKey(const Key('checkout_method_netbanking')));
+      await tester.tap(find.byKey(const Key('checkout_method_netbanking')));
+      await tester.pumpAndSettle();
+
+      // Select Debit / Credit Card
+      await tester.ensureVisible(find.byKey(const Key('checkout_method_card')));
+      await tester.tap(find.byKey(const Key('checkout_method_card')));
+      await tester.pumpAndSettle();
+
+      // Select Pick Cash
+      await tester.ensureVisible(find.byKey(const Key('checkout_method_pick_cash')));
+      await tester.tap(find.byKey(const Key('checkout_method_pick_cash')));
+      await tester.pumpAndSettle();
+
+      // Button updates to reflect cash pickup
+      expect(find.text('Proceed with Cash Pickup'), findsOneWidget);
     });
 
     testWidgets('4. Polling state renders PaymentProcessingView', (WidgetTester tester) async {

@@ -41,6 +41,9 @@ abstract final class AppSpacing {
   /// 48px - Major screen block separator
   static const double space48 = 48.0;
 
+  /// 64px - Extended bottom dock clearance
+  static const double space64 = 64.0;
+
   // ---------------------------------------------------------------------------
   // EdgeInsets Shortcuts
   // ---------------------------------------------------------------------------
@@ -78,6 +81,9 @@ abstract final class AppRadius {
   /// 6px - Progress bars, inner pill tags
   static const double radius6 = 6.0;
 
+  /// 8px - Badges, small chips, pill tags
+  static const double radius8 = 8.0;
+
   /// 10px - Secondary buttons, thumbnail cards
   static const double radius10 = 10.0;
 
@@ -108,6 +114,9 @@ abstract final class AppRadius {
 
   /// BorderRadius.circular(6.0)
   static const BorderRadius border6 = BorderRadius.all(Radius.circular(radius6));
+
+  /// BorderRadius.circular(8.0)
+  static const BorderRadius border8 = BorderRadius.all(Radius.circular(radius8));
 
   /// BorderRadius.circular(10.0)
   static const BorderRadius border10 = BorderRadius.all(Radius.circular(radius10));

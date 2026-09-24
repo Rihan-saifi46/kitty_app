@@ -42,6 +42,7 @@ class HomeEditorialBanner extends StatelessWidget {
             // Campaign Background Image
             Image.asset(
               'assets/images/campaign_emerald_necklace.jpg',
+              cacheWidth: 800,
               fit: BoxFit.cover,
               errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
                 return Container(
@@ -84,13 +85,13 @@ class HomeEditorialBanner extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: const BoxDecoration(
-                      color: AppColors.goldPrimary,
+                      color: AppColors.champagneFoil,
                       borderRadius: AppRadius.border6,
                     ),
                     child: Text(
                       'EXCLUSIVE EDIT',
                       style: AppTypography.labelMeta(
-                        color: AppColors.deepEmeraldBase,
+                        color: AppColors.deepUmberBronze,
                       ).copyWith(
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.2,
@@ -110,10 +111,12 @@ class HomeEditorialBanner extends StatelessWidget {
 
                   // Subtitle
                   Text(
-                    'Timeless pieces crafted for life\'s everyday celebrations.',
+                    'Handcrafted 22K daily-wear essentials crafted for eternal elegance.',
                     style: AppTypography.bodySmall(
-                      color: AppColors.textSecondaryLight,
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 12),
 
@@ -124,7 +127,7 @@ class HomeEditorialBanner extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       decoration: const BoxDecoration(
-                        color: AppColors.goldPrimary,
+                        color: AppColors.honeyGoldAccent,
                         borderRadius: AppRadius.border10,
                       ),
                       child: Row(
@@ -133,7 +136,7 @@ class HomeEditorialBanner extends StatelessWidget {
                           Text(
                             'EXPLORE COLLECTION',
                             style: AppTypography.labelMeta(
-                              color: AppColors.deepEmeraldBase,
+                              color: AppColors.deepUmberBronze,
                             ).copyWith(
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.0,
@@ -143,7 +146,7 @@ class HomeEditorialBanner extends StatelessWidget {
                           const Icon(
                             Icons.arrow_forward_rounded,
                             size: 14,
-                            color: AppColors.deepEmeraldBase,
+                            color: AppColors.deepUmberBronze,
                           ),
                         ],
                       ),

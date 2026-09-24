@@ -13,15 +13,13 @@ import '../../domain/entities/product_entity.dart';
 import '../providers/home_controller.dart';
 import '../providers/home_state.dart';
 import '../widgets/home_active_kitty_card.dart';
-import '../widgets/home_category_scroll.dart';
 import '../widgets/home_curated_product_grid.dart';
 import '../widgets/home_editorial_banner.dart';
 import '../widgets/home_gold_rate_strip.dart';
-import '../widgets/home_greeting_bar.dart';
 import '../widgets/home_kyc_reminder_banner.dart';
 import '../widgets/home_offers_carousel.dart';
-import '../widgets/home_quick_actions.dart';
 import '../widgets/home_skeleton_loader.dart';
+import '../widgets/home_store_video_section.dart';
 
 /// Complete authenticated Home landing screen for the Kitty App.
 class HomeScreen extends ConsumerWidget {
@@ -50,7 +48,7 @@ class HomeScreen extends ConsumerWidget {
     // 1. Loading State
     if (homeState.isLoading && homeState.data == null) {
       return const Scaffold(
-        backgroundColor: AppColors.deepEmeraldBase,
+        backgroundColor: AppColors.homeCanvasBg,
         body: SafeArea(child: HomeSkeletonLoader()),
       );
     }
@@ -58,7 +56,7 @@ class HomeScreen extends ConsumerWidget {
     // 2. Error State (No cached data)
     if (homeState.isError && homeState.data == null) {
       return Scaffold(
-        backgroundColor: AppColors.deepEmeraldBase,
+        backgroundColor: AppColors.homeCanvasBg,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.space24),
@@ -67,7 +65,7 @@ class HomeScreen extends ConsumerWidget {
               message: homeState.errorMessage ??
                   'Unable to load your kitty details and catalog. Please check your internet connection.',
               retryLabel: 'Try Again',
-              isDarkSurface: true,
+              isDarkSurface: false,
               onRetry: () => ref.read(homeControllerProvider.notifier).loadHomeData(),
             ),
           ),
@@ -78,34 +76,25 @@ class HomeScreen extends ConsumerWidget {
     final HomeDataEntity? data = homeState.data;
     if (data == null) {
       return const Scaffold(
-        backgroundColor: AppColors.deepEmeraldBase,
+        backgroundColor: AppColors.homeCanvasBg,
         body: SafeArea(child: HomeSkeletonLoader()),
       );
     }
 
     return Scaffold(
-      backgroundColor: AppColors.deepEmeraldBase,
+      backgroundColor: AppColors.homeCanvasBg,
       body: SafeArea(
         bottom: false,
         child: RefreshIndicator(
-          color: AppColors.goldPrimary,
-          backgroundColor: AppColors.emeraldCard,
+          color: AppColors.homeBrandGold,
+          backgroundColor: AppColors.homeNavbarBg,
           onRefresh: () => ref.read(homeControllerProvider.notifier).refresh(),
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
             ),
             slivers: <Widget>[
-              // 1. Patron Greeting Bar
-              SliverToBoxAdapter(
-                child: HomeGreetingBar(
-                  userName: authState.userName.isNotEmpty ? authState.userName : 'Valued Patron',
-                  tier: authState.tier,
-                  onProfileTap: () => context.go(RoutePaths.settings),
-                ),
-              ),
-
-              // 2. Statutory KYC Compliance Reminder (if not verified)
+              // 1. Statutory KYC Compliance Reminder (if not verified)
               if (!authState.isKycVerified)
                 SliverToBoxAdapter(
                   child: HomeKycReminderBanner(
@@ -113,58 +102,11 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
 
-              // 3. Quick Action Shortcuts
-              SliverToBoxAdapter(
-                child: HomeQuickActions(
-                  actions: <QuickActionItem>[
-                    QuickActionItem(
-                      title: 'My Kitty',
-                      icon: Icons.savings_outlined,
-                      onTap: () => context.go(RoutePaths.dashboard),
-                    ),
-                    QuickActionItem(
-                      title: 'Passbook',
-                      icon: Icons.receipt_long_outlined,
-                      onTap: () => context.go(RoutePaths.passbook),
-                    ),
-                    QuickActionItem(
-                      title: 'Offers',
-                      icon: Icons.local_offer_outlined,
-                      onTap: () => context.go(RoutePaths.offers),
-                    ),
-                    QuickActionItem(
-                      title: 'KYC',
-                      icon: Icons.shield_outlined,
-                      onTap: () => context.push(RoutePaths.kyc),
-                    ),
-                    QuickActionItem(
-                      title: 'Concierge',
-                      icon: Icons.support_agent_outlined,
-                      onTap: () => context.go(RoutePaths.settings),
-                    ),
-                  ],
-                ),
-              ),
-
               const SliverToBoxAdapter(
-                child: SizedBox(height: AppSpacing.space12),
+                child: SizedBox(height: AppSpacing.space8),
               ),
 
-              // 4. Active Kitty Plan Summary Card
-              if (data.activeKitty != null)
-                SliverToBoxAdapter(
-                  child: HomeActiveKittyCard(
-                    dashboard: data.activeKitty!,
-                    onPayTap: () => context.push(RoutePaths.checkout),
-                    onDetailsTap: () => context.go(RoutePaths.dashboard),
-                  ),
-                ),
-
-              const SliverToBoxAdapter(
-                child: SizedBox(height: AppSpacing.space14),
-              ),
-
-              // 5. Exclusive Kitty Offers & Schemes Carousel
+              // 2. Exclusive Promotional Kitty Offers Carousel (Promoted to Top)
               SliverToBoxAdapter(
                 child: HomeOffersCarousel(
                   schemes: data.schemes,
@@ -174,23 +116,30 @@ class HomeScreen extends ConsumerWidget {
               ),
 
               const SliverToBoxAdapter(
-                child: SizedBox(height: AppSpacing.space20),
+                child: SizedBox(height: AppSpacing.space12),
               ),
 
-              // 6. Curated Collections / Shop By Category
-              SliverToBoxAdapter(
-                child: HomeCategoryScroll(
-                  categories: data.categories,
-                  selectedCategory: data.selectedCategory,
-                  onCategorySelected: (String category) {
-                    ref.read(homeControllerProvider.notifier).selectCategory(category);
-                  },
-                  onViewAllTap: () => context.go(RoutePaths.offers),
+              // 3. Active Jewel Plan Summary Card
+              if (data.activeKitty != null)
+                SliverToBoxAdapter(
+                  child: HomeActiveKittyCard(
+                    dashboard: data.activeKitty!,
+                    onSeeActiveSchemeTap: () => context.go(RoutePaths.dashboard),
+                    onDetailsTap: () => context.go(RoutePaths.dashboard),
+                  ),
                 ),
-              ),
 
               const SliverToBoxAdapter(
                 child: SizedBox(height: AppSpacing.space16),
+              ),
+
+              // 6. Store Video Showcase Section ("Experience Swastik")
+              const SliverToBoxAdapter(
+                child: HomeStoreVideoSection(),
+              ),
+
+              const SliverToBoxAdapter(
+                child: SizedBox(height: AppSpacing.space20),
               ),
 
               // 7. Curated For You (2-Column Product Cards)
@@ -203,10 +152,10 @@ class HomeScreen extends ConsumerWidget {
               ),
 
               const SliverToBoxAdapter(
-                child: SizedBox(height: AppSpacing.space14),
+                child: SizedBox(height: AppSpacing.space20),
               ),
 
-              // 8. Editorial Collection Banner ("The Everyday Gold Edit")
+              // 9. Editorial Collection Banner ("The Everyday Gold Edit")
               SliverToBoxAdapter(
                 child: HomeEditorialBanner(
                   onExploreTap: () => context.go(RoutePaths.offers),
@@ -225,7 +174,7 @@ class HomeScreen extends ConsumerWidget {
               ),
 
               const SliverToBoxAdapter(
-                child: SizedBox(height: AppSpacing.space32),
+                child: SizedBox(height: AppSpacing.space64),
               ),
             ],
           ),

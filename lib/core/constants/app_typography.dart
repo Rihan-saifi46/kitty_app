@@ -4,12 +4,14 @@ import 'app_colors.dart';
 
 /// Centralized typography definitions for Kitty App.
 ///
-/// Implements the classical Indian heritage luxury pairing:
-/// - [Cinzel] for brand prestige, royal hero titles, and scheme branding.
-/// - [Plus Jakarta Sans] for high-density financial UI, passbook tables, and body copy.
+/// Implements the authentic Swastik Jewellers brand typography studied from
+/// the official `swastikjewel.in` storefront:
+/// - [Cinzel] for royal heritage brand titles, scheme names, and display headers.
+/// - [Playfair Display] for elegant luxury editorial subtitles and serif flourishes.
+/// - [Montserrat] for clean, modern geometric UI headlines, card titles, buttons, and captions.
 abstract final class AppTypography {
   // ---------------------------------------------------------------------------
-  // Display & Hero Titles (Cinzel - Heritage Serif)
+  // Display & Hero Titles (Cinzel & Playfair Display - Heritage Serifs)
   // ---------------------------------------------------------------------------
 
   /// Section titles and scheme branding names (26px, Bold, Tracking: -0.2px).
@@ -42,7 +44,7 @@ abstract final class AppTypography {
   static TextStyle displaySubtitle({
     Color color = AppColors.goldPrimary,
   }) {
-    return GoogleFonts.cinzel(
+    return GoogleFonts.playfairDisplay(
       fontSize: 18,
       fontWeight: FontWeight.w600,
       height: 1.30,
@@ -52,14 +54,14 @@ abstract final class AppTypography {
   }
 
   // ---------------------------------------------------------------------------
-  // Headings & Card Titles (Plus Jakarta Sans - Geometric Sans-Serif)
+  // Headings & Card Titles (Montserrat - Geometric Modern Sans-Serif)
   // ---------------------------------------------------------------------------
 
   /// Card title and screen sub-headers (17px, Bold, Tracking: 0.0px).
   static TextStyle cardTitle({
     Color color = AppColors.textPrimaryDark,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 17,
       fontWeight: FontWeight.w700,
       height: 1.35,
@@ -72,7 +74,7 @@ abstract final class AppTypography {
   static TextStyle sectionHeading({
     Color color = AppColors.textPrimaryDark,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 15,
       fontWeight: FontWeight.w600,
       height: 1.35,
@@ -81,14 +83,14 @@ abstract final class AppTypography {
   }
 
   // ---------------------------------------------------------------------------
-  // Body Text & Button Labels (Plus Jakarta Sans)
+  // Body Text & Button Labels (Montserrat)
   // ---------------------------------------------------------------------------
 
   /// Primary button labels and table text (14px, Bold, Tracking: +0.2px).
   static TextStyle bodyBold({
     Color color = AppColors.textPrimaryDark,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 14,
       fontWeight: FontWeight.w700,
       height: 1.40,
@@ -101,7 +103,7 @@ abstract final class AppTypography {
   static TextStyle bodyRegular({
     Color color = AppColors.textSecondaryMuted,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 13.5,
       fontWeight: FontWeight.w500,
       height: 1.50,
@@ -114,7 +116,7 @@ abstract final class AppTypography {
   static TextStyle bodySmall({
     Color color = AppColors.textSecondaryMuted,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 12,
       fontWeight: FontWeight.w400,
       height: 1.40,
@@ -122,15 +124,27 @@ abstract final class AppTypography {
     );
   }
 
+  /// Caption and helper text (11px, Regular).
+  static TextStyle caption({
+    Color color = AppColors.textSecondaryMuted,
+  }) {
+    return GoogleFonts.montserrat(
+      fontSize: 11,
+      fontWeight: FontWeight.w400,
+      height: 1.35,
+      color: color,
+    );
+  }
+
   // ---------------------------------------------------------------------------
-  // Labels, Meta, & Badges (Plus Jakarta Sans)
+  // Labels, Meta, & Badges (Montserrat)
   // ---------------------------------------------------------------------------
 
   /// Table headers and secondary stats labels (11.5px, SemiBold, Tracking: +0.6px).
   static TextStyle labelMeta({
     Color color = AppColors.textSecondaryMuted,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 11.5,
       fontWeight: FontWeight.w600,
       height: 1.30,
@@ -143,7 +157,7 @@ abstract final class AppTypography {
   static TextStyle kickerCaps({
     Color color = AppColors.goldPrimary,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 10,
       fontWeight: FontWeight.w800,
       height: 1.20,
@@ -156,7 +170,7 @@ abstract final class AppTypography {
   static TextStyle buttonGoldCta({
     Color color = AppColors.emeraldCard,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 14,
       fontWeight: FontWeight.w800,
       height: 1.20,
@@ -169,7 +183,7 @@ abstract final class AppTypography {
   static TextStyle amountDisplay({
     Color color = AppColors.textPrimaryDark,
   }) {
-    return GoogleFonts.plusJakartaSans(
+    return GoogleFonts.montserrat(
       fontSize: 20,
       fontWeight: FontWeight.w700,
       height: 1.20,

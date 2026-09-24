@@ -89,14 +89,14 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
             eyebrow: 'EXCLUSIVE PRIVILEGES',
             actionLabel: 'View All →',
             onAction: widget.onViewAllTap,
-            isDarkSurface: true,
+            isDarkSurface: false,
           ),
         ),
         const SizedBox(height: AppSpacing.space12),
 
         // Carousel Slider
         SizedBox(
-          height: 190,
+          height: 225,
           child: PageView.builder(
             controller: _pageController,
             itemCount: itemCount,
@@ -113,20 +113,24 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
 
               final String title = scheme?.name ?? fallback['title']!;
               final String cta = fallback['cta']!;
-              final String imageAsset = scheme?.bannerImageUrl ?? fallback['asset']!;
+              String imageAsset = scheme?.bannerImageUrl ?? fallback['asset']!;
+              if (!imageAsset.startsWith('assets/images/') && imageAsset.startsWith('assets/')) {
+                imageAsset = imageAsset.replaceFirst('assets/', 'assets/images/');
+              }
 
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
                 decoration: BoxDecoration(
+                  color: AppColors.creamIvoryCard,
                   borderRadius: AppRadius.border16,
                   border: Border.all(
-                    color: AppColors.goldBorder.withValues(alpha: 0.4),
-                    width: 1,
+                    color: AppColors.warmLinenInset,
+                    width: 1.2,
                   ),
                   boxShadow: const <BoxShadow>[
                     BoxShadow(
-                      color: Color(0x30000000),
-                      blurRadius: 12,
+                      color: Color(0x0A2B2521),
+                      blurRadius: 16,
                       offset: Offset(0, 4),
                     ),
                   ],
@@ -139,17 +143,13 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
                       // Banner Image
                       Image.asset(
                         imageAsset,
+                        cacheWidth: 800,
                         fit: BoxFit.cover,
                         errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                          return Container(
-                            color: AppColors.deepEmeraldBase,
-                            child: const Center(
-                              child: Icon(
-                                Icons.diamond_outlined,
-                                color: AppColors.goldPrimary,
-                                size: 48,
-                              ),
-                            ),
+                          return Image.asset(
+                            fallback['asset']!,
+                            cacheWidth: 800,
+                            fit: BoxFit.cover,
                           );
                         },
                       ),
@@ -163,7 +163,7 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
                             colors: <Color>[
                               Colors.transparent,
                               Colors.black.withValues(alpha: 0.1),
-                              Colors.black.withValues(alpha: 0.85),
+                              Colors.black.withValues(alpha: 0.82),
                             ],
                             stops: const <double>[0.3, 0.6, 1.0],
                           ),
@@ -202,7 +202,7 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                 decoration: const BoxDecoration(
-                                  color: AppColors.goldPrimary,
+                                  color: AppColors.deepUmberBronze,
                                   borderRadius: AppRadius.border10,
                                 ),
                                 child: Row(
@@ -211,14 +211,14 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
                                     Text(
                                       cta,
                                       style: AppTypography.labelMeta(
-                                        color: AppColors.deepEmeraldBase,
+                                        color: AppColors.champagneFoil,
                                       ).copyWith(fontWeight: FontWeight.w800),
                                     ),
                                     const SizedBox(width: 4),
                                     const Icon(
                                       Icons.arrow_forward_rounded,
                                       size: 12,
-                                      color: AppColors.deepEmeraldBase,
+                                      color: AppColors.champagneFoil,
                                     ),
                                   ],
                                 ),
@@ -247,7 +247,7 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
               width: isActive ? 20 : 6,
               height: 6,
               decoration: BoxDecoration(
-                color: isActive ? AppColors.goldPrimary : AppColors.textTertiary.withValues(alpha: 0.4),
+                color: isActive ? AppColors.homeBrandGold : AppColors.homePrimaryHeading.withValues(alpha: 0.22),
                 borderRadius: BorderRadius.circular(3),
               ),
             );

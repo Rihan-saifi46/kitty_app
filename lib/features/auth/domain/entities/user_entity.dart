@@ -29,4 +29,30 @@ class UserEntity {
   final DateTime createdAt;
   final String? nomineeName;
   final String? nomineeRelationship;
+
+  UserEntity copyWith({
+    String? id,
+    String? name,
+    String? phone,
+    String? email,
+    UserRoleEnum? role,
+    String? tier,
+    KycInfoEntity? kyc,
+    DateTime? createdAt,
+    String? nomineeName,
+    String? nomineeRelationship,
+  }) {
+    return UserEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      role: role ?? this.role,
+      tier: tier ?? this.tier,
+      kyc: kyc ?? this.kyc,
+      createdAt: createdAt ?? this.createdAt,
+      nomineeName: nomineeName ?? this.nomineeName,
+      nomineeRelationship: nomineeRelationship ?? this.nomineeRelationship,
+    );
+  }
 }

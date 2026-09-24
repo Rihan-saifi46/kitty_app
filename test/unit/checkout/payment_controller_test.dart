@@ -52,6 +52,17 @@ void main() {
       expect(container.read(paymentControllerProvider).selectedMethod, PaymentMethodEnum.online);
     });
 
+    test('2b. selectPaymentChannel updates channel and synchronizes method', () {
+      final controller = container.read(paymentControllerProvider.notifier);
+      controller.selectPaymentChannel(PaymentChannel.netbanking);
+      expect(container.read(paymentControllerProvider).selectedChannel, PaymentChannel.netbanking);
+      expect(container.read(paymentControllerProvider).selectedMethod, PaymentMethodEnum.online);
+
+      controller.selectPaymentChannel(PaymentChannel.pickCash);
+      expect(container.read(paymentControllerProvider).selectedChannel, PaymentChannel.pickCash);
+      expect(container.read(paymentControllerProvider).selectedMethod, PaymentMethodEnum.cash);
+    });
+
     test('3. setInstallmentContext overrides scheme and month parameters', () {
       final controller = container.read(paymentControllerProvider.notifier);
       controller.setInstallmentContext(

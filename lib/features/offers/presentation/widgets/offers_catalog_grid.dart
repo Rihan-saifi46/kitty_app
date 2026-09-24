@@ -32,97 +32,105 @@ class OffersCatalogGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
+    return SliverMainAxisGroup(
+      slivers: <Widget>[
         // Category Chips Bar
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          child: Row(
-            children: categories.map((String category) {
-              final bool isSelected =
-                  selectedCategory.toLowerCase() == category.toLowerCase();
-              return Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.space8),
-                child: GestureDetector(
-                  onTap: () => onCategorySelected(category),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                    decoration: BoxDecoration(
-                      color:
-                          isSelected ? AppColors.deepEmeraldBase : Colors.white,
-                      borderRadius: AppRadius.borderPill,
-                      border: Border.all(
-                        color: isSelected
-                            ? AppColors.deepEmeraldBase
-                            : const Color(0xFFE2E8F0),
-                        width: 1,
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: categories.map((String category) {
+                    final bool isSelected =
+                        selectedCategory.toLowerCase() == category.toLowerCase();
+                    return Padding(
+                      padding: const EdgeInsets.only(right: AppSpacing.space8),
+                      child: GestureDetector(
+                        onTap: () => onCategorySelected(category),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                          decoration: BoxDecoration(
+                            color:
+                                isSelected ? AppColors.deepEmeraldBase : Colors.white,
+                            borderRadius: AppRadius.borderPill,
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.deepEmeraldBase
+                                  : const Color(0xFFE2E8F0),
+                              width: 1,
+                            ),
+                            boxShadow: isSelected
+                                ? <BoxShadow>[
+                                    BoxShadow(
+                                      color: AppColors.deepEmeraldBase
+                                          .withValues(alpha: 0.2),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Text(
+                            category,
+                            style: AppTypography.bodySmall(
+                              color: isSelected
+                                  ? Colors.white
+                                  : AppColors.textSecondaryMuted,
+                            ).copyWith(
+                              fontWeight:
+                                  isSelected ? FontWeight.w700 : FontWeight.w600,
+                              fontSize: 11.5,
+                            ),
+                          ),
+                        ),
                       ),
-                      boxShadow: isSelected
-                          ? <BoxShadow>[
-                              BoxShadow(
-                                color: AppColors.deepEmeraldBase
-                                    .withValues(alpha: 0.2),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      category,
-                      style: AppTypography.bodySmall(
-                        color: isSelected
-                            ? Colors.white
-                            : AppColors.textSecondaryMuted,
-                      ).copyWith(
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w600,
-                        fontSize: 11.5,
-                      ),
-                    ),
-                  ),
+                    );
+                  }).toList(),
                 ),
-              );
-            }).toList(),
+              ),
+              const SizedBox(height: AppSpacing.space16),
+            ],
           ),
         ),
-        const SizedBox(height: AppSpacing.space16),
 
         // Product Grid or Empty
         if (products.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.space32),
-            child: KittyEmptyState(
-              title: 'No products available',
-              description: 'No jewellery found in $selectedCategory.',
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.space32),
+              child: KittyEmptyState(
+                title: 'No products available',
+                description: 'No jewellery found in $selectedCategory.',
+              ),
             ),
           )
         else
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: products.length,
+          SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 14,
               childAspectRatio: 0.68,
             ),
-            itemBuilder: (BuildContext context, int index) {
-              final ProductEntity product = products[index];
-              final bool isWishlisted =
-                  wishlistedProductIds.contains(product.id);
-              return _ProductGridCard(
-                product: product,
-                isWishlisted: isWishlisted,
-                onWishlistTap: () => onWishlistTap(product.id),
-                onTap: () => onProductTap(product),
-              );
-            },
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                final ProductEntity product = products[index];
+                final bool isWishlisted =
+                    wishlistedProductIds.contains(product.id);
+                return _ProductGridCard(
+                  product: product,
+                  isWishlisted: isWishlisted,
+                  onWishlistTap: () => onWishlistTap(product.id),
+                  onTap: () => onProductTap(product),
+                );
+              },
+              childCount: products.length,
+            ),
           ),
       ],
     );
@@ -179,6 +187,8 @@ class _ProductGridCard extends StatelessWidget {
                       color: const Color(0xFFF8F9FA),
                       child: Image.asset(
                         product.imageUrl,
+                        cacheWidth: 360,
+                        cacheHeight: 360,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kitty_app/core/providers/auth_state_provider.dart';
@@ -61,8 +62,8 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      // Verify Brand Header
-      expect(find.text('SWASTIK VAULT'), findsOneWidget);
+      // Verify Brand Header Logo SVG
+      expect(find.byType(SvgPicture), findsWidgets);
 
       // Verify Patron Profile Card
       expect(find.text('Rihan Patron'), findsOneWidget);

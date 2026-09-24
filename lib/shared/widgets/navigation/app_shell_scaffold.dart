@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../features/notifications/presentation/providers/notifications_controller.dart';
+import '../../../../core/routing/route_paths.dart';
 import 'app_bottom_nav_bar.dart';
 import 'header_nav_bar.dart';
 import 'luxury_nav_drawer.dart';
 
 /// Persistent luxury application shell wrapping the primary navigation tabs.
 ///
-/// Houses the sticky header, slide-out navigation drawer, bottom navigation dock,
+/// Houses the sticky header, slide-out navigation drawer, blurry frosted-glass bottom navigation dock,
 /// and Android hardware back-button interceptor.
 class AppShellScaffold extends ConsumerStatefulWidget {
   const AppShellScaffold({
@@ -27,10 +27,34 @@ class AppShellScaffold extends ConsumerStatefulWidget {
 class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  int _resolveBottomNavIndex(String location) {
+    if (location.startsWith(RoutePaths.coinRates)) return 1;
+    if (location.startsWith(RoutePaths.jewellery)) return 2;
+    if (location.startsWith(RoutePaths.calculator)) return 3;
+    return 0; // Home or default
+  }
+
+  void _onBottomNavTapped(int index) {
+    switch (index) {
+      case 0:
+        widget.navigationShell.goBranch(0);
+        break;
+      case 1:
+        widget.navigationShell.goBranch(1);
+        break;
+      case 2:
+        widget.navigationShell.goBranch(2);
+        break;
+      case 3:
+        widget.navigationShell.goBranch(3);
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final int unreadCount = ref.watch(unreadNotificationsCountProvider);
+    final String location = GoRouterState.of(context).uri.path;
+    final int activeIndex = _resolveBottomNavIndex(location);
 
     return PopScope(
       canPop: false,
@@ -48,27 +72,18 @@ class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
           widget.navigationShell.goBranch(0);
           return;
         }
-
-        // 3. On root Tab 0, allow system pop / exit
-        // In full app, can show double-tap to exit toast
       },
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: isDark ? AppColors.deepEmeraldBase : AppColors.surfacePageBg,
+        backgroundColor: AppColors.homeCanvasBg,
         appBar: HeaderNavBar(
           onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
-          unreadNotificationsCount: unreadCount,
         ),
         drawer: const LuxuryNavDrawer(),
         body: widget.navigationShell,
         bottomNavigationBar: AppBottomNavBar(
-          currentIndex: widget.navigationShell.currentIndex,
-          onTap: (int index) {
-            widget.navigationShell.goBranch(
-              index,
-              initialLocation: index == widget.navigationShell.currentIndex,
-            );
-          },
+          currentIndex: activeIndex,
+          onTap: _onBottomNavTapped,
         ),
       ),
     );

@@ -40,26 +40,24 @@ class SettingsGroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final Color cardBg = isDark ? AppColors.emeraldCard : Colors.white;
-    final Color cardBorder = isDark ? AppColors.emeraldBorder : const Color(0xFFEAECEF);
-    final Color dividerColor = isDark ? AppColors.emeraldBorder : const Color(0xFFF1F5F9);
-    final Color titleColor = isDark ? AppColors.textPrimaryLight : const Color(0xFF0F172A);
-    final Color subColor = isDark ? AppColors.emeraldTextSubtle : const Color(0xFF64748B);
-    final Color iconBase = isDark ? AppColors.goldSubtle : const Color(0xFFFBF8F1);
-    const Color iconColor = AppColors.goldPrimary;
+    const Color cardBg = AppColors.settingsCardBg;
+    const Color cardBorder = AppColors.settingsBorder;
+    const Color titleColor = AppColors.settingsTextPrimary;
+    const Color subColor = AppColors.settingsTextSecondary;
+    const Color iconBase = AppColors.settingsIconBg;
+    const Color iconColor = AppColors.settingsAccentGold;
+    const Color eyebrowColor = AppColors.settingsAccentGold;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        // Eyebrow title
+        // Eyebrow section title
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             title.toUpperCase(),
             style: AppTypography.kickerCaps(
-              color: isDark ? AppColors.goldLight : const Color(0xFF64748B),
+              color: eyebrowColor,
             ).copyWith(
               fontSize: 11,
               letterSpacing: 0.8,
@@ -76,7 +74,7 @@ class SettingsGroupCard extends StatelessWidget {
             border: Border.all(color: cardBorder),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -93,13 +91,12 @@ class SettingsGroupCard extends StatelessWidget {
                   subColor: subColor,
                   iconBase: iconBase,
                   iconColor: iconColor,
-                  isDark: isDark,
                 ),
                 if (i < items.length - 1)
-                  Divider(
+                  const Divider(
                     height: 1,
                     thickness: 1,
-                    color: dividerColor,
+                    color: AppColors.settingsBorder,
                   ),
               ],
             ],
@@ -116,13 +113,12 @@ class SettingsGroupCard extends StatelessWidget {
     required Color subColor,
     required Color iconBase,
     required Color iconColor,
-    required bool isDark,
   }) {
     final Widget content = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: <Widget>[
-          // Icon Container
+          // Icon Container / Squircle (Soft Warm Linen #EAE4D9)
           Container(
             width: 38,
             height: 38,
@@ -130,7 +126,7 @@ class SettingsGroupCard extends StatelessWidget {
               color: iconBase,
               borderRadius: BorderRadius.circular(11),
               border: Border.all(
-                color: AppColors.goldBorder.withValues(alpha: 0.25),
+                color: AppColors.settingsBorder,
                 width: 1,
               ),
             ),
@@ -179,27 +175,27 @@ class SettingsGroupCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF064E3B).withValues(alpha: 0.4) : const Color(0xFFECFDF5),
+                color: AppColors.settingsBadgeBg,
                 borderRadius: AppRadius.border20,
                 border: Border.all(
-                  color: isDark ? const Color(0xFF047857) : const Color(0xFFA7F3D0),
+                  color: AppColors.settingsBorder,
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Icon(
+                  const Icon(
                     Icons.check_circle_rounded,
                     size: 11,
-                    color: isDark ? AppColors.statusSuccessText : const Color(0xFF047857),
+                    color: AppColors.settingsBadgeText,
                   ),
                   const SizedBox(width: 3),
                   Text(
                     item.badgeText!,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? AppColors.statusSuccessText : const Color(0xFF047857),
+                      color: AppColors.settingsBadgeText,
                     ),
                   ),
                 ],
@@ -211,9 +207,9 @@ class SettingsGroupCard extends StatelessWidget {
           if (item.trailing != null)
             item.trailing!
           else if (item.onTap != null)
-            const Icon(
+            Icon(
               Icons.chevron_right_rounded,
-              color: Color(0xFF94A3B8),
+              color: AppColors.settingsTextSecondary.withValues(alpha: 0.6),
               size: 20,
             ),
         ],

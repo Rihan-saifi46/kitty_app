@@ -16,18 +16,16 @@ class PatronProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     final String name = user?.name.isNotEmpty == true ? user!.name : 'Patron';
     final String phone = user?.phone.isNotEmpty == true ? user!.phone : '+91 98765 43210';
     final String? email = user?.email;
     final String tier = user?.tier.isNotEmpty == true ? user!.tier : 'Tier 1 Verified Member';
     final bool isKycVerified = user?.kyc.isVerified == true;
 
-    final Color cardBg = isDark ? AppColors.emeraldCard : Colors.white;
-    final Color cardBorder = isDark ? AppColors.emeraldBorder : const Color(0xFFEAECEF);
-    final Color titleColor = isDark ? AppColors.textPrimaryLight : const Color(0xFF0F172A);
-    final Color subColor = isDark ? AppColors.emeraldTextSubtle : const Color(0xFF64748B);
+    const Color cardBg = AppColors.settingsCardBg;
+    const Color cardBorder = AppColors.settingsBorder;
+    const Color iconBg = AppColors.settingsIconBg;
+    const Color accentGold = AppColors.settingsAccentGold;
 
     return Container(
       padding: AppSpacing.all16,
@@ -37,7 +35,7 @@ class PatronProfileCard extends StatelessWidget {
         border: Border.all(color: cardBorder),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -45,15 +43,15 @@ class PatronProfileCard extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          // Royal Monogram Avatar
+          // Royal Monogram Avatar Squircle / Circle
           Container(
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: AppColors.goldSubtle,
+              color: iconBg,
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.goldBorder,
+                color: accentGold.withValues(alpha: 0.6),
                 width: 1.5,
               ),
             ),
@@ -61,7 +59,7 @@ class PatronProfileCard extends StatelessWidget {
               child: Text(
                 name.isNotEmpty ? name[0].toUpperCase() : 'P',
                 style: AppTypography.displaySubtitle(
-                  color: AppColors.goldPrimary,
+                  color: accentGold,
                 ).copyWith(fontSize: 22, fontWeight: FontWeight.w700),
               ),
             ),
@@ -79,10 +77,10 @@ class PatronProfileCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         name,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
-                          color: titleColor,
+                          color: AppColors.settingsTextPrimary,
                           letterSpacing: 0.2,
                         ),
                         maxLines: 1,
@@ -96,7 +94,7 @@ class PatronProfileCard extends StatelessWidget {
                         child: Icon(
                           Icons.verified_rounded,
                           size: 16,
-                          color: AppColors.goldPrimary,
+                          color: AppColors.settingsBadgeText,
                         ),
                       ),
                   ],
@@ -104,9 +102,9 @@ class PatronProfileCard extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   phone,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12.5,
-                    color: subColor,
+                    color: AppColors.settingsTextSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -114,9 +112,9 @@ class PatronProfileCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     email,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 11.5,
-                      color: subColor,
+                      color: AppColors.settingsTextSecondary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -126,17 +124,17 @@ class PatronProfileCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                   decoration: BoxDecoration(
-                    color: AppColors.goldSubtle,
+                    color: AppColors.settingsBadgeBg,
                     borderRadius: AppRadius.border12,
                     border: Border.all(
-                      color: AppColors.goldBorder.withValues(alpha: 0.4),
+                      color: AppColors.settingsBorder,
                     ),
                   ),
                   child: Text(
                     tier,
                     style: AppTypography.kickerCaps(
-                      color: isDark ? AppColors.goldLight : AppColors.goldPrimary,
-                    ).copyWith(fontSize: 9.5, letterSpacing: 0.5),
+                      color: AppColors.settingsBadgeText,
+                    ).copyWith(fontSize: 9.5, letterSpacing: 0.5, fontWeight: FontWeight.w700),
                   ),
                 ),
               ],

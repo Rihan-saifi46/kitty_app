@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
@@ -15,7 +16,15 @@ abstract final class AppTheme {
   // ---------------------------------------------------------------------------
 
   /// Luxury dark emerald theme for brand-centric and authentication surfaces.
-  static ThemeData get darkTheme {
+  static ThemeData get darkTheme => _cachedDarkTheme;
+
+  /// Clean light luxury theme for readability-first operational surfaces.
+  static ThemeData get lightTheme => _cachedLightTheme;
+
+  static final ThemeData _cachedDarkTheme = _buildDarkTheme();
+  static final ThemeData _cachedLightTheme = _buildLightTheme();
+
+  static ThemeData _buildDarkTheme() {
     const ColorScheme colorScheme = ColorScheme.dark(
       primary: AppColors.goldPrimary,
       onPrimary: AppColors.emeraldCard,
@@ -33,8 +42,8 @@ abstract final class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: AppColors.deepEmeraldBase,
-      canvasColor: AppColors.deepEmeraldBase,
+      scaffoldBackgroundColor: AppColors.homeCanvasBg,
+      canvasColor: AppColors.homeCanvasBg,
 
       // Typography
       textTheme: _buildTextTheme(
@@ -78,7 +87,7 @@ abstract final class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border14,
           ),
-          textStyle: GoogleFonts.plusJakartaSans(
+          textStyle: GoogleFonts.montserrat(
             fontSize: 14,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.2,
@@ -95,7 +104,7 @@ abstract final class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border14,
           ),
-          textStyle: GoogleFonts.plusJakartaSans(
+          textStyle: GoogleFonts.montserrat(
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,
@@ -107,7 +116,7 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.goldLight,
-          textStyle: GoogleFonts.plusJakartaSans(
+          textStyle: GoogleFonts.montserrat(
             fontSize: 13.5,
             fontWeight: FontWeight.w600,
           ),
@@ -166,7 +175,7 @@ abstract final class AppTheme {
   // ---------------------------------------------------------------------------
 
   /// Crisp off-white theme for financial ledgers, passbook tables, and settings.
-  static ThemeData get lightTheme {
+  static ThemeData _buildLightTheme() {
     const ColorScheme colorScheme = ColorScheme.light(
       primary: AppColors.goldPrimary,
       onPrimary: Colors.white,
@@ -199,6 +208,7 @@ abstract final class AppTheme {
         foregroundColor: AppColors.textPrimaryDark,
         elevation: 0,
         centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         titleTextStyle: GoogleFonts.cinzel(
           fontSize: 18,
           fontWeight: FontWeight.w700,
@@ -229,7 +239,7 @@ abstract final class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border14,
           ),
-          textStyle: GoogleFonts.plusJakartaSans(
+          textStyle: GoogleFonts.montserrat(
             fontSize: 14,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.2,
@@ -246,7 +256,7 @@ abstract final class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border10,
           ),
-          textStyle: GoogleFonts.plusJakartaSans(
+          textStyle: GoogleFonts.montserrat(
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),
@@ -257,7 +267,7 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.emeraldPrimary,
-          textStyle: GoogleFonts.plusJakartaSans(
+          textStyle: GoogleFonts.montserrat(
             fontSize: 13.5,
             fontWeight: FontWeight.w600,
           ),
@@ -337,59 +347,59 @@ abstract final class AppTheme {
         color: primaryColor,
         letterSpacing: 0.4,
       ),
-      headlineMedium: GoogleFonts.plusJakartaSans(
+      headlineMedium: GoogleFonts.montserrat(
         fontSize: 18,
         fontWeight: FontWeight.w700,
         color: primaryColor,
       ),
-      headlineSmall: GoogleFonts.plusJakartaSans(
+      headlineSmall: GoogleFonts.montserrat(
         fontSize: 17,
         fontWeight: FontWeight.w700,
         color: primaryColor,
       ),
-      titleLarge: GoogleFonts.plusJakartaSans(
+      titleLarge: GoogleFonts.montserrat(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: primaryColor,
       ),
-      titleMedium: GoogleFonts.plusJakartaSans(
+      titleMedium: GoogleFonts.montserrat(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: primaryColor,
       ),
-      titleSmall: GoogleFonts.plusJakartaSans(
+      titleSmall: GoogleFonts.montserrat(
         fontSize: 13,
         fontWeight: FontWeight.w600,
         color: secondaryColor,
       ),
-      bodyLarge: GoogleFonts.plusJakartaSans(
+      bodyLarge: GoogleFonts.montserrat(
         fontSize: 14,
         fontWeight: FontWeight.w700,
         color: primaryColor,
       ),
-      bodyMedium: GoogleFonts.plusJakartaSans(
+      bodyMedium: GoogleFonts.montserrat(
         fontSize: 13.5,
         fontWeight: FontWeight.w500,
         color: secondaryColor,
       ),
-      bodySmall: GoogleFonts.plusJakartaSans(
+      bodySmall: GoogleFonts.montserrat(
         fontSize: 12,
         fontWeight: FontWeight.w400,
         color: secondaryColor,
       ),
-      labelLarge: GoogleFonts.plusJakartaSans(
+      labelLarge: GoogleFonts.montserrat(
         fontSize: 14,
         fontWeight: FontWeight.w800,
         color: primaryColor,
         letterSpacing: 1.0,
       ),
-      labelMedium: GoogleFonts.plusJakartaSans(
+      labelMedium: GoogleFonts.montserrat(
         fontSize: 11.5,
         fontWeight: FontWeight.w600,
         color: secondaryColor,
         letterSpacing: 0.6,
       ),
-      labelSmall: GoogleFonts.plusJakartaSans(
+      labelSmall: GoogleFonts.montserrat(
         fontSize: 10,
         fontWeight: FontWeight.w800,
         color: AppColors.goldPrimary,

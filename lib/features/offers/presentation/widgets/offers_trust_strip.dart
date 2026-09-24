@@ -76,67 +76,77 @@ class OffersTrustStrip extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.space12),
 
-          // 2x2 Grid
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 2.3,
-            children: _trustItems.map((item) {
-              return Row(
-                children: <Widget>[
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFBF8F1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: AppColors.goldPrimary.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: Icon(
-                      item.icon,
-                      color: AppColors.goldPrimary,
-                      size: 16,
-                    ),
+          // 2x2 Static Layout
+          Row(
+            children: <Widget>[
+              _buildTrustItem(_trustItems[0]),
+              const SizedBox(width: 10),
+              _buildTrustItem(_trustItems[1]),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: <Widget>[
+              _buildTrustItem(_trustItems[2]),
+              const SizedBox(width: 10),
+              _buildTrustItem(_trustItems[3]),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrustItem(({IconData icon, String title, String subtitle}) item) {
+    return Expanded(
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFBF8F1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: AppColors.goldPrimary.withValues(alpha: 0.2),
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Icon(
+              item.icon,
+              color: AppColors.goldPrimary,
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  item.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.bodySmall(
+                    color: AppColors.textPrimaryDark,
+                  ).copyWith(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          item.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.bodySmall(
-                            color: AppColors.textPrimaryDark,
-                          ).copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 11,
-                          ),
-                        ),
-                        Text(
-                          item.subtitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTypography.bodySmall(
-                            color: AppColors.textSecondaryMuted,
-                          ).copyWith(
-                            fontSize: 9.5,
-                          ),
-                        ),
-                      ],
-                    ),
+                ),
+                Text(
+                  item.subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.bodySmall(
+                    color: AppColors.textSecondaryMuted,
+                  ).copyWith(
+                    fontSize: 9.5,
                   ),
-                ],
-              );
-            }).toList(),
+                ),
+              ],
+            ),
           ),
         ],
       ),

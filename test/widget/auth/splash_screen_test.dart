@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kitty_app/features/splash/presentation/screens/splash_screen.dart';
 
 void main() {
@@ -25,7 +26,7 @@ void main() {
     expect(find.byType(RepaintBoundary), findsWidgets);
   });
 
-  testWidgets('SplashScreen completes animation and shows branding text KITTY VAULT', (WidgetTester tester) async {
+  testWidgets('SplashScreen completes animation and shows Swastik logo without KITTY VAULT text', (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -39,6 +40,7 @@ void main() {
 
     // Fast-forward to end
     await tester.pump(const Duration(milliseconds: 950));
-    expect(find.text('KITTY VAULT'), findsOneWidget);
+    expect(find.byType(SvgPicture), findsWidgets);
+    expect(find.text('KITTY VAULT'), findsNothing);
   });
 }

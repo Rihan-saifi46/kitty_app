@@ -31,6 +31,45 @@ enum PaymentUiStatus {
   error,
 }
 
+/// Granular payment channels available to patrons.
+enum PaymentChannel {
+  /// Instant Unified Payments Interface (GPay, PhonePe, Paytm, BHIM).
+  upi,
+
+  /// Direct internet banking across 40+ partnered Indian banks.
+  netbanking,
+
+  /// Major debit and credit card networks (Visa, Mastercard, RuPay).
+  card,
+
+  /// Doorstep cash collection by an authorized Swastik logistics executive.
+  pickCash;
+
+  String get displayName {
+    switch (this) {
+      case PaymentChannel.upi:
+        return 'Instant UPI';
+      case PaymentChannel.netbanking:
+        return 'Net Banking';
+      case PaymentChannel.card:
+        return 'Debit / Credit Card';
+      case PaymentChannel.pickCash:
+        return 'Pick Cash';
+    }
+  }
+
+  PaymentMethodEnum get methodEnum {
+    switch (this) {
+      case PaymentChannel.pickCash:
+        return PaymentMethodEnum.cash;
+      case PaymentChannel.upi:
+      case PaymentChannel.netbanking:
+      case PaymentChannel.card:
+        return PaymentMethodEnum.online;
+    }
+  }
+}
+
 /// Comprehensive immutable state container for Payment Checkout and Polling.
 class PaymentState {
   const PaymentState({
@@ -39,20 +78,25 @@ class PaymentState {
     this.chitToken = '#SW-042',
     this.monthFor = 9,
     this.amount = 5000, // Whole integer Rupees
-    this.selectedMethod = PaymentMethodEnum.online,
+    this.selectedChannel = PaymentChannel.upi,
+    PaymentMethodEnum? selectedMethod,
     this.order,
     this.statusEntity,
     this.pollCount = 0,
     this.maxPolls = 5,
     this.pollingMessage = 'Verifying payment with bank...',
     this.errorMessage,
-  });
+  }) : selectedMethod = selectedMethod ??
+            (selectedChannel == PaymentChannel.pickCash
+                ? PaymentMethodEnum.cash
+                : PaymentMethodEnum.online);
 
   final PaymentUiStatus status;
   final String membershipId;
   final String chitToken;
   final int monthFor;
   final int amount; // Whole integer Rupees
+  final PaymentChannel selectedChannel;
   final PaymentMethodEnum selectedMethod;
   final PaymentOrderEntity? order;
   final PaymentStatusEntity? statusEntity;
@@ -97,6 +141,7 @@ class PaymentState {
     String? chitToken,
     int? monthFor,
     int? amount,
+    PaymentChannel? selectedChannel,
     PaymentMethodEnum? selectedMethod,
     PaymentOrderEntity? order,
     PaymentStatusEntity? statusEntity,
@@ -106,13 +151,18 @@ class PaymentState {
     String? errorMessage,
     bool clearError = false,
   }) {
+    final PaymentChannel effectiveChannel = selectedChannel ?? this.selectedChannel;
+    final PaymentMethodEnum effectiveMethod = selectedMethod ??
+        (selectedChannel != null ? selectedChannel.methodEnum : this.selectedMethod);
+
     return PaymentState(
       status: status ?? this.status,
       membershipId: membershipId ?? this.membershipId,
       chitToken: chitToken ?? this.chitToken,
       monthFor: monthFor ?? this.monthFor,
       amount: amount ?? this.amount,
-      selectedMethod: selectedMethod ?? this.selectedMethod,
+      selectedChannel: effectiveChannel,
+      selectedMethod: effectiveMethod,
       order: order ?? this.order,
       statusEntity: statusEntity ?? this.statusEntity,
       pollCount: pollCount ?? this.pollCount,

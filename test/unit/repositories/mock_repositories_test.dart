@@ -170,10 +170,10 @@ void main() {
       expect(rate.ratePerGram, 7120.500);
 
       final categories = await productRepo.getCategories();
-      expect(categories.length, 5);
+      expect(categories.length, 6);
 
       final products = await productRepo.getCuratedProducts();
-      expect(products.length, 3);
+      expect(products.length, 6);
     });
 
     test('MockNotificationRepository, MockReceiptRepository, and MockProfileRepository', () async {

@@ -23,14 +23,28 @@ class SecureStorageService {
   // JWT Token Management (Frozen Contract v1.0 - Single 30-Day Token)
   // ---------------------------------------------------------------------------
 
+  static bool? _inMemorySessionHint;
+
+  /// Fast non-sensitive session existence hint for instant routing bootstrap.
+  /// NOTE: This is purely a fast routing hint and NEVER proof of authentication.
+  bool get fastSessionHint => _inMemorySessionHint ?? false;
+
+  /// Update the fast non-sensitive session existence hint.
+  void setSessionHint(bool hasSession) {
+    _inMemorySessionHint = hasSession;
+  }
+
   /// Persist the authentication JWT token.
   Future<void> saveToken(String token) async {
+    setSessionHint(true);
     await write(key: AppConstants.jwtStorageKey, value: token);
   }
 
   /// Retrieve the active JWT token, or null if unauthenticated.
   Future<String?> getToken() async {
-    return read(key: AppConstants.jwtStorageKey);
+    final String? token = await read(key: AppConstants.jwtStorageKey);
+    setSessionHint(token != null && token.trim().isNotEmpty);
+    return token;
   }
 
   /// Check whether a valid JWT token exists in storage.
@@ -41,6 +55,7 @@ class SecureStorageService {
 
   /// Remove JWT token on logout or session expiration.
   Future<void> deleteToken() async {
+    setSessionHint(false);
     await delete(key: AppConstants.jwtStorageKey);
   }
 
@@ -60,6 +75,7 @@ class SecureStorageService {
 
   /// Clear all authentication, token, and user session cache data.
   Future<void> clearSession() async {
+    setSessionHint(false);
     await Future.wait<void>(<Future<void>>[
       delete(key: AppConstants.jwtStorageKey),
       delete(key: AppConstants.userSessionStorageKey),

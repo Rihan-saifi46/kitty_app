@@ -35,7 +35,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     final bool success = await controller.verifyOtp(_currentOtp);
 
     if (success && mounted) {
-      context.go(RoutePaths.authSuccess);
+      context.go(RoutePaths.profile);
     }
   }
 

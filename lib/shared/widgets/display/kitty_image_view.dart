@@ -83,6 +83,8 @@ class KittyImageView extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
+        cacheWidth: width != null && width! > 0 ? (width! * 2).round() : null,
+        cacheHeight: height != null && height! > 0 ? (height! * 2).round() : null,
         errorBuilder: (BuildContext context, Object error, StackTrace? stack) {
           return _buildErrorPlaceholder(effectiveRadius);
         },

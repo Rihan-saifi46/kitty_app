@@ -95,6 +95,8 @@ class OffersProductDetailSheet extends StatelessWidget {
                       Positioned.fill(
                         child: Image.asset(
                           product.imageUrl,
+                          cacheWidth: 600,
+                          cacheHeight: 600,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(

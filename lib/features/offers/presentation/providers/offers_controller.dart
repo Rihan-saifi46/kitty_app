@@ -17,6 +17,9 @@ class OffersController extends Notifier<OffersState> {
   late final ISchemeRepository _schemeRepository;
   late final IProductRepository _productRepository;
 
+  DateTime? _lastLoadedTime;
+  static const Duration _cacheTtl = Duration(seconds: 60);
+
   @override
   OffersState build() {
     _schemeRepository = ref.watch(schemeRepositoryProvider);
@@ -28,8 +31,15 @@ class OffersController extends Notifier<OffersState> {
     return const OffersState(status: OffersStatus.loading);
   }
 
-  /// Loads both gold schemes and curated jewelry products from repository layer.
+  /// Loads both gold schemes and curated jewelry products from repository layer with 60s caching.
   Future<void> loadOffersAndCatalog({bool refresh = false}) async {
+    if (!refresh &&
+        state.status == OffersStatus.loaded &&
+        _lastLoadedTime != null &&
+        DateTime.now().difference(_lastLoadedTime!) < _cacheTtl) {
+      return;
+    }
+
     if (!refresh) {
       state = state.copyWith(status: OffersStatus.loading);
     }
@@ -61,6 +71,7 @@ class OffersController extends Notifier<OffersState> {
         return;
       }
 
+      _lastLoadedTime = DateTime.now();
       state = state.copyWith(
         status: OffersStatus.loaded,
         schemes: schemes,
@@ -122,5 +133,5 @@ class OffersController extends Notifier<OffersState> {
   }
 
   /// Retries fetching after an error occurred.
-  Future<void> retry() => loadOffersAndCatalog();
+  Future<void> retry() => loadOffersAndCatalog(refresh: true);
 }

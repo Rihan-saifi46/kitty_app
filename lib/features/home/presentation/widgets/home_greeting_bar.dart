@@ -36,7 +36,7 @@ class HomeGreetingBar extends StatelessWidget {
               imageUrl: avatarUrl,
               initials: userName.isNotEmpty ? userName.substring(0, 1).toUpperCase() : 'R',
               size: 46,
-              borderColor: AppColors.goldBorder,
+              borderColor: AppColors.homeCategoryRingBorder,
             ),
             const SizedBox(width: AppSpacing.space12),
 
@@ -49,14 +49,14 @@ class HomeGreetingBar extends StatelessWidget {
                   Text(
                     'NAMASTE,',
                     style: AppTypography.kickerCaps(
-                      color: AppColors.goldPrimary,
+                      color: AppColors.homeBrandGold,
                     ).copyWith(letterSpacing: 1.8),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     userName,
                     style: AppTypography.cardTitle(
-                      color: AppColors.textPrimaryLight,
+                      color: AppColors.homePrimaryHeading,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -69,10 +69,10 @@ class HomeGreetingBar extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.goldSubtle,
+                color: AppColors.homeCategoryRingBg,
                 borderRadius: AppRadius.border12,
                 border: Border.all(
-                  color: AppColors.goldBorder.withValues(alpha: 0.6),
+                  color: AppColors.homeCategoryRingBorder,
                   width: 1,
                 ),
               ),
@@ -81,14 +81,14 @@ class HomeGreetingBar extends StatelessWidget {
                 children: <Widget>[
                   const Icon(
                     Icons.verified_outlined,
-                    color: AppColors.goldPrimary,
+                    color: AppColors.homeBrandGold,
                     size: 13,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     'ROYAL CLUB',
                     style: AppTypography.labelMeta(
-                      color: AppColors.goldLight,
+                      color: AppColors.homeBrandGold,
                     ).copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.8,

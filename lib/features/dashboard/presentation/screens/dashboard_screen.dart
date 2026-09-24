@@ -257,7 +257,7 @@ class DashboardScreen extends ConsumerWidget {
 
           // Bottom Spacing for smooth navigation dock clearance
           const SliverToBoxAdapter(
-            child: SizedBox(height: AppSpacing.space32),
+            child: SizedBox(height: AppSpacing.space64),
           ),
         ],
       ),

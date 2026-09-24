@@ -25,16 +25,16 @@ class HomeSkeletonLoader extends StatelessWidget {
                     width: 46,
                     height: 46,
                     borderRadius: BorderRadius.all(Radius.circular(23)),
-                    isDarkSurface: true,
+                    isDarkSurface: false,
                   ),
                   SizedBox(width: AppSpacing.space12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        KittySkeletonText(width: 80, height: 10, isDarkSurface: true),
+                        KittySkeletonText(width: 80, height: 10, isDarkSurface: false),
                         SizedBox(height: 6),
-                        KittySkeletonText(width: 140, height: 16, isDarkSurface: true),
+                        KittySkeletonText(width: 140, height: 16, isDarkSurface: false),
                       ],
                     ),
                   ),
@@ -42,7 +42,7 @@ class HomeSkeletonLoader extends StatelessWidget {
                     width: 90,
                     height: 26,
                     borderRadius: BorderRadius.all(Radius.circular(13)),
-                    isDarkSurface: true,
+                    isDarkSurface: false,
                   ),
                 ],
               ),
@@ -55,7 +55,7 @@ class HomeSkeletonLoader extends StatelessWidget {
               child: Container(
                 height: 210,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF092B22),
+                  color: Colors.white,
                   borderRadius: AppRadius.border20,
                 ),
               ),
@@ -74,10 +74,10 @@ class HomeSkeletonLoader extends StatelessWidget {
                         width: 56,
                         height: 56,
                         borderRadius: BorderRadius.all(Radius.circular(28)),
-                        isDarkSurface: true,
+                        isDarkSurface: false,
                       ),
                       SizedBox(height: 6),
-                      KittySkeletonText(width: 44, height: 10, isDarkSurface: true),
+                      KittySkeletonText(width: 44, height: 10, isDarkSurface: false),
                     ],
                   );
                 }),
@@ -94,7 +94,7 @@ class HomeSkeletonLoader extends StatelessWidget {
                     child: Container(
                       height: 220,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF092B22),
+                        color: Colors.white,
                         borderRadius: AppRadius.border16,
                       ),
                     ),
@@ -104,7 +104,7 @@ class HomeSkeletonLoader extends StatelessWidget {
                     child: Container(
                       height: 220,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF092B22),
+                        color: Colors.white,
                         borderRadius: AppRadius.border16,
                       ),
                     ),

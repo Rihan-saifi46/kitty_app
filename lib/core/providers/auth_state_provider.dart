@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../storage/secure_storage_service.dart';
@@ -116,7 +117,38 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
     try {
       final String? token = await _storage.getToken();
       if (token != null && token.trim().isNotEmpty) {
-        state = AppAuthState.authenticated(token: token);
+        String userName = 'Rihan';
+        String userPhone = '+91 98765 43210';
+        String tier = 'Tier 1 Verified Member';
+        bool isKyc = true;
+
+        final String? userJson = await _storage.getUserData();
+        if (userJson != null && userJson.trim().isNotEmpty) {
+          try {
+            final Map<String, dynamic> data = jsonDecode(userJson) as Map<String, dynamic>;
+            if (data['name'] is String && (data['name'] as String).isNotEmpty) {
+              userName = data['name'] as String;
+            }
+            if (data['phone'] is String && (data['phone'] as String).isNotEmpty) {
+              userPhone = data['phone'] as String;
+            }
+            if (data['tier'] is String && (data['tier'] as String).isNotEmpty) {
+              tier = data['tier'] as String;
+            }
+            if (data['kyc'] is Map<String, dynamic>) {
+              final Map<String, dynamic> kyc = data['kyc'] as Map<String, dynamic>;
+              isKyc = kyc['isVerified'] == true || kyc['status'] == 'VERIFIED';
+            }
+          } catch (_) {}
+        }
+
+        state = AppAuthState.authenticated(
+          token: token,
+          userName: userName,
+          userPhone: userPhone,
+          tier: tier,
+          isKycVerified: isKyc,
+        );
       } else {
         state = const AppAuthState.unauthenticated();
       }
@@ -130,13 +162,52 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
     required String token,
     String userName = 'Rihan',
     String userPhone = '+91 98765 43210',
+    String tier = 'Tier 1 Verified Member',
+    bool isKycVerified = true,
   }) async {
     await _storage.saveToken(token);
     state = AppAuthState.authenticated(
       token: token,
       userName: userName,
       userPhone: userPhone,
+      tier: tier,
+      isKycVerified: isKycVerified,
     );
+  }
+
+  /// Updates user profile details (Name, Email, Phone, City) and persists them in SecureStorage.
+  Future<void> updateProfile({
+    required String userName,
+    String? userEmail,
+    String? userPhone,
+    String? city,
+  }) async {
+    final String currentPhone = (userPhone != null && userPhone.isNotEmpty)
+        ? userPhone
+        : state.userPhone;
+    state = state.copyWith(
+      userName: userName,
+      userPhone: currentPhone,
+    );
+
+    // Persist to SecureStorage safely
+    try {
+      final Map<String, dynamic> userData = <String, dynamic>{
+        'name': userName,
+        'email': userEmail ?? '',
+        'phone': currentPhone,
+        'city': city ?? '',
+        'tier': state.tier,
+        'kyc': <String, dynamic>{
+          'isVerified': state.isKycVerified,
+          'status': state.isKycVerified ? 'VERIFIED' : 'PENDING',
+        },
+      };
+      await _storage.saveUserData(jsonEncode(userData)).timeout(
+            const Duration(milliseconds: 200),
+            onTimeout: () {},
+          );
+    } catch (_) {}
   }
 
   /// Clears secure session and transitions state to unauthenticated.

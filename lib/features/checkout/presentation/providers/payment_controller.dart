@@ -70,10 +70,29 @@ class PaymentController extends Notifier<PaymentState> {
     );
   }
 
-  /// Selects payment method (ONLINE UPI, NetBanking, Card).
+  /// Selects specific payment channel (UPI, NetBanking, Card, Pick Cash).
+  void selectPaymentChannel(PaymentChannel channel) {
+    if (state.isBusy) return;
+    state = state.copyWith(
+      selectedChannel: channel,
+      selectedMethod: channel.methodEnum,
+      clearError: true,
+    );
+  }
+
+  /// Selects payment method (ONLINE, CASH) with channel synchronization.
   void selectPaymentMethod(PaymentMethodEnum method) {
     if (state.isBusy) return;
-    state = state.copyWith(selectedMethod: method);
+    final PaymentChannel channel = method == PaymentMethodEnum.cash
+        ? PaymentChannel.pickCash
+        : (state.selectedChannel == PaymentChannel.pickCash
+            ? PaymentChannel.upi
+            : state.selectedChannel);
+    state = state.copyWith(
+      selectedMethod: method,
+      selectedChannel: channel,
+      clearError: true,
+    );
   }
 
   /// Initiates payment and manages the entire gateway and polling lifecycle.

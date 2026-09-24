@@ -41,17 +41,17 @@ class DashboardHeroCard extends StatelessWidget {
         vertical: AppSpacing.space8,
       ),
       decoration: BoxDecoration(
-        color: AppColors.emeraldCard,
+        color: AppColors.creamIvoryCard,
         borderRadius: AppRadius.border20,
         border: Border.all(
-          color: AppColors.goldBorder.withValues(alpha: 0.35),
+          color: AppColors.warmLinenInset,
           width: 1.5,
         ),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x40051C16),
-            blurRadius: 24,
-            offset: Offset(0, 10),
+            color: Color(0x0A2B2521),
+            blurRadius: 20,
+            offset: Offset(0, 6),
           ),
         ],
       ),
@@ -68,11 +68,10 @@ class DashboardHeroCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: <Color>[
-                    AppColors.goldPrimary.withValues(alpha: 0.15),
-                    AppColors.goldPrimary.withValues(alpha: 0.02),
+                    AppColors.honeyGoldAccent.withValues(alpha: 0.12),
                     Colors.transparent,
                   ],
-                  stops: const <double>[0.0, 0.6, 0.8],
+                  stops: const <double>[0.0, 0.8],
                 ),
               ),
             ),
@@ -91,10 +90,10 @@ class DashboardHeroCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0x248EAA9E),
+                        color: AppColors.champagneFoil,
                         borderRadius: AppRadius.border20,
                         border: Border.all(
-                          color: const Color(0x598EAA9E),
+                          color: AppColors.honeyGoldAccent.withValues(alpha: 0.35),
                           width: 1,
                         ),
                       ),
@@ -106,20 +105,14 @@ class DashboardHeroCard extends StatelessWidget {
                             height: 6,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Color(0xFF8EAA9E),
-                              boxShadow: <BoxShadow>[
-                                BoxShadow(
-                                  color: Color(0xFF8EAA9E),
-                                  blurRadius: 6,
-                                ),
-                              ],
+                              color: AppColors.honeyGoldAccent,
                             ),
                           ),
                           const SizedBox(width: 6),
                           Text(
                             statusLabel,
                             style: AppTypography.labelMeta(
-                              color: const Color(0xFF8EAA9E),
+                              color: AppColors.espressoCharcoal,
                             ).copyWith(
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.8,
@@ -128,7 +121,10 @@ class DashboardHeroCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    KittyChitTokenPill(token: chitToken),
+                    KittyChitTokenPill(
+                      token: chitToken,
+                      isDarkSurface: false,
+                    ),
                   ],
                 ),
 
@@ -145,7 +141,7 @@ class DashboardHeroCard extends StatelessWidget {
                           Text(
                             schemeName,
                             style: AppTypography.cardTitle(
-                              color: Colors.white,
+                              color: AppColors.espressoCharcoal,
                             ).copyWith(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -158,17 +154,17 @@ class DashboardHeroCard extends StatelessWidget {
                           Text(
                             '$totalMonths-Month Gold Kitty Privileges',
                             style: AppTypography.bodySmall(
-                              color: const Color(0xFF8EAA9E),
+                              color: AppColors.warmTaupeBrown,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.3),
+                              color: AppColors.warmLinenInset,
                               borderRadius: AppRadius.border6,
                               border: Border.all(
-                                color: AppColors.goldBorder.withValues(alpha: 0.35),
+                                color: AppColors.warmLinenInset,
                                 width: 1,
                               ),
                             ),
@@ -178,13 +174,13 @@ class DashboardHeroCard extends StatelessWidget {
                                 Text(
                                   'Monthly Installment: ',
                                   style: AppTypography.labelMeta(
-                                    color: const Color(0xFF8EAA9E),
+                                    color: AppColors.warmTaupeBrown,
                                   ),
                                 ),
                                 Text(
                                   CurrencyFormatter.formatRupees(monthlyEmi),
                                   style: AppTypography.labelMeta(
-                                    color: Colors.white,
+                                    color: AppColors.espressoCharcoal,
                                   ).copyWith(
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -203,17 +199,17 @@ class DashboardHeroCard extends StatelessWidget {
                       width: 72,
                       height: 72,
                       decoration: BoxDecoration(
-                        color: AppColors.goldSubtle.withValues(alpha: 0.25),
+                        color: AppColors.warmLinenInset,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: AppColors.goldBorder.withValues(alpha: 0.4),
+                          color: AppColors.warmLinenInset,
                           width: 1,
                         ),
                       ),
                       child: const Center(
                         child: Icon(
                           Icons.diamond_outlined,
-                          color: AppColors.goldPrimary,
+                          color: AppColors.honeyGoldAccent,
                           size: 34,
                         ),
                       ),
@@ -223,26 +219,19 @@ class DashboardHeroCard extends StatelessWidget {
 
                 const SizedBox(height: AppSpacing.space20),
 
-                // 3. Frosted Champagne Progress Panel
+                // 3. Warm Progress Panel
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.space16,
                     vertical: AppSpacing.space14,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.06),
+                    color: AppColors.warmLinenInset,
                     borderRadius: AppRadius.border20,
                     border: Border.all(
-                      color: AppColors.goldBorder.withValues(alpha: 0.3),
+                      color: AppColors.warmLinenInset,
                       width: 1,
                     ),
-                    boxShadow: const <BoxShadow>[
-                      BoxShadow(
-                        color: Color(0x33000000),
-                        blurRadius: 16,
-                        offset: Offset(0, 6),
-                      ),
-                    ],
                   ),
                   child: Row(
                     children: <Widget>[
@@ -253,13 +242,14 @@ class DashboardHeroCard extends StatelessWidget {
                         size: 92,
                         strokeWidth: 7.5,
                         subtitle: 'EMIS PAID',
+                        isDarkSurface: false,
                       ),
 
                       // Vertical Divider
                       Container(
                         width: 1,
                         height: 54,
-                        color: AppColors.goldBorder.withValues(alpha: 0.3),
+                        color: AppColors.warmTaupeBrown.withValues(alpha: 0.2),
                         margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
                       ),
 
@@ -278,7 +268,7 @@ class DashboardHeroCard extends StatelessWidget {
                                         ? '$remainingPayable to Pay'
                                         : (dashboard.isCompleted ? 'Completed' : '1 to Pay'),
                                     style: AppTypography.cardTitle(
-                                      color: Colors.white,
+                                      color: AppColors.espressoCharcoal,
                                     ).copyWith(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
@@ -288,7 +278,7 @@ class DashboardHeroCard extends StatelessWidget {
                                   Text(
                                     '✧ 1 Bonus Month Free',
                                     style: AppTypography.labelMeta(
-                                      color: AppColors.goldLight,
+                                      color: AppColors.honeyGoldAccent,
                                     ).copyWith(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 11,
@@ -307,16 +297,16 @@ class DashboardHeroCard extends StatelessWidget {
                                   height: 38,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: AppColors.goldPrimary.withValues(alpha: 0.15),
+                                    color: AppColors.champagneFoil,
                                     border: Border.all(
-                                      color: AppColors.goldBorder.withValues(alpha: 0.4),
+                                      color: AppColors.honeyGoldAccent.withValues(alpha: 0.35),
                                       width: 1,
                                     ),
                                   ),
                                   child: const Center(
                                     child: Icon(
                                       Icons.card_giftcard,
-                                      color: AppColors.goldLight,
+                                      color: AppColors.honeyGoldAccent,
                                       size: 18,
                                     ),
                                   ),
@@ -326,7 +316,7 @@ class DashboardHeroCard extends StatelessWidget {
                                   'BONUS\nMONTH',
                                   textAlign: TextAlign.center,
                                   style: AppTypography.kickerCaps(
-                                    color: AppColors.goldLight,
+                                    color: AppColors.warmTaupeBrown,
                                   ).copyWith(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w700,

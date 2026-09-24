@@ -5,7 +5,7 @@ abstract final class AppConstants {
   // ---------------------------------------------------------------------------
 
   /// Application display title.
-  static const String appName = 'Swastik Jewel Kitty';
+  static const String appName = 'Swastik';
 
   /// Default currency symbol (Indian Rupee).
   static const String currencySymbol = '₹';

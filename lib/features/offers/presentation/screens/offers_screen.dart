@@ -5,16 +5,12 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../shared/widgets/feedback/kitty_empty_state.dart';
 import '../../../../shared/widgets/feedback/kitty_error_state.dart';
-import '../../../home/domain/entities/product_entity.dart';
 import '../../domain/entities/scheme_entity.dart';
 import '../providers/offers_controller.dart';
 import '../providers/offers_state.dart';
-import '../widgets/offers_catalog_grid.dart';
 import '../widgets/offers_duration_tabs.dart';
 import '../widgets/offers_enrollment_dialog.dart';
 import '../widgets/offers_hero_header.dart';
-import '../widgets/offers_product_detail_sheet.dart';
-import '../widgets/offers_section_switcher.dart';
 import '../widgets/offers_skeleton_loader.dart';
 import '../widgets/offers_scheme_card.dart';
 import '../widgets/offers_trust_strip.dart';
@@ -95,85 +91,72 @@ class OffersScreen extends ConsumerWidget {
     return RefreshIndicator(
       color: AppColors.goldPrimary,
       onRefresh: () => controller.loadOffersAndCatalog(refresh: true),
-      child: SingleChildScrollView(
+      child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
         ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.space16,
-          vertical: AppSpacing.space16,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // 1. Hero Header
-            const OffersHeroHeader(),
-            const SizedBox(height: AppSpacing.space16),
-
-            // 2. Primary Section Switcher (Schemes vs Catalog)
-            OffersSectionSwitcher(
-              activeSection: state.activeSection,
-              onSectionChanged: controller.setSection,
+        slivers: <Widget>[
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.space16,
+              vertical: AppSpacing.space16,
             ),
-            const SizedBox(height: AppSpacing.space16),
-
-            // 3. Section Content
-            if (state.activeSection == OffersViewSection.schemes) ...<Widget>[
-              // Duration Filter Tabs
-              OffersDurationTabs(
-                schemes: state.schemes,
-                selectedDuration: state.selectedDuration,
-                onDurationSelected: controller.setDurationFilter,
-              ),
-              const SizedBox(height: AppSpacing.space16),
-
-              // Filtered Schemes List
-              if (state.filteredSchemes.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: AppSpacing.space24),
-                  child: KittyEmptyState(
-                    title: 'No offers available right now',
-                    description: 'No schemes found for the selected duration.',
+            sliver: SliverMainAxisGroup(
+              slivers: <Widget>[
+                // 1. Hero Header
+                const SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      OffersHeroHeader(),
+                      SizedBox(height: AppSpacing.space16),
+                    ],
                   ),
-                )
-              else
-                ...state.filteredSchemes.map((SchemeEntity scheme) {
-                  return OffersSchemeCard(
-                    key: ValueKey<String>(scheme.id),
-                    scheme: scheme,
-                    onEnrollTap: (SchemeEntity s) {
-                      OffersEnrollmentDialog.show(context, scheme: s);
-                    },
-                  );
-                }),
-            ] else ...<Widget>[
-              // Curated Jewellery Catalog
-              OffersCatalogGrid(
-                products: state.filteredProducts,
-                categories: state.categories,
-                selectedCategory: state.selectedCategory,
-                wishlistedProductIds: state.wishlistedProductIds,
-                onCategorySelected: controller.setCategoryFilter,
-                onWishlistTap: controller.toggleWishlist,
-                onProductTap: (ProductEntity product) {
-                  OffersProductDetailSheet.show(
-                    context,
-                    product: product,
-                    isWishlisted: state.isWishlisted(product.id),
-                    onWishlistToggle: () =>
-                        controller.toggleWishlist(product.id),
-                  );
-                },
-              ),
-            ],
+                ),
 
-            const SizedBox(height: AppSpacing.space20),
+                // 2. Savings Schemes Content
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // Duration Filter Tabs
+                      OffersDurationTabs(
+                        schemes: state.schemes,
+                        selectedDuration: state.selectedDuration,
+                        onDurationSelected: controller.setDurationFilter,
+                      ),
+                      const SizedBox(height: AppSpacing.space16),
 
-            // 4. Swastik Trust & Security 4-Grid Strip
-            const OffersTrustStrip(),
-            const SizedBox(height: AppSpacing.space32),
-          ],
-        ),
+                      // Filtered Schemes List
+                      if (state.filteredSchemes.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: AppSpacing.space24),
+                          child: KittyEmptyState(
+                            title: 'No offers available right now',
+                            description: 'No schemes found for the selected duration.',
+                          ),
+                        )
+                      else
+                        ...state.filteredSchemes.map((SchemeEntity scheme) {
+                          return OffersSchemeCard(
+                            key: ValueKey<String>(scheme.id),
+                            scheme: scheme,
+                            onEnrollTap: (SchemeEntity s) {
+                              OffersEnrollmentDialog.show(context, scheme: s);
+                            },
+                          );
+                        }),
+
+                      const SizedBox(height: AppSpacing.space20),
+                      const OffersTrustStrip(),
+                      const SizedBox(height: AppSpacing.space64),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

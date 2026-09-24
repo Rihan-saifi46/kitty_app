@@ -12,18 +12,31 @@ class PaymentCheckoutModal extends StatelessWidget {
     super.key,
     required this.state,
     required this.onSelectMethod,
+    this.onSelectChannel,
     required this.onConfirmPayment,
+    this.onProceedPickCash,
     required this.onClose,
   });
 
   final PaymentState state;
   final ValueChanged<PaymentMethodEnum> onSelectMethod;
+  final ValueChanged<PaymentChannel>? onSelectChannel;
   final VoidCallback onConfirmPayment;
+  final VoidCallback? onProceedPickCash;
   final VoidCallback onClose;
+
+  void _handleSelectChannel(PaymentChannel channel) {
+    if (onSelectChannel != null) {
+      onSelectChannel!(channel);
+    } else {
+      onSelectMethod(channel.methodEnum);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final String formattedAmount = CurrencyFormatter.formatRupees(state.amount);
+    final bool isPickCash = state.selectedChannel == PaymentChannel.pickCash;
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 440),
@@ -143,8 +156,8 @@ class PaymentCheckoutModal extends StatelessWidget {
             iconColor: const Color(0xFFFFD700),
             title: 'Instant UPI (GPay / PhonePe / Paytm)',
             subtitle: 'Instant zero-fee gold allocation',
-            isSelected: state.selectedMethod == PaymentMethodEnum.online,
-            onTap: () => onSelectMethod(PaymentMethodEnum.online),
+            isSelected: state.selectedChannel == PaymentChannel.upi,
+            onTap: () => _handleSelectChannel(PaymentChannel.upi),
           ),
 
           const SizedBox(height: AppSpacing.space10),
@@ -156,8 +169,8 @@ class PaymentCheckoutModal extends StatelessWidget {
             iconColor: const Color(0xFF6EE7B7),
             title: 'Net Banking',
             subtitle: 'HDFC, ICICI, SBI & 40+ banks',
-            isSelected: false,
-            onTap: () => onSelectMethod(PaymentMethodEnum.online),
+            isSelected: state.selectedChannel == PaymentChannel.netbanking,
+            onTap: () => _handleSelectChannel(PaymentChannel.netbanking),
           ),
 
           const SizedBox(height: AppSpacing.space10),
@@ -169,8 +182,21 @@ class PaymentCheckoutModal extends StatelessWidget {
             iconColor: const Color(0xFF93C5FD),
             title: 'Debit / Credit Card',
             subtitle: 'Visa, Mastercard, RuPay',
-            isSelected: false,
-            onTap: () => onSelectMethod(PaymentMethodEnum.online),
+            isSelected: state.selectedChannel == PaymentChannel.card,
+            onTap: () => _handleSelectChannel(PaymentChannel.card),
+          ),
+
+          const SizedBox(height: AppSpacing.space10),
+
+          // Method 4: Pick Cash (Doorstep Cash Collection)
+          _buildMethodItem(
+            key: const Key('checkout_method_pick_cash'),
+            icon: Icons.payments_outlined,
+            iconColor: const Color(0xFFECC97D),
+            title: 'PICK CASH (Doorstep Pickup)',
+            subtitle: 'Swastik verified executive collects cash at doorstep',
+            isSelected: state.selectedChannel == PaymentChannel.pickCash,
+            onTap: () => _handleSelectChannel(PaymentChannel.pickCash),
           ),
 
           const SizedBox(height: AppSpacing.space20),
@@ -192,7 +218,9 @@ class PaymentCheckoutModal extends StatelessWidget {
           // Confirm & Pay CTA Button
           ElevatedButton(
             key: const Key('btn_confirm_payment'),
-            onPressed: state.isBusy ? null : onConfirmPayment,
+            onPressed: state.isBusy
+                ? null
+                : (isPickCash ? (onProceedPickCash ?? onConfirmPayment) : onConfirmPayment),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFECC97D),
               foregroundColor: const Color(0xFF05241C),
@@ -218,7 +246,7 @@ class PaymentCheckoutModal extends StatelessWidget {
                       ),
                       const SizedBox(width: AppSpacing.space10),
                       Text(
-                        'Processing Secure UPI Payment...',
+                        'Processing Secure Payment...',
                         style: AppTypography.bodyBold(
                           color: const Color(0xFF05241C),
                         ).copyWith(fontSize: 14, fontWeight: FontWeight.w800),
@@ -226,7 +254,9 @@ class PaymentCheckoutModal extends StatelessWidget {
                     ],
                   )
                 : Text(
-                    'Confirm & Pay $formattedAmount',
+                    isPickCash
+                        ? 'Proceed with Cash Pickup'
+                        : 'Confirm & Pay $formattedAmount',
                     style: AppTypography.bodyBold(
                       color: const Color(0xFF05241C),
                     ).copyWith(fontSize: 14.5, fontWeight: FontWeight.w800),

@@ -25,15 +25,11 @@ class NotificationsScreen extends ConsumerWidget {
     final NotificationsState state = ref.watch(notificationsControllerProvider);
     final NotificationsController controller =
         ref.read(notificationsControllerProvider.notifier);
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final Color pageBg =
-        isDark ? AppColors.deepEmeraldBase : const Color(0xFFF8F9FA);
-    final Color headerBg = isDark ? AppColors.deepEmeraldBase : Colors.white;
-    final Color headerBorder =
-        isDark ? AppColors.emeraldBorder : const Color(0xFFF1F3F5);
-    final Color titleColor =
-        isDark ? AppColors.textPrimaryLight : const Color(0xFF0F172A);
+    const bool isDark = false;
+    const Color pageBg = AppColors.homeCanvasBg;
+    const Color headerBg = AppColors.homeNavbarBg;
+    const Color headerBorder = AppColors.homeNavbarBorder;
+    const Color titleColor = AppColors.homePrimaryHeading;
 
     return Scaffold(
       backgroundColor: pageBg,
