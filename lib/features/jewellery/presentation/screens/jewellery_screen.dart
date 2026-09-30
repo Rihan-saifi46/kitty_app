@@ -637,6 +637,7 @@ class _JewelleryScreenState extends ConsumerState<JewelleryScreen> {
                         icon: const Icon(Icons.open_in_browser_rounded),
                         label: const Text('Open in Browser', style: TextStyle(fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(0, 48),
                           backgroundColor: AppColors.primaryEmerald,
                           foregroundColor: Colors.white,
                           shape: const RoundedRectangleBorder(borderRadius: AppRadius.border12),
@@ -649,6 +650,7 @@ class _JewelleryScreenState extends ConsumerState<JewelleryScreen> {
                       icon: const Icon(Icons.phone_rounded, color: AppColors.primaryEmerald),
                       label: Text('Concierge', style: AppTypography.bodyBold(color: AppColors.primaryEmerald)),
                       style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 48),
                         side: const BorderSide(color: AppColors.primaryEmerald),
                         shape: const RoundedRectangleBorder(borderRadius: AppRadius.border12),
                       ),

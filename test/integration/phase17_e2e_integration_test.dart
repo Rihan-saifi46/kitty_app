@@ -311,7 +311,11 @@ void main() {
       }
       expect(unauthenticatedRejected, isTrue);
     });
-  });
+  },
+  skip: const bool.fromEnvironment('RUN_LIVE_BACKEND_TESTS', defaultValue: false)
+      ? null
+      : 'Deferred to Phase 17 — Live backend server required at http://127.0.0.1:5000',
+  );
 
   group('Phase 17 — Negative E2E Resilience Tests', () {
     test('A. Invalid OTP rejection', () async {
@@ -389,5 +393,9 @@ void main() {
       }
       expect(caught, isTrue);
     });
-  });
+  },
+  skip: const bool.fromEnvironment('RUN_LIVE_BACKEND_TESTS', defaultValue: false)
+      ? null
+      : 'Deferred to Phase 17 — Live backend server required at http://127.0.0.1:5000',
+  );
 }

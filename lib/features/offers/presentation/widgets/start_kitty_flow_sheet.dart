@@ -119,6 +119,7 @@ class _StartKittyFlowSheetState extends ConsumerState<StartKittyFlowSheet> {
         ref.read(startKittyFlowControllerProvider.notifier);
 
     return Container(
+      key: const Key('start_kitty_flow_sheet'),
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.92,
       ),
@@ -577,12 +578,14 @@ class _StartKittyFlowSheetState extends ConsumerState<StartKittyFlowSheet> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: isLarge ? 13 : 12,
-            fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-            color: AppColors.warmTaupeBrown,
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: isLarge ? 13 : 12,
+              fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+              color: AppColors.warmTaupeBrown,
+            ),
           ),
         ),
         Text(

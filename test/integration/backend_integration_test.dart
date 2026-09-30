@@ -91,7 +91,9 @@ void main() {
     paymentRepo = PaymentRepositoryImpl(apiClient: apiClient);
   });
 
-  group('Phase 16 — Live Backend Integration Tests', () {
+  group(
+    'Phase 16 — Live Backend Integration Tests',
+    () {
     test('1. Backend Health Check (GET /api/v1/health)', () async {
       final response = await apiClient.get<Map<String, dynamic>>('/api/v1/health');
       expect(response.statusCode, equals(200));
@@ -251,5 +253,9 @@ void main() {
       // Verify token is wiped from secure storage
       expect(await storageService.hasToken(), isFalse);
     });
-  });
+  },
+  skip: const bool.fromEnvironment('RUN_LIVE_BACKEND_TESTS', defaultValue: false)
+      ? null
+      : 'Deferred to Phase 16 — Live backend server required at http://127.0.0.1:5000',
+  );
 }
