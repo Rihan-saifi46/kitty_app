@@ -2,6 +2,7 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/mock/mock_engine_config.dart';
 import '../../../../core/mock/mock_fixtures.dart';
+import '../../domain/entities/kitty_slot_entity.dart';
 import '../../domain/entities/scheme_entity.dart';
 import '../../domain/repositories/i_scheme_repository.dart';
 import '../dtos/scheme_dto.dart';
@@ -37,7 +38,7 @@ class MockSchemeRepository implements ISchemeRepository {
         'Accumulate 24K 999 Hallmark Purity gold every month',
       ],
       isPopular: true,
-      bannerImageUrl: 'assets/images/banner_clean_bonus.jpg',
+      bannerImageUrl: 'assets/images/kitty_banner_royal_gold.jpg',
     ),
     SchemeEntity(
       id: 'sch_12month_suvarna',
@@ -49,12 +50,12 @@ class MockSchemeRepository implements ISchemeRepository {
       currentMembers: 42,
       status: SchemeStatusEnum.open,
       benefits: <String>[
-        'Classic Kitty: 1 Month Free Bonus on Month 12',
+        'Classic Gold Scheme: 1 Month Free Bonus on Month 12',
         'Guaranteed conversion at lowest daily market price',
         'Flexible redemption for 24K gold bullion or hallmarked ornaments',
       ],
       isPopular: false,
-      bannerImageUrl: 'assets/images/banner_clean_bonus.jpg',
+      bannerImageUrl: 'assets/images/kitty_banner_gold_coins.jpg',
     ),
     SchemeEntity(
       id: 'sch_18month_bridal',
@@ -71,7 +72,7 @@ class MockSchemeRepository implements ISchemeRepository {
         'Priority access to new heritage, bridal polki & uncut diamond collections',
       ],
       isPopular: false,
-      bannerImageUrl: 'assets/images/banner_clean_bridal.jpg',
+      bannerImageUrl: 'assets/images/kitty_banner_royal_gold.jpg',
     ),
     SchemeEntity(
       id: 'sch_6month_express',
@@ -83,12 +84,12 @@ class MockSchemeRepository implements ISchemeRepository {
       currentMembers: 31,
       status: SchemeStatusEnum.open,
       benefits: <String>[
-        'Express Kitty: 50% Sponsored Bonus on Month 6',
+        'Express Gold Scheme: 50% Sponsored Bonus on Month 6',
         'Fast-track festival accumulation for Diwali & Dhanteras celebrations',
         'Instant hallmarked coin or ornament redemption',
       ],
       isPopular: false,
-      bannerImageUrl: 'assets/images/banner_clean_coin.jpg',
+      bannerImageUrl: 'assets/images/kitty_banner_diamond_solitaire.jpg',
     ),
   ];
 
@@ -137,5 +138,56 @@ class MockSchemeRepository implements ISchemeRepository {
         'Scheme not found with the requested ID.',
       ),
     );
+  }
+
+  List<KittySlotEntity>? _customSlots;
+  void setCustomSlots(List<KittySlotEntity>? slots) => _customSlots = slots;
+
+  @override
+  Future<List<KittySlotEntity>> getAvailableNumbers(
+    String schemeId, {
+    int totalCapacity = 50,
+  }) async {
+    await _engineConfig.simulate();
+
+    if (_shouldThrow) {
+      throw const NetworkException('Failed to load Kitty numbers.');
+    }
+
+    if (_customSlots != null) {
+      return _customSlots!;
+    }
+
+    // Deterministic realistic slot matrix (1 to 50)
+    // Booked slots: 2, 5, 8, 13, 17, 21, 28, 33, 42, 49
+    // Locked slot: 7 (held in active checkout)
+    const Set<int> bookedNumbers = <int>{2, 5, 8, 13, 17, 21, 28, 33, 42, 49};
+    const Set<int> lockedNumbers = <int>{7};
+
+    return List<KittySlotEntity>.generate(totalCapacity, (int index) {
+      final int number = index + 1;
+      final String token = '#SW-${number.toString().padLeft(3, '0')}';
+
+      if (bookedNumbers.contains(number)) {
+        return KittySlotEntity(
+          number: number,
+          status: KittySlotStatus.booked,
+          tokenString: token,
+        );
+      } else if (lockedNumbers.contains(number)) {
+        return KittySlotEntity(
+          number: number,
+          status: KittySlotStatus.locked,
+          tokenString: token,
+          lockedUntil: DateTime.now().add(const Duration(minutes: 12)),
+        );
+      } else {
+        return KittySlotEntity(
+          number: number,
+          status: KittySlotStatus.available,
+          tokenString: token,
+        );
+      }
+    });
   }
 }

@@ -1,3 +1,4 @@
+import '../entities/kitty_slot_entity.dart';
 import '../entities/scheme_entity.dart';
 
 /// Pure domain repository interface for gold savings scheme discovery.
@@ -7,4 +8,10 @@ abstract interface class ISchemeRepository {
 
   /// Retrieves a specific scheme by unique ID.
   Future<SchemeEntity> getSchemeById(String id);
+
+  /// Retrieves the numbered slot matrix for a scheme.
+  Future<List<KittySlotEntity>> getAvailableNumbers(
+    String schemeId, {
+    int totalCapacity = 50,
+  });
 }

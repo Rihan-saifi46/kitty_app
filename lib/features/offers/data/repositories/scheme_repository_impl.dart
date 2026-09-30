@@ -1,6 +1,7 @@
 import '../../../../core/config/api_endpoints.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../domain/entities/kitty_slot_entity.dart';
 import '../../domain/entities/offer_entity.dart';
 import '../../domain/entities/scheme_entity.dart';
 import '../../domain/repositories/i_offer_repository.dart';
@@ -57,6 +58,36 @@ class SchemeRepositoryImpl implements ISchemeRepository, IOfferRepository {
         code: 'SWASTIK${scheme.durationMonths}',
         discountPct: 25.0,
         imageUrl: scheme.bannerImageUrl,
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<KittySlotEntity>> getAvailableNumbers(
+    String schemeId, {
+    int totalCapacity = 50,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '${ApiEndpoints.schemesActive}/$schemeId/numbers',
+    );
+
+    final Map<String, dynamic> data =
+        response.data?['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
+    final List<dynamic> list = data['numbers'] as List<dynamic>? ?? <dynamic>[];
+
+    return list.map((dynamic item) {
+      final Map<String, dynamic> json = item as Map<String, dynamic>;
+      final int num = json['number'] as int? ?? 1;
+      final String statusStr = (json['status'] as String? ?? 'AVAILABLE').toUpperCase();
+      final KittySlotStatus status = switch (statusStr) {
+        'BOOKED' => KittySlotStatus.booked,
+        'LOCKED' => KittySlotStatus.locked,
+        _ => KittySlotStatus.available,
+      };
+      return KittySlotEntity(
+        number: num,
+        status: status,
+        tokenString: json['tokenString'] as String? ?? '#SW-${num.toString().padLeft(3, '0')}',
       );
     }).toList();
   }
