@@ -25,6 +25,24 @@ class DashboardRepositoryImpl
   }
 
   @override
+  Future<List<DashboardSummaryEntity>> getMySchemes() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>('/api/v1/memberships/my-schemes');
+      final dynamic rawList = response.data?['data'];
+      if (rawList is List) {
+        return rawList
+            .map((dynamic item) => DashboardMapper.toEntity(
+                DashboardSummaryResponseDto.fromJson(item as Map<String, dynamic>)))
+            .toList();
+      }
+    } catch (_) {
+      // Graceful fallback to single active dashboard
+    }
+    final DashboardSummaryEntity single = await getMyDashboard();
+    return <DashboardSummaryEntity>[single];
+  }
+
+  @override
   Future<MembershipEntity> joinScheme({required String schemeId}) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/api/v1/memberships/join',
