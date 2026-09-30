@@ -78,6 +78,11 @@ class PaymentState {
     this.chitToken = '#SW-042',
     this.monthFor = 9,
     this.amount = 5000, // Whole integer Rupees
+    this.monthlyInstallment = 5000,
+    this.selectedMonthsCount = 1,
+    this.totalDurationMonths = 12,
+    this.startMonth = 9,
+    this.remainingMonthsCount = 4,
     this.selectedChannel = PaymentChannel.upi,
     PaymentMethodEnum? selectedMethod,
     this.order,
@@ -86,7 +91,7 @@ class PaymentState {
     this.maxPolls = 5,
     this.pollingMessage = 'Verifying payment with bank...',
     this.errorMessage,
-  }) : selectedMethod = selectedMethod ??
+  })  : selectedMethod = selectedMethod ??
             (selectedChannel == PaymentChannel.pickCash
                 ? PaymentMethodEnum.cash
                 : PaymentMethodEnum.online);
@@ -96,6 +101,11 @@ class PaymentState {
   final String chitToken;
   final int monthFor;
   final int amount; // Whole integer Rupees
+  final int monthlyInstallment;
+  final int selectedMonthsCount;
+  final int totalDurationMonths;
+  final int startMonth;
+  final int remainingMonthsCount;
   final PaymentChannel selectedChannel;
   final PaymentMethodEnum selectedMethod;
   final PaymentOrderEntity? order;
@@ -104,6 +114,13 @@ class PaymentState {
   final int maxPolls;
   final String pollingMessage;
   final String? errorMessage;
+
+  /// List of sequential month numbers covered by the current selection.
+  List<int> get selectedMonthsList =>
+      List<int>.generate(selectedMonthsCount, (int i) => startMonth + i);
+
+  /// Dynamically calculated total payable rupees.
+  int get totalPayable => selectedMonthsCount * monthlyInstallment;
 
   /// True if payment is initiating, in gateway, or currently polling.
   bool get isBusy =>
@@ -141,6 +158,11 @@ class PaymentState {
     String? chitToken,
     int? monthFor,
     int? amount,
+    int? monthlyInstallment,
+    int? selectedMonthsCount,
+    int? totalDurationMonths,
+    int? startMonth,
+    int? remainingMonthsCount,
     PaymentChannel? selectedChannel,
     PaymentMethodEnum? selectedMethod,
     PaymentOrderEntity? order,
@@ -161,6 +183,11 @@ class PaymentState {
       chitToken: chitToken ?? this.chitToken,
       monthFor: monthFor ?? this.monthFor,
       amount: amount ?? this.amount,
+      monthlyInstallment: monthlyInstallment ?? this.monthlyInstallment,
+      selectedMonthsCount: selectedMonthsCount ?? this.selectedMonthsCount,
+      totalDurationMonths: totalDurationMonths ?? this.totalDurationMonths,
+      startMonth: startMonth ?? this.startMonth,
+      remainingMonthsCount: remainingMonthsCount ?? this.remainingMonthsCount,
       selectedChannel: effectiveChannel,
       selectedMethod: effectiveMethod,
       order: order ?? this.order,

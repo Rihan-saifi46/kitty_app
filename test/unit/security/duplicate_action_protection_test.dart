@@ -106,12 +106,14 @@ class _SpyPaymentRepository extends MockPaymentRepository {
   Future<PaymentOrderEntity> initiatePayment({
     required String membershipId,
     required int monthFor,
+    int monthsCount = 1,
     PaymentMethodEnum paymentMethod = PaymentMethodEnum.online,
   }) async {
     initiateCalls++;
     return super.initiatePayment(
       membershipId: membershipId,
       monthFor: monthFor,
+      monthsCount: monthsCount,
       paymentMethod: paymentMethod,
     );
   }

@@ -13,6 +13,7 @@ class PaymentCheckoutModal extends StatelessWidget {
     required this.state,
     required this.onSelectMethod,
     this.onSelectChannel,
+    this.onSelectMonthsCount,
     required this.onConfirmPayment,
     this.onProceedPickCash,
     required this.onClose,
@@ -21,6 +22,7 @@ class PaymentCheckoutModal extends StatelessWidget {
   final PaymentState state;
   final ValueChanged<PaymentMethodEnum> onSelectMethod;
   final ValueChanged<PaymentChannel>? onSelectChannel;
+  final ValueChanged<int>? onSelectMonthsCount;
   final VoidCallback onConfirmPayment;
   final VoidCallback? onProceedPickCash;
   final VoidCallback onClose;
@@ -42,17 +44,17 @@ class PaymentCheckoutModal extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 440),
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
       decoration: BoxDecoration(
-        color: const Color(0xFF05241C),
+        color: AppColors.pureWhite,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: AppColors.goldBorder.withValues(alpha: 0.35),
+          color: AppColors.surfaceCardBorder,
           width: 1.2,
         ),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x66000000),
-            blurRadius: 48,
-            offset: Offset(0, 20),
+            color: Color(0x33000000),
+            blurRadius: 40,
+            offset: Offset(0, 16),
           ),
         ],
       ),
@@ -72,7 +74,7 @@ class PaymentCheckoutModal extends StatelessWidget {
                     Text(
                       'Pay Kitty Installment',
                       key: const Key('checkout_modal_title'),
-                      style: AppTypography.cardTitle(color: Colors.white).copyWith(
+                      style: AppTypography.cardTitle(color: AppColors.espressoCharcoal).copyWith(
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.2,
@@ -83,7 +85,7 @@ class PaymentCheckoutModal extends StatelessWidget {
                       'Month ${state.monthFor} Installment (${state.chitToken})',
                       key: const Key('checkout_modal_subtitle'),
                       style: AppTypography.labelMeta(
-                        color: const Color(0xFF9EC0B4),
+                        color: AppColors.warmTaupeBrown,
                       ).copyWith(fontSize: 12.5),
                     ),
                   ],
@@ -91,11 +93,11 @@ class PaymentCheckoutModal extends StatelessWidget {
               ),
               IconButton(
                 key: const Key('checkout_modal_close_btn'),
-                icon: const Icon(Icons.close_rounded, color: Color(0xFFFAF8F2), size: 20),
+                icon: const Icon(Icons.close_rounded, color: AppColors.espressoCharcoal, size: 20),
                 onPressed: state.isBusy ? null : onClose,
                 splashRadius: 20,
                 style: IconButton.styleFrom(
-                  backgroundColor: Colors.white.withValues(alpha: 0.1),
+                  backgroundColor: const Color(0xFFF1F5F3),
                 ),
               ),
             ],
@@ -110,10 +112,10 @@ class PaymentCheckoutModal extends StatelessWidget {
               horizontal: AppSpacing.space16,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.06),
+              color: AppColors.primaryEmerald,
               borderRadius: AppRadius.border14,
               border: Border.all(
-                color: const Color(0xFFC99A2E).withValues(alpha: 0.25),
+                color: const Color(0xFFC99A2E).withValues(alpha: 0.35),
                 width: 1,
               ),
             ),
@@ -122,7 +124,7 @@ class PaymentCheckoutModal extends StatelessWidget {
                 Text(
                   'EMI AMOUNT DUE',
                   style: AppTypography.labelMeta(
-                    color: const Color(0xFF8EAA9E),
+                    color: const Color(0xFFC7D9D1),
                   ).copyWith(letterSpacing: 1.1, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 4),
@@ -137,13 +139,90 @@ class PaymentCheckoutModal extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: AppSpacing.space16),
+          const SizedBox(height: AppSpacing.space14),
+
+          // Multi-Month Installment Selector
+          Text(
+            'SELECT INSTALLMENT MONTHS',
+            style: AppTypography.labelMeta(
+              color: AppColors.warmTaupeBrown,
+            ).copyWith(letterSpacing: 1.0, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: AppSpacing.space8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: <Widget>[
+                _buildMonthPill(
+                  label: '1 Month',
+                  count: 1,
+                  isSelected: state.selectedMonthsCount == 1,
+                  isEnabled: state.remainingMonthsCount >= 1 && !state.isBusy,
+                ),
+                const SizedBox(width: 8),
+                _buildMonthPill(
+                  label: '2 Months',
+                  count: 2,
+                  isSelected: state.selectedMonthsCount == 2,
+                  isEnabled: state.remainingMonthsCount >= 2 && !state.isBusy,
+                ),
+                const SizedBox(width: 8),
+                _buildMonthPill(
+                  label: '3 Months',
+                  count: 3,
+                  isSelected: state.selectedMonthsCount == 3,
+                  isEnabled: state.remainingMonthsCount >= 3 && !state.isBusy,
+                ),
+                const SizedBox(width: 8),
+                _buildMonthPill(
+                  pillKey: const Key('month_pill_all_remaining'),
+                  label: 'All Remaining (${state.remainingMonthsCount} Mos)',
+                  count: state.remainingMonthsCount,
+                  isSelected: state.selectedMonthsCount == state.remainingMonthsCount &&
+                      state.remainingMonthsCount > 1,
+                  isEnabled: state.remainingMonthsCount > 1 && !state.isBusy,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (state.selectedMonthsCount > 1)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: const BoxDecoration(
+                color: Color(0xFFF0FDF4),
+                borderRadius: AppRadius.border8,
+              ),
+              child: Row(
+                children: <Widget>[
+                  const Icon(
+                    Icons.check_circle_outline_rounded,
+                    color: AppColors.primaryEmerald,
+                    size: 14,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Paying Months ${state.selectedMonthsList.join(", ")} (${state.selectedMonthsCount} × ${CurrencyFormatter.formatRupees(state.monthlyInstallment)})',
+                      style: const TextStyle(
+                        color: AppColors.deepEmeraldBase,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          const SizedBox(height: AppSpacing.space12),
 
           // Payment Methods Header
           Text(
             'SELECT PAYMENT METHOD',
             style: AppTypography.labelMeta(
-              color: const Color(0xFF8EAA9E),
+              color: AppColors.warmTaupeBrown,
             ).copyWith(letterSpacing: 1.0, fontWeight: FontWeight.w700),
           ),
 
@@ -153,7 +232,7 @@ class PaymentCheckoutModal extends StatelessWidget {
           _buildMethodItem(
             key: const Key('checkout_method_upi'),
             icon: Icons.bolt_rounded,
-            iconColor: const Color(0xFFFFD700),
+            iconColor: const Color(0xFFD97706),
             title: 'Instant UPI (GPay / PhonePe / Paytm)',
             subtitle: 'Instant zero-fee gold allocation',
             isSelected: state.selectedChannel == PaymentChannel.upi,
@@ -166,7 +245,7 @@ class PaymentCheckoutModal extends StatelessWidget {
           _buildMethodItem(
             key: const Key('checkout_method_netbanking'),
             icon: Icons.account_balance_rounded,
-            iconColor: const Color(0xFF6EE7B7),
+            iconColor: AppColors.primaryEmerald,
             title: 'Net Banking',
             subtitle: 'HDFC, ICICI, SBI & 40+ banks',
             isSelected: state.selectedChannel == PaymentChannel.netbanking,
@@ -179,7 +258,7 @@ class PaymentCheckoutModal extends StatelessWidget {
           _buildMethodItem(
             key: const Key('checkout_method_card'),
             icon: Icons.credit_card_rounded,
-            iconColor: const Color(0xFF93C5FD),
+            iconColor: const Color(0xFF2563EB),
             title: 'Debit / Credit Card',
             subtitle: 'Visa, Mastercard, RuPay',
             isSelected: state.selectedChannel == PaymentChannel.card,
@@ -192,7 +271,7 @@ class PaymentCheckoutModal extends StatelessWidget {
           _buildMethodItem(
             key: const Key('checkout_method_pick_cash'),
             icon: Icons.payments_outlined,
-            iconColor: const Color(0xFFECC97D),
+            iconColor: const Color(0xFFB45309),
             title: 'PICK CASH (Doorstep Pickup)',
             subtitle: 'Swastik verified executive collects cash at doorstep',
             isSelected: state.selectedChannel == PaymentChannel.pickCash,
@@ -209,7 +288,7 @@ class PaymentCheckoutModal extends StatelessWidget {
                 state.errorMessage!,
                 key: const Key('checkout_modal_error_text'),
                 style: AppTypography.labelMeta(
-                  color: const Color(0xFFF87171),
+                  color: const Color(0xFFDC2626),
                 ).copyWith(fontWeight: FontWeight.w600),
                 textAlign: TextAlign.center,
               ),
@@ -222,15 +301,15 @@ class PaymentCheckoutModal extends StatelessWidget {
                 ? null
                 : (isPickCash ? (onProceedPickCash ?? onConfirmPayment) : onConfirmPayment),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFECC97D),
-              foregroundColor: const Color(0xFF05241C),
-              disabledBackgroundColor: const Color(0xFFECC97D).withValues(alpha: 0.5),
-              disabledForegroundColor: const Color(0xFF05241C).withValues(alpha: 0.7),
+              backgroundColor: AppColors.primaryEmerald,
+              foregroundColor: Colors.white,
+              disabledBackgroundColor: AppColors.primaryEmerald.withValues(alpha: 0.5),
+              disabledForegroundColor: Colors.white70,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
               ),
-              elevation: 4,
+              elevation: 2,
             ),
             child: state.isInitiating
                 ? Row(
@@ -241,14 +320,14 @@ class PaymentCheckoutModal extends StatelessWidget {
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF05241C)),
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       ),
                       const SizedBox(width: AppSpacing.space10),
                       Text(
                         'Processing Secure Payment...',
                         style: AppTypography.bodyBold(
-                          color: const Color(0xFF05241C),
+                          color: Colors.white,
                         ).copyWith(fontSize: 14, fontWeight: FontWeight.w800),
                       ),
                     ],
@@ -258,7 +337,7 @@ class PaymentCheckoutModal extends StatelessWidget {
                         ? 'Proceed with Cash Pickup'
                         : 'Confirm & Pay $formattedAmount',
                     style: AppTypography.bodyBold(
-                      color: const Color(0xFF05241C),
+                      color: Colors.white,
                     ).copyWith(fontSize: 14.5, fontWeight: FontWeight.w800),
                   ),
           ),
@@ -288,13 +367,13 @@ class PaymentCheckoutModal extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFFC99A2E).withValues(alpha: 0.15)
-              : Colors.white.withValues(alpha: 0.05),
+              ? const Color(0xFFEAF5F0)
+              : const Color(0xFFF8F9FA),
           borderRadius: AppRadius.border12,
           border: Border.all(
             color: isSelected
-                ? AppColors.goldPrimary
-                : Colors.white.withValues(alpha: 0.1),
+                ? AppColors.primaryEmerald
+                : const Color(0xFFE2E8F0),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -309,14 +388,14 @@ class PaymentCheckoutModal extends StatelessWidget {
                   Text(
                     title,
                     style: AppTypography.bodyBold(
-                      color: Colors.white,
+                      color: isSelected ? AppColors.primaryEmerald : AppColors.espressoCharcoal,
                     ).copyWith(fontSize: 13, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
                     style: AppTypography.labelMeta(
-                      color: const Color(0xFF8EAA9E),
+                      color: isSelected ? const Color(0xFF2E6352) : AppColors.warmTaupeBrown,
                     ).copyWith(fontSize: 11),
                   ),
                 ],
@@ -329,8 +408,8 @@ class PaymentCheckoutModal extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? AppColors.goldPrimary
-                      : Colors.white.withValues(alpha: 0.3),
+                      ? AppColors.primaryEmerald
+                      : const Color(0xFFCBD5E1),
                   width: 2,
                 ),
               ),
@@ -341,13 +420,55 @@ class PaymentCheckoutModal extends StatelessWidget {
                         height: 8,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.goldPrimary,
+                          color: AppColors.primaryEmerald,
                         ),
                       ),
                     )
                   : null,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMonthPill({
+    Key? pillKey,
+    required String label,
+    required int count,
+    required bool isSelected,
+    required bool isEnabled,
+  }) {
+    return InkWell(
+      key: pillKey ?? Key('month_pill_$count'),
+      onTap: isEnabled && onSelectMonthsCount != null
+          ? () => onSelectMonthsCount!(count)
+          : null,
+      borderRadius: AppRadius.border10,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primaryEmerald
+              : (isEnabled ? const Color(0xFFF8FAF9) : const Color(0xFFF1F5F9)),
+          borderRadius: AppRadius.border10,
+          border: Border.all(
+            color: isSelected
+                ? AppColors.goldPrimary
+                : (isEnabled ? const Color(0xFFD1D5DB) : const Color(0xFFE2E8F0)),
+            width: isSelected ? 1.6 : 1.0,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11.5,
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+            color: isSelected
+                ? Colors.white
+                : (isEnabled ? AppColors.espressoCharcoal : const Color(0xFF94A3B8)),
+          ),
         ),
       ),
     );

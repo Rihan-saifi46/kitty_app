@@ -60,14 +60,47 @@ class PaymentController extends Notifier<PaymentState> {
     required String chitToken,
     required int monthFor,
     required int amount,
+    int totalDurationMonths = 12,
   }) {
     if (state.isBusy) return;
+    final int remaining =
+        (totalDurationMonths - monthFor + 1).clamp(1, totalDurationMonths);
     state = state.copyWith(
       membershipId: membershipId,
       chitToken: chitToken,
       monthFor: monthFor,
+      startMonth: monthFor,
       amount: amount,
+      monthlyInstallment: amount,
+      selectedMonthsCount: 1,
+      totalDurationMonths: totalDurationMonths,
+      remainingMonthsCount: remaining,
     );
+  }
+
+  /// Selects the number of installment months to pay (1, 2, 3, or remaining).
+  bool selectMonthsCount(int count) {
+    if (state.isBusy) return false;
+    final int maxAllowed = state.remainingMonthsCount;
+    if (count < 1 || count > maxAllowed) {
+      state = state.copyWith(
+        errorMessage: 'Invalid month selection. Remaining months: $maxAllowed.',
+      );
+      return false;
+    }
+
+    final int newTotal = count * state.monthlyInstallment;
+    state = state.copyWith(
+      selectedMonthsCount: count,
+      amount: newTotal,
+      clearError: true,
+    );
+    return true;
+  }
+
+  /// Selects all remaining months in the active tenure.
+  void selectAllRemainingMonths() {
+    selectMonthsCount(state.remainingMonthsCount);
   }
 
   /// Selects specific payment channel (UPI, NetBanking, Card, Pick Cash).
@@ -115,6 +148,7 @@ class PaymentController extends Notifier<PaymentState> {
       order = await _paymentRepository.initiatePayment(
         membershipId: state.membershipId,
         monthFor: state.monthFor,
+        monthsCount: state.selectedMonthsCount,
         paymentMethod: state.selectedMethod,
       );
 

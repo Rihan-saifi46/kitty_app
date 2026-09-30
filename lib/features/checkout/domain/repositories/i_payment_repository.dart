@@ -7,6 +7,7 @@ abstract interface class IPaymentRepository {
   Future<PaymentOrderEntity> initiatePayment({
     required String membershipId,
     required int monthFor,
+    int monthsCount = 1,
     PaymentMethodEnum paymentMethod = PaymentMethodEnum.online,
   });
 

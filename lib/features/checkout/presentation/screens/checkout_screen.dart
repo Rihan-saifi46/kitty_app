@@ -115,7 +115,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xCC05241C), // 80% opacity dark emerald overlay
+        backgroundColor: Colors.black.withValues(alpha: 0.65), // Dark semi-transparent overlay backdrop
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -157,6 +157,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
       state: state,
       onSelectChannel: (PaymentChannel channel) => controller.selectPaymentChannel(channel),
       onSelectMethod: (PaymentMethodEnum method) => controller.selectPaymentMethod(method),
+      onSelectMonthsCount: (int count) => controller.selectMonthsCount(count),
       onConfirmPayment: () => controller.initiateAndPay(context),
       onProceedPickCash: () => PickCashSheet.show(
         context,

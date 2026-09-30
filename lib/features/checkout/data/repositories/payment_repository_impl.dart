@@ -15,15 +15,17 @@ class PaymentRepositoryImpl implements IPaymentRepository {
   Future<PaymentOrderEntity> initiatePayment({
     required String membershipId,
     required int monthFor,
+    int monthsCount = 1,
     PaymentMethodEnum paymentMethod = PaymentMethodEnum.online,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/api/v1/payments/initiate',
-      data: PaymentInitiateRequestDto(
-        membershipId: membershipId,
-        monthFor: monthFor,
-        paymentMethod: paymentMethod.toJson(),
-      ).toJson(),
+      data: <String, dynamic>{
+        'membershipId': membershipId,
+        'monthFor': monthFor,
+        'monthsCount': monthsCount,
+        'paymentMethod': paymentMethod.toJson(),
+      },
     );
 
     final Map<String, dynamic> data =

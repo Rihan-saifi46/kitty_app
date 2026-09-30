@@ -51,6 +51,7 @@ class MockPaymentRepository implements IPaymentRepository {
   Future<PaymentOrderEntity> initiatePayment({
     required String membershipId,
     required int monthFor,
+    int monthsCount = 1,
     PaymentMethodEnum paymentMethod = PaymentMethodEnum.online,
   }) async {
     await _engineConfig.simulate();
@@ -66,7 +67,14 @@ class MockPaymentRepository implements IPaymentRepository {
 
     _pollCounts[dto.orderId] = 0;
 
-    return PaymentMapper.toOrderEntity(dto);
+    final PaymentOrderEntity baseOrder = PaymentMapper.toOrderEntity(dto);
+    return PaymentOrderEntity(
+      orderId: baseOrder.orderId,
+      paymentId: baseOrder.paymentId,
+      amount: baseOrder.amount * monthsCount,
+      currency: baseOrder.currency,
+      merchantKey: baseOrder.merchantKey,
+    );
   }
 
   @override
