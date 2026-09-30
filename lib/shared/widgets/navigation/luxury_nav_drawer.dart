@@ -8,8 +8,15 @@ import '../../../../core/constants/app_typography.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../../../features/notifications/presentation/providers/notifications_controller.dart';
+import 'menu_items_config.dart';
 
 /// Luxury slide-out navigation drawer strictly matching the approved prototype.
+///
+/// Features 4 categorized sections:
+/// 1. KITTY & SAVINGS: My Kitty, Kitty Plans, Savings Passbook
+/// 2. BULLION: Gold Coins, Silver Coins
+/// 3. ACCOUNT & COMPLIANCE: Profile, KYC Compliance, Orders & Bookings, Settings & Security, Notifications
+/// 4. CONCIERGE: Concierge & Support
 class LuxuryNavDrawer extends ConsumerWidget {
   const LuxuryNavDrawer({super.key});
 
@@ -20,7 +27,7 @@ class LuxuryNavDrawer extends ConsumerWidget {
     final int unreadNotificationsCount = ref.watch(unreadNotificationsCountProvider);
 
     return Drawer(
-      backgroundColor: AppColors.deepEmeraldBase,
+      backgroundColor: AppColors.homeCanvasBg,
       child: SafeArea(
         child: Column(
           children: <Widget>[
@@ -47,7 +54,7 @@ class LuxuryNavDrawer extends ConsumerWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(
                       Icons.close_rounded,
-                      color: AppColors.textPrimaryLight,
+                      color: AppColors.primaryEmerald,
                       size: 22,
                     ),
                     tooltip: 'Close Drawer',
@@ -62,9 +69,16 @@ class LuxuryNavDrawer extends ConsumerWidget {
               child: Container(
                 padding: AppSpacing.all16,
                 decoration: BoxDecoration(
-                  color: AppColors.emeraldCard,
+                  color: Colors.white,
                   borderRadius: AppRadius.border16,
-                  border: Border.all(color: AppColors.emeraldBorder),
+                  border: Border.all(color: AppColors.surfaceCardBorder),
+                  boxShadow: const <BoxShadow>[
+                    BoxShadow(
+                      color: Color(0x0A063D2E),
+                      blurRadius: 10,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: <Widget>[
@@ -72,9 +86,12 @@ class LuxuryNavDrawer extends ConsumerWidget {
                       width: 46,
                       height: 46,
                       decoration: BoxDecoration(
-                        color: AppColors.goldSubtle,
+                        color: const Color(0x18063D2E),
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.goldBorder, width: 1.5),
+                        border: Border.all(
+                          color: AppColors.primaryEmerald.withValues(alpha: 0.3),
+                          width: 1.5,
+                        ),
                       ),
                       child: Center(
                         child: Text(
@@ -82,7 +99,7 @@ class LuxuryNavDrawer extends ConsumerWidget {
                               ? authState.userName[0].toUpperCase()
                               : 'P',
                           style: AppTypography.displaySubtitle(
-                            color: AppColors.goldPrimary,
+                            color: AppColors.primaryEmerald,
                           ),
                         ),
                       ),
@@ -95,8 +112,8 @@ class LuxuryNavDrawer extends ConsumerWidget {
                           Text(
                             authState.userName,
                             style: AppTypography.bodyBold(
-                              color: AppColors.textPrimaryLight,
-                            ),
+                              color: AppColors.primaryEmerald,
+                            ).copyWith(fontWeight: FontWeight.w700),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -104,27 +121,7 @@ class LuxuryNavDrawer extends ConsumerWidget {
                           Text(
                             authState.userPhone,
                             style: AppTypography.labelMeta(
-                              color: AppColors.emeraldTextSubtle,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.goldSubtle,
-                              borderRadius: AppRadius.border12,
-                              border: Border.all(
-                                color: AppColors.goldBorder.withValues(alpha: 0.4),
-                              ),
-                            ),
-                            child: Text(
-                              authState.tier,
-                              style: AppTypography.kickerCaps(
-                                color: AppColors.goldLight,
-                              ).copyWith(fontSize: 9),
+                              color: AppColors.mutedSlateGray,
                             ),
                           ),
                         ],
@@ -135,72 +132,60 @@ class LuxuryNavDrawer extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: AppSpacing.space16),
+            const SizedBox(height: AppSpacing.space12),
 
-            // 3. Navigation Links List
+            // 3. Categorized Navigation Links List
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 children: <Widget>[
-                  _DrawerNavItem(
-                    title: 'Home',
-                    icon: Icons.storefront_outlined,
-                    routePath: RoutePaths.home,
-                    isActive: currentPath == RoutePaths.home,
-                    onTap: () => _navigateTo(context, RoutePaths.home),
-                  ),
-                  _DrawerNavItem(
-                    title: 'My Kitty Scheme',
-                    icon: Icons.diamond_outlined,
-                    routePath: RoutePaths.dashboard,
-                    isActive: currentPath == RoutePaths.dashboard,
-                    badgeText: 'Active',
-                    badgeColor: AppColors.goldPrimary,
-                    onTap: () => _navigateTo(context, RoutePaths.dashboard),
-                  ),
-                  _DrawerNavItem(
-                    title: 'Passbook Ledger',
-                    icon: Icons.menu_book_outlined,
-                    routePath: RoutePaths.passbook,
-                    isActive: currentPath == RoutePaths.passbook,
-                    onTap: () => _navigateTo(context, RoutePaths.passbook),
-                  ),
-                  _DrawerNavItem(
-                    title: 'Kitty Offers & Plans',
-                    icon: Icons.card_giftcard_rounded,
-                    routePath: RoutePaths.offers,
-                    isActive: currentPath == RoutePaths.offers,
-                    badgeText: 'Special',
-                    badgeColor: AppColors.goldLight,
-                    onTap: () => _navigateTo(context, RoutePaths.offers),
-                  ),
-                  _DrawerNavItem(
-                    title: 'Notifications',
-                    icon: Icons.notifications_outlined,
-                    routePath: RoutePaths.notifications,
-                    isActive: currentPath == RoutePaths.notifications,
-                    badgeText: unreadNotificationsCount > 0 ? '$unreadNotificationsCount' : null,
-                    badgeColor: AppColors.goldLight,
-                    onTap: () => _navigateTo(context, RoutePaths.notifications),
-                  ),
-                  _DrawerNavItem(
-                    title: 'KYC Compliance',
-                    icon: Icons.verified_user_outlined,
-                    routePath: RoutePaths.kyc,
-                    isActive: currentPath == RoutePaths.kyc,
-                    onTap: () => _navigateTo(context, RoutePaths.kyc),
-                  ),
+                  ...AppNavMenuConfig.getCategories(
+                    unreadNotificationsCount: unreadNotificationsCount,
+                  ).map((AppNavCategory category) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(14, 12, 14, 4),
+                          child: Text(
+                            category.categoryName,
+                            style: AppTypography.kickerCaps(
+                              color: AppColors.mutedSlateGray,
+                            ).copyWith(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ),
+                        ...category.items.map((AppNavMenuItem item) {
+                          return _DrawerNavItem(
+                            title: item.title,
+                            icon: item.icon,
+                            routePath: item.routePath,
+                            isActive: currentPath == item.routePath,
+                            badgeText: item.badgeText,
+                            badgeColor: item.badgeColor ?? AppColors.primaryEmerald,
+                            isDestructive: item.isDestructive,
+                            onTap: () {
+                              if (item.id == 'concierge') {
+                                _showConciergeModal(context);
+                              } else {
+                                _navigateTo(context, item.routePath, extra: item.extra);
+                              }
+                            },
+                          );
+                        }),
+                      ],
+                    );
+                  }),
+
                   const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Divider(color: AppColors.emeraldBorder, height: 1),
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    child: Divider(color: AppColors.surfaceCardBorder, height: 1),
                   ),
-                  _DrawerNavItem(
-                    title: 'Settings & Security',
-                    icon: Icons.settings_outlined,
-                    routePath: RoutePaths.settings,
-                    isActive: currentPath == RoutePaths.settings,
-                    onTap: () => _navigateTo(context, RoutePaths.settings),
-                  ),
+
+                  // 4. Logout Action
                   _DrawerNavItem(
                     title: 'Log Out of Account',
                     icon: Icons.logout_rounded,
@@ -209,42 +194,9 @@ class LuxuryNavDrawer extends ConsumerWidget {
                     isDestructive: true,
                     onTap: () => _handleLogout(context, ref),
                   ),
-                ],
-              ),
-            ),
 
-            // 4. VIP Concierge Footer Pill
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.goldSubtle,
-                  borderRadius: AppRadius.border12,
-                  border: Border.all(
-                    color: AppColors.goldBorder.withValues(alpha: 0.4),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text(
-                      '✦',
-                      style: TextStyle(color: AppColors.goldPrimary, fontSize: 13),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'Swastik VIP Concierge • 1800-SWASTIK',
-                        style: AppTypography.kickerCaps(
-                          color: AppColors.goldLight,
-                        ).copyWith(fontSize: 10),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ],
@@ -253,9 +205,95 @@ class LuxuryNavDrawer extends ConsumerWidget {
     );
   }
 
-  void _navigateTo(BuildContext context, String path) {
+  void _navigateTo(BuildContext context, String path, {Object? extra}) {
     Navigator.of(context).pop(); // Close drawer first
-    context.go(path);
+    context.go(path, extra: extra);
+  }
+
+  void _showConciergeModal(BuildContext context) {
+    Navigator.of(context).pop(); // Close drawer first
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Swastik Concierge',
+                    style: AppTypography.cardTitle(color: AppColors.primaryEmerald),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded, color: AppColors.primaryEmerald),
+                    onPressed: () => Navigator.of(ctx).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Personalized jewellery advisory, bespoke orders, and scheme concierge assistance.',
+                style: AppTypography.bodyRegular(color: AppColors.mutedSlateGray),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0x18063D2E),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.phone_in_talk_rounded, color: AppColors.primaryEmerald, size: 20),
+                ),
+                title: const Text('Toll-Free Helpline', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                subtitle: const Text('1800-SWASTIK (1800-792-7845)', style: TextStyle(fontSize: 12)),
+              ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0x18063D2E),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.chat_bubble_outline_rounded, color: AppColors.primaryEmerald, size: 20),
+                ),
+                title: const Text('Concierge WhatsApp', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                subtitle: const Text('+91 98765 43210 • 10:30 AM - 8:30 PM', style: TextStyle(fontSize: 12)),
+              ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: const BoxDecoration(
+                    color: Color(0x18063D2E),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.email_outlined, color: AppColors.primaryEmerald, size: 20),
+                ),
+                title: const Text('Priority Support Email', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                subtitle: const Text('support@swastikjewel.in', style: TextStyle(fontSize: 12)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
@@ -264,22 +302,22 @@ class LuxuryNavDrawer extends ConsumerWidget {
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
-        backgroundColor: AppColors.emeraldCard,
+        backgroundColor: Colors.white,
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.border16),
         title: Text(
           'Log Out of Account?',
-          style: AppTypography.cardTitle(color: AppColors.textPrimaryLight),
+          style: AppTypography.cardTitle(color: AppColors.primaryEmerald),
         ),
         content: Text(
           'Are you sure you want to end your current session? You will need to re-verify via OTP.',
-          style: AppTypography.bodyRegular(color: AppColors.emeraldTextSubtle),
+          style: AppTypography.bodyRegular(color: AppColors.espressoCharcoal),
         ),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               'Cancel',
-              style: AppTypography.bodyRegular(color: AppColors.emeraldTextSubtle),
+              style: AppTypography.bodyRegular(color: AppColors.mutedSlateGray),
             ),
           ),
           ElevatedButton(
@@ -328,53 +366,60 @@ class _DrawerNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color itemColor = isDestructive
         ? AppColors.statusErrorText
-        : (isActive ? AppColors.goldPrimary : AppColors.textPrimaryLight);
+        : AppColors.primaryEmerald;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Material(
-        color: isActive ? AppColors.goldSubtle : Colors.transparent,
-        borderRadius: AppRadius.border12,
-        child: InkWell(
-          onTap: onTap,
+    return Semantics(
+      button: true,
+      label: title,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: Material(
+          color: isActive ? const Color(0x18063D2E) : Colors.transparent,
           borderRadius: AppRadius.border12,
-          splashColor: AppColors.goldSubtle,
-          highlightColor: AppColors.goldSubtle.withValues(alpha: 0.5),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Row(
-              children: <Widget>[
-                Icon(icon, color: itemColor, size: 20),
-                const SizedBox(width: AppSpacing.space12),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: AppTypography.bodyBold(
-                      color: itemColor,
-                    ).copyWith(
-                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                    ),
-                  ),
-                ),
-                if (badgeText != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.goldSubtle,
-                      borderRadius: AppRadius.border12,
-                      border: Border.all(
-                        color: badgeColor ?? AppColors.goldBorder,
-                        width: 0.8,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: AppRadius.border12,
+            splashColor: const Color(0x1A063D2E),
+            highlightColor: const Color(0x0F063D2E),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 48),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                child: Row(
+                  children: <Widget>[
+                    Icon(icon, color: itemColor, size: 20),
+                    const SizedBox(width: AppSpacing.space12),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: AppTypography.bodyBold(
+                          color: itemColor,
+                        ).copyWith(
+                          fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      badgeText!,
-                      style: AppTypography.kickerCaps(
-                        color: badgeColor ?? AppColors.goldPrimary,
-                      ).copyWith(fontSize: 9),
-                    ),
-                  ),
-              ],
+                    if (badgeText != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0x14063D2E),
+                          borderRadius: AppRadius.border12,
+                          border: Border.all(
+                            color: badgeColor ?? AppColors.primaryEmerald.withValues(alpha: 0.3),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Text(
+                          badgeText!,
+                          style: AppTypography.kickerCaps(
+                            color: badgeColor ?? AppColors.primaryEmerald,
+                          ).copyWith(fontSize: 9, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

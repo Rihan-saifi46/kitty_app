@@ -131,13 +131,20 @@ class KittySecondaryButton extends StatelessWidget {
       ),
     );
 
+    final Widget semanticContent = Semantics(
+      button: true,
+      enabled: _isActionable,
+      label: label,
+      child: buttonContent,
+    );
+
     if (fullWidth) {
       return SizedBox(
         width: double.infinity,
-        child: buttonContent,
+        child: semanticContent,
       );
     }
 
-    return buttonContent;
+    return semanticContent;
   }
 }

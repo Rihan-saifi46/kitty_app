@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../buttons/kitty_primary_button.dart';
 import '../buttons/kitty_secondary_button.dart';
@@ -92,7 +93,7 @@ class KittyErrorState extends StatelessWidget {
             // Title
             Text(
               title,
-              style: GoogleFonts.cinzel(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: titleColor,
@@ -121,7 +122,7 @@ class KittyErrorState extends StatelessWidget {
                 label: retryLabel,
                 onPressed: onRetry,
                 fullWidth: false,
-                height: 44,
+                height: AppDimensions.primaryButtonHeight,
                 icon: const Icon(Icons.refresh, size: 16, color: Color(0xFF092B22)),
               ),
             ],

@@ -4,20 +4,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/constants/app_typography.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../../../features/notifications/presentation/providers/notifications_controller.dart';
 
 /// Sticky luxury top application header matching the approved Swastik prototype.
 ///
-/// Features the authentic Swastik Jewellers brand crest, live 24K gold rate benchmark pill,
+/// Features the authentic Swastik Jewellers brand crest at the extreme left,
 /// notifications bell with unread badge, and the navigation drawer hamburger toggle.
 class HeaderNavBar extends StatelessWidget implements PreferredSizeWidget {
   const HeaderNavBar({
     super.key,
     this.onMenuPressed,
     this.unreadNotificationsCount,
-    this.goldRate24k = 7485.50,
+    @Deprecated('Gold rate ticker removed from header') this.goldRate24k,
   });
 
   /// Callback to open the slide-out luxury navigation drawer.
@@ -26,8 +25,8 @@ class HeaderNavBar extends StatelessWidget implements PreferredSizeWidget {
   /// Optional override for unread transactional notifications count.
   final int? unreadNotificationsCount;
 
-  /// Daily benchmark gold rate per gram.
-  final double goldRate24k;
+  /// Deprecated benchmark rate; header no longer displays ticker pill.
+  final double? goldRate24k;
 
   @override
   Size get preferredSize => const Size.fromHeight(66);
@@ -45,7 +44,7 @@ class HeaderNavBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Color(0x082B2521),
+            color: Color(0x0D063D2E),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -54,155 +53,109 @@ class HeaderNavBar extends StatelessWidget implements PreferredSizeWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          child: Stack(
-            alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              // Center: Authentic Swastik Jewellers Brand Logo
-              Center(
-                child: GestureDetector(
-                  key: const Key('swastik_header_logo'),
-                  onTap: () => context.go(RoutePaths.home),
-                  behavior: HitTestBehavior.opaque,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/swastiklogo.svg',
-                      height: 38,
-                      fit: BoxFit.contain,
-                      semanticsLabel: 'Swastik Jewellers',
-                    ),
+              // Extreme Left: Authentic Swastik Jewellers Brand Logo
+              GestureDetector(
+                key: const Key('swastik_header_logo'),
+                onTap: () => context.go(RoutePaths.home),
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2.0),
+                  child: SvgPicture.asset(
+                    'assets/icons/swastiklogo.svg',
+                    height: 38,
+                    fit: BoxFit.contain,
+                    semanticsLabel: 'Swastik Jewellers',
                   ),
                 ),
               ),
 
-              // Left & Right Controls Row
-              Positioned.fill(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    // Left: Live Gold Rate Ticker Pill (Aligned to LEFT, slightly smaller)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                      decoration: BoxDecoration(
-                        color: AppColors.champagneFoil,
-                        borderRadius: AppRadius.border20,
-                        border: Border.all(
-                          color: AppColors.honeyGoldAccent.withValues(alpha: 0.35),
-                          width: 0.9,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+              // Right: Notification Bell + Hamburger Navigation Toggle Button
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Tooltip(
+                    message: 'Notifications',
+                    child: InkWell(
+                      onTap: () => context.push(RoutePaths.notifications),
+                      borderRadius: AppRadius.border20,
+                      child: Stack(
+                        clipBehavior: Clip.none,
                         children: <Widget>[
                           Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: AppColors.statusSuccessText,
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: AppColors.homeNavbarBg,
                               shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.homeNavbarBorder,
+                                width: 1,
+                              ),
+                              boxShadow: const <BoxShadow>[
+                                BoxShadow(
+                                  color: Color(0x0D063D2E),
+                                  blurRadius: 6,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.notifications_none_rounded,
+                                color: AppColors.homePrimaryHeading,
+                                size: 20,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '24K: ₹${goldRate24k.toInt()}/g',
-                            style: AppTypography.kickerCaps(
-                              color: AppColors.espressoCharcoal,
-                            ).copyWith(
-                              fontSize: 11.0,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0.3,
-                            ),
+                          Positioned(
+                            right: -2,
+                            top: -2,
+                            child: NotificationBellBadge(unreadCountOverride: unreadNotificationsCount),
                           ),
                         ],
                       ),
                     ),
-
-                    // Right: Notification Bell + Hamburger Navigation Toggle Button
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Tooltip(
-                          message: 'Notifications',
-                          child: InkWell(
-                            onTap: () => context.push(RoutePaths.notifications),
-                            borderRadius: AppRadius.border20,
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: <Widget>[
-                                Container(
-                                  width: 38,
-                                  height: 38,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.homeNavbarBg,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: AppColors.homeNavbarBorder,
-                                      width: 1,
-                                    ),
-                                    boxShadow: const <BoxShadow>[
-                                      BoxShadow(
-                                        color: Color(0x0A0C2B24),
-                                        blurRadius: 6,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.notifications_none_rounded,
-                                      color: AppColors.homePrimaryHeading,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  right: -2,
-                                  top: -2,
-                                  child: NotificationBellBadge(unreadCountOverride: unreadNotificationsCount),
-                                ),
-                              ],
+                  ),
+                  const SizedBox(width: AppSpacing.space8),
+                  Tooltip(
+                    message: 'Open Menu',
+                    child: InkWell(
+                      onTap: onMenuPressed,
+                      borderRadius: AppRadius.border20,
+                      child: Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: AppColors.homeNavbarBg,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.homeNavbarBorder,
+                            width: 1,
+                          ),
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(
+                              color: Color(0x0D063D2E),
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
                             ),
+                          ],
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.menu_rounded,
+                            color: AppColors.homePrimaryHeading,
+                            size: 22,
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.space8),
-                        Tooltip(
-                          message: 'Open Menu',
-                          child: InkWell(
-                            onTap: onMenuPressed,
-                            borderRadius: AppRadius.border20,
-                            child: Container(
-                              width: 38,
-                              height: 38,
-                              decoration: BoxDecoration(
-                                color: AppColors.homeNavbarBg,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppColors.homeNavbarBorder,
-                                  width: 1,
-                                ),
-                                boxShadow: const <BoxShadow>[
-                                  BoxShadow(
-                                    color: Color(0x0A0C2B24),
-                                    blurRadius: 6,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.menu_rounded,
-                                  color: AppColors.homePrimaryHeading,
-                                  size: 22,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),

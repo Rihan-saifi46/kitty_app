@@ -6,8 +6,8 @@ import '../../../core/constants/app_spacing.dart';
 
 /// High-prominence luxury call-to-action button for Kitty App.
 ///
-/// Follows the approved design with metallic gold gradient (`#E6C275` -> `#CCA043`),
-/// deep emerald text (`#092B22`), bold typography with `letterSpacing: 1.2`,
+/// Follows the approved redesign with Deep Emerald Green (`#063D2E`),
+/// crisp white text (`#FFFFFF`), bold typography with `letterSpacing: 1.2`,
 /// rounded corners (`radius14`), and supports loading and disabled states.
 class KittyPrimaryButton extends StatefulWidget {
   const KittyPrimaryButton({
@@ -71,7 +71,7 @@ class _KittyPrimaryButtonState extends State<KittyPrimaryButton> {
   @override
   Widget build(BuildContext context) {
     final BorderRadius radius = widget.borderRadius ?? AppRadius.border14;
-    final Color textColor = widget.textColor ?? const Color(0xFF092B22);
+    final Color textColor = widget.textColor ?? Colors.white;
 
     final Widget buttonContent = AnimatedScale(
       scale: _isPressed && _isActionable ? 0.98 : 1.0,
@@ -85,10 +85,10 @@ class _KittyPrimaryButtonState extends State<KittyPrimaryButton> {
           decoration: BoxDecoration(
             borderRadius: radius,
             gradient: widget.backgroundColor == null
-                ? AppColors.goldPrimaryGradient
+                ? AppColors.emeraldPrimaryGradient
                 : null,
             color: widget.backgroundColor,
-            boxShadow: _isActionable ? AppShadows.ctaGold : null,
+            boxShadow: _isActionable ? AppShadows.ctaEmerald : null,
           ),
           child: Material(
             color: Colors.transparent,
@@ -114,14 +114,21 @@ class _KittyPrimaryButtonState extends State<KittyPrimaryButton> {
       ),
     );
 
+    final Widget semanticContent = Semantics(
+      button: true,
+      enabled: _isActionable,
+      label: widget.label,
+      child: buttonContent,
+    );
+
     if (widget.fullWidth) {
       return SizedBox(
         width: double.infinity,
-        child: buttonContent,
+        child: semanticContent,
       );
     }
 
-    return buttonContent;
+    return semanticContent;
   }
 
   Widget _buildDefaultState(Color textColor) {

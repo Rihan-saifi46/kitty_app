@@ -13,7 +13,7 @@ import '../../../../core/constants/app_typography.dart';
 /// 3. Jewellery
 /// 4. KYC
 /// 5. Menu
-class AppBottomNavBar extends StatelessWidget {
+class AppBottomNavBar extends StatefulWidget {
   const AppBottomNavBar({
     required this.currentIndex,
     required this.onTap,
@@ -26,25 +26,63 @@ class AppBottomNavBar extends StatelessWidget {
   static const List<_NavItemData> _items = <_NavItemData>[
     _NavItemData(
       label: 'Home',
-      icon: Icons.storefront_outlined,
-      activeIcon: Icons.storefront_rounded,
+      icon: Icons.home_outlined,
+      activeIcon: Icons.home_rounded,
     ),
     _NavItemData(
-      label: 'Coin Rates',
-      icon: Icons.monetization_on_outlined,
-      activeIcon: Icons.monetization_on_rounded,
+      label: 'My Kitty',
+      icon: Icons.workspace_premium_outlined,
+      activeIcon: Icons.workspace_premium_rounded,
     ),
     _NavItemData(
-      label: 'Jewellery',
-      icon: Icons.diamond_outlined,
-      activeIcon: Icons.diamond_rounded,
+      label: 'Kitty Plans',
+      icon: Icons.card_giftcard_outlined,
+      activeIcon: Icons.card_giftcard_rounded,
     ),
     _NavItemData(
       label: 'Calculator',
       icon: Icons.calculate_outlined,
       activeIcon: Icons.calculate_rounded,
     ),
+    _NavItemData(
+      label: 'Jewellery',
+      icon: Icons.diamond_outlined,
+      activeIcon: Icons.diamond_rounded,
+    ),
   ];
+
+  @override
+  State<AppBottomNavBar> createState() => _AppBottomNavBarState();
+}
+
+class _AppBottomNavBarState extends State<AppBottomNavBar> {
+  late int _activeIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _activeIndex = widget.currentIndex;
+  }
+
+  @override
+  void didUpdateWidget(covariant AppBottomNavBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentIndex != _activeIndex) {
+      setState(() {
+        _activeIndex = widget.currentIndex;
+      });
+    }
+  }
+
+  void _onTabSelected(int index) {
+    if (_activeIndex != index) {
+      setState(() {
+        _activeIndex = index;
+      });
+    }
+    HapticFeedback.selectionClick();
+    widget.onTap(index);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,38 +91,80 @@ class AppBottomNavBar extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.creamIvoryCard.withValues(alpha: 0.85),
+            color: AppColors.pureWhite.withValues(alpha: 0.94),
             border: const Border(
               top: BorderSide(
-                color: AppColors.warmLinenInset,
-                width: 1.2,
+                color: AppColors.homeNavbarBorder,
+                width: 1.0,
               ),
             ),
             boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: Color(0x122B2521),
-                blurRadius: 20,
-                offset: Offset(0, -6),
+                color: Color(0x0D063D2E),
+                blurRadius: 16,
+                offset: Offset(0, -4),
               ),
             ],
           ),
           child: SafeArea(
             top: false,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List<Widget>.generate(
-                  _items.length,
-                  (int index) => _DockNavItem(
-                    data: _items[index],
-                    isSelected: currentIndex == index,
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      onTap(index);
-                    },
-                  ),
-                ),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  final double tabWidth = constraints.maxWidth / AppBottomNavBar._items.length;
+                  final double pillWidth = (tabWidth - 8).clamp(50.0, 70.0);
+                  final bool hasActiveTab = _activeIndex >= 0 && _activeIndex < AppBottomNavBar._items.length;
+                  final double indicatorLeft = hasActiveTab
+                      ? _activeIndex * tabWidth + (tabWidth - pillWidth) / 2
+                      : 0.0;
+
+                  return SizedBox(
+                    height: 52,
+                    child: Stack(
+                      alignment: Alignment.centerLeft,
+                      children: <Widget>[
+                        // Smooth Sliding Active Indicator Capsule
+                        AnimatedPositioned(
+                          duration: const Duration(milliseconds: 280),
+                          curve: Curves.easeOutCubic,
+                          left: indicatorLeft,
+                          top: 2,
+                          bottom: 2,
+                          width: pillWidth,
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 200),
+                            opacity: hasActiveTab ? 1.0 : 0.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0x18063D2E),
+                                borderRadius: AppRadius.border16,
+                                border: Border.all(
+                                  color: AppColors.primaryEmerald.withValues(alpha: 0.22),
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Nav Items Row
+                        Row(
+                          children: List<Widget>.generate(
+                            AppBottomNavBar._items.length,
+                            (int index) => Expanded(
+                              child: _DockNavItem(
+                                data: AppBottomNavBar._items[index],
+                                isSelected: hasActiveTab && _activeIndex == index,
+                                onTap: () => _onTabSelected(index),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -119,28 +199,19 @@ class _DockNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color itemColor = isSelected ? AppColors.espressoCharcoal : AppColors.warmTaupeBrown;
-    final Color iconColor = isSelected ? AppColors.honeyGoldAccent : AppColors.warmTaupeBrown;
+    final Color itemColor = isSelected ? AppColors.primaryEmerald : AppColors.mutedNavGray;
+    final Color iconColor = isSelected ? AppColors.primaryEmerald : AppColors.mutedNavGray;
 
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: isSelected
-            ? const EdgeInsets.symmetric(horizontal: 10, vertical: 5)
-            : const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.champagneFoil.withValues(alpha: 0.55) : Colors.transparent,
-          borderRadius: AppRadius.border16,
-          border: Border.all(
-            color: isSelected
-                ? AppColors.honeyGoldAccent.withValues(alpha: 0.35)
-                : Colors.transparent,
-            width: 1,
-          ),
-        ),
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: '${data.label} tab, ${isSelected ? "selected" : "not selected"}',
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+        alignment: Alignment.center,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -152,6 +223,8 @@ class _DockNavItem extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               data.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: AppTypography.labelMeta(
                 color: itemColor,
               ).copyWith(
@@ -163,6 +236,7 @@ class _DockNavItem extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 }

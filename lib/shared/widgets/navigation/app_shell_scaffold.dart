@@ -28,27 +28,19 @@ class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int _resolveBottomNavIndex(String location) {
-    if (location.startsWith(RoutePaths.coinRates)) return 1;
-    if (location.startsWith(RoutePaths.jewellery)) return 2;
+    if (location == RoutePaths.home || location == '/') return 0;
+    if (location.startsWith(RoutePaths.dashboard)) return 1;
+    if (location.startsWith(RoutePaths.offers)) return 2;
     if (location.startsWith(RoutePaths.calculator)) return 3;
-    return 0; // Home or default
+    if (location.startsWith(RoutePaths.jewellery)) return 4;
+    return -1; // Off-dock navigation routes (e.g. /coin-rates, /passbook, /settings, /orders, etc.)
   }
 
   void _onBottomNavTapped(int index) {
-    switch (index) {
-      case 0:
-        widget.navigationShell.goBranch(0);
-        break;
-      case 1:
-        widget.navigationShell.goBranch(1);
-        break;
-      case 2:
-        widget.navigationShell.goBranch(2);
-        break;
-      case 3:
-        widget.navigationShell.goBranch(3);
-        break;
-    }
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == widget.navigationShell.currentIndex,
+    );
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../buttons/kitty_primary_button.dart';
 
@@ -85,7 +86,7 @@ class KittyEmptyState extends StatelessWidget {
             // Title
             Text(
               title,
-              style: GoogleFonts.cinzel(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: titleColor,
@@ -113,7 +114,7 @@ class KittyEmptyState extends StatelessWidget {
                 label: actionLabel!,
                 onPressed: onAction,
                 fullWidth: false,
-                height: 44,
+                height: AppDimensions.primaryButtonHeight,
               ),
             ],
           ],
