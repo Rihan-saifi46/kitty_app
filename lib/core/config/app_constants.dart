@@ -13,6 +13,12 @@ abstract final class AppConstants {
   /// Standard Chit token prefix.
   static const String chitTokenPrefix = '#SW-';
 
+  /// Official Swastik Jewellers showroom web catalog URL.
+  static const String jewelleryCatalogUrl = 'https://swastikjewel.in';
+
+  /// Official showroom concierge contact phone number.
+  static const String showroomContactPhone = '+919876543210';
+
   // ---------------------------------------------------------------------------
   // Network Timeouts & Limits
   // ---------------------------------------------------------------------------
