@@ -32,17 +32,26 @@ class StartKittyFlowSheet extends ConsumerStatefulWidget {
     super.key,
     required this.scheme,
     this.initialSlotNumber,
+    this.customMonthlyAmount,
+    this.sourceGrams,
+    this.sourceKarat,
     this.onCompleted,
   });
 
   final SchemeEntity scheme;
   final int? initialSlotNumber;
+  final int? customMonthlyAmount;
+  final double? sourceGrams;
+  final String? sourceKarat;
   final ValueChanged<Map<String, dynamic>>? onCompleted;
 
   static Future<void> show(
     BuildContext context, {
     required SchemeEntity scheme,
     int? initialSlotNumber,
+    int? customMonthlyAmount,
+    double? sourceGrams,
+    String? sourceKarat,
     ValueChanged<Map<String, dynamic>>? onCompleted,
   }) {
     return showModalBottomSheet<void>(
@@ -52,6 +61,9 @@ class StartKittyFlowSheet extends ConsumerStatefulWidget {
       builder: (BuildContext ctx) => StartKittyFlowSheet(
         scheme: scheme,
         initialSlotNumber: initialSlotNumber,
+        customMonthlyAmount: customMonthlyAmount,
+        sourceGrams: sourceGrams,
+        sourceKarat: sourceKarat,
         onCompleted: onCompleted,
       ),
     );
@@ -70,13 +82,17 @@ class _StartKittyFlowSheetState extends ConsumerState<StartKittyFlowSheet> {
   @override
   void initState() {
     super.initState();
-    _amountInputController.text =
-        widget.scheme.monthlyInstallment.toString();
+    final int initialAmount =
+        widget.customMonthlyAmount ?? widget.scheme.monthlyInstallment;
+    _amountInputController.text = initialAmount.toString();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ref
-          .read(startKittyFlowControllerProvider.notifier)
-          .init(widget.scheme);
+      ref.read(startKittyFlowControllerProvider.notifier).init(
+            widget.scheme,
+            customMonthlyAmount: widget.customMonthlyAmount,
+            sourceGrams: widget.sourceGrams,
+            sourceKarat: widget.sourceKarat,
+          );
       await ref
           .read(kittyNumberPickerControllerProvider.notifier)
           .loadSlots(widget.scheme.id);
@@ -195,6 +211,7 @@ class _StartKittyFlowSheetState extends ConsumerState<StartKittyFlowSheet> {
             ],
           ),
           IconButton(
+            key: const Key('start_kitty_close_btn'),
             icon: const Icon(
               Icons.close_rounded,
               color: AppColors.warmTaupeBrown,
@@ -313,6 +330,35 @@ class _StartKittyFlowSheetState extends ConsumerState<StartKittyFlowSheet> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: <Widget>[
+        if (flowState.sourceGrams != null && flowState.sourceKarat != null) ...<Widget>[
+          Container(
+            key: const Key('start_kitty_calculation_context_banner'),
+            margin: const EdgeInsets.only(bottom: AppSpacing.space12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFEF3C7),
+              borderRadius: AppRadius.border10,
+              border: Border.all(color: const Color(0xFFFDE68A)),
+            ),
+            child: Row(
+              children: <Widget>[
+                const Icon(Icons.calculate_outlined, size: 16, color: Color(0xFF92400E)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Budget calculated from Gold Calculator (${flowState.sourceGrams!.toStringAsFixed(3)}g ${flowState.sourceKarat})',
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF92400E),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+
         // Scheme Summary Pill Card
         Container(
           padding: const EdgeInsets.all(16),

@@ -26,11 +26,18 @@ class StartKittyFlowController extends Notifier<StartKittyFlowState> {
     );
   }
 
-  void init(SchemeEntity scheme) {
+  void init(
+    SchemeEntity scheme, {
+    int? customMonthlyAmount,
+    double? sourceGrams,
+    String? sourceKarat,
+  }) {
     state = StartKittyFlowState(
       scheme: scheme,
-      monthlyAmount: scheme.monthlyInstallment,
+      monthlyAmount: customMonthlyAmount ?? scheme.monthlyInstallment,
       durationMonths: scheme.durationMonths,
+      sourceGrams: sourceGrams,
+      sourceKarat: sourceKarat,
     );
   }
 

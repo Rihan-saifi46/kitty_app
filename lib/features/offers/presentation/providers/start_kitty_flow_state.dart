@@ -1,4 +1,4 @@
-﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 import '../../domain/entities/kitty_slot_entity.dart';
 import '../../domain/entities/scheme_entity.dart';
 
@@ -17,6 +17,8 @@ class StartKittyFlowState {
     this.monthlyAmount = 5000,
     this.durationMonths = 12,
     this.selectedSlot,
+    this.sourceGrams,
+    this.sourceKarat,
     this.isSubmitting = false,
     this.errorMessage,
     this.enrollmentResult,
@@ -27,6 +29,8 @@ class StartKittyFlowState {
   final int monthlyAmount;
   final int durationMonths;
   final KittySlotEntity? selectedSlot;
+  final double? sourceGrams;
+  final String? sourceKarat;
   final bool isSubmitting;
   final String? errorMessage;
   final Map<String, dynamic>? enrollmentResult;
@@ -52,6 +56,8 @@ class StartKittyFlowState {
     int? monthlyAmount,
     int? durationMonths,
     KittySlotEntity? selectedSlot,
+    double? sourceGrams,
+    String? sourceKarat,
     bool clearSelectedSlot = false,
     bool? isSubmitting,
     String? errorMessage,
@@ -64,6 +70,8 @@ class StartKittyFlowState {
       monthlyAmount: monthlyAmount ?? this.monthlyAmount,
       durationMonths: durationMonths ?? this.durationMonths,
       selectedSlot: clearSelectedSlot ? null : (selectedSlot ?? this.selectedSlot),
+      sourceGrams: sourceGrams ?? this.sourceGrams,
+      sourceKarat: sourceKarat ?? this.sourceKarat,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       enrollmentResult: enrollmentResult ?? this.enrollmentResult,
