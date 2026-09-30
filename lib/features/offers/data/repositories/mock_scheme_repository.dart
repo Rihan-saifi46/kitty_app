@@ -190,4 +190,28 @@ class MockSchemeRepository implements ISchemeRepository {
       }
     });
   }
+
+  @override
+  Future<Map<String, dynamic>> enrollScheme({
+    required String schemeId,
+    required int monthlyAmount,
+    required int slotNumber,
+  }) async {
+    await _engineConfig.simulate();
+
+    final String token = '#SW-${slotNumber.toString().padLeft(3, '0')}';
+    final String membershipId =
+        'MEM-2026-${slotNumber.toString().padLeft(3, '0')}';
+
+    return <String, dynamic>{
+      'success': true,
+      'membershipId': membershipId,
+      'schemeId': schemeId,
+      'monthlyAmount': monthlyAmount,
+      'slotNumber': slotNumber,
+      'tokenString': token,
+      'status': 'ENROLLED',
+      'message': 'Successfully enrolled in Kitty Scheme with Number $slotNumber',
+    };
+  }
 }

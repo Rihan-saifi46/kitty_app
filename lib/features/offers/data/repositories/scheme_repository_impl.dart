@@ -91,4 +91,25 @@ class SchemeRepositoryImpl implements ISchemeRepository, IOfferRepository {
       );
     }).toList();
   }
+
+  @override
+  Future<Map<String, dynamic>> enrollScheme({
+    required String schemeId,
+    required int monthlyAmount,
+    required int slotNumber,
+  }) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '${ApiEndpoints.schemesActive}/$schemeId/enroll',
+      data: <String, dynamic>{
+        'monthlyAmount': monthlyAmount,
+        'slotNumber': slotNumber,
+      },
+    );
+
+    return response.data?['data'] as Map<String, dynamic>? ??
+        <String, dynamic>{
+          'success': true,
+          'membershipId': 'MEM-$slotNumber',
+        };
+  }
 }

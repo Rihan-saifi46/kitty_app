@@ -14,4 +14,11 @@ abstract interface class ISchemeRepository {
     String schemeId, {
     int totalCapacity = 50,
   });
+
+  /// Submits an enrollment request for a specific scheme and kitty number slot.
+  Future<Map<String, dynamic>> enrollScheme({
+    required String schemeId,
+    required int monthlyAmount,
+    required int slotNumber,
+  });
 }
