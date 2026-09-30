@@ -56,8 +56,8 @@ void main() {
 
       // Hero Header
       expect(find.byType(OffersHeroHeader), findsOneWidget);
-      expect(find.text('Kitty Offers & Plans'), findsOneWidget);
-      expect(find.text('Curated Gold Kitty Plans'), findsOneWidget);
+      expect(find.text('CURATED GOLD SCHEME'), findsOneWidget);
+      expect(find.text('Explore Our Gold Scheme'), findsOneWidget);
 
       // Section Switcher removed per Change 10
       expect(find.text('✦ Savings Schemes'), findsNothing);
@@ -136,7 +136,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final Finder ctaFinder = find.text('Start 12-Month Kitty');
+      final Finder ctaFinder = find.text('START 12-MONTH GOLD SCHEME');
       expect(ctaFinder, findsOneWidget);
 
       await tester.tap(ctaFinder);
@@ -144,8 +144,8 @@ void main() {
 
       // Dialog opens
       expect(find.byType(OffersEnrollmentDialog), findsOneWidget);
-      expect(find.text('Enrol in Kitty Scheme'), findsOneWidget);
-      expect(find.text('CONFIRM & START KITTY'), findsOneWidget);
+      expect(find.text('Enrol in Gold Scheme'), findsOneWidget);
+      expect(find.text('CONFIRM & START GOLD SCHEME'), findsOneWidget);
 
       // Close dialog
       await tester.tap(find.byIcon(Icons.close_rounded));
@@ -243,8 +243,72 @@ void main() {
       await tester.tap(find.text('TRY AGAIN'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Curated Gold Kitty Plans'), findsOneWidget);
+      expect(find.text('CURATED GOLD SCHEME'), findsOneWidget);
       expect(find.byType(OffersSchemeCard), findsWidgets);
+    });
+
+    testWidgets('8. Benefit-first presentation renders 11+1 bonus banner and math',
+        (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2340);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final MockSchemeRepository schemeRepo =
+          MockSchemeRepository(engineConfig: instantConfig);
+      final MockProductRepository productRepo =
+          MockProductRepository(engineConfig: instantConfig);
+
+      await tester.pumpWidget(
+        buildTestApp(
+          schemeRepository: schemeRepo,
+          productRepository: productRepo,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Check for 11+1 callout banner
+      expect(find.text('✦ 11 + 1 SWASTIK BONUS BENEFIT'), findsOneWidget);
+      expect(find.text('11+1 PLAN'), findsOneWidget);
+      expect(find.text('View Plan Details & Rules'), findsWidgets);
+    });
+
+    testWidgets('9. Tapping View Plan Details & Rules opens KittyPlanDetailSheet with FAQs',
+        (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2340);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final MockSchemeRepository schemeRepo =
+          MockSchemeRepository(engineConfig: instantConfig);
+      final MockProductRepository productRepo =
+          MockProductRepository(engineConfig: instantConfig);
+
+      await tester.pumpWidget(
+        buildTestApp(
+          schemeRepository: schemeRepo,
+          productRepository: productRepo,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap first "View Plan Details & Rules"
+      await tester.tap(find.text('View Plan Details & Rules').first);
+      await tester.pumpAndSettle();
+
+      // Verify sheet content
+      expect(find.text('KITTY PLAN DETAILS'), findsOneWidget);
+      expect(find.text('MATURITY MATHEMATICS (11+1 ADVANTAGE)'), findsOneWidget);
+      expect(find.text('HOW REDEMPTION WORKS'), findsOneWidget);
+      expect(find.text('FREQUENTLY ASKED QUESTIONS'), findsOneWidget);
+      expect(find.text('START SWASTIK SUVARNA VARSHA NOW'), findsOneWidget);
+
+      // Tap START ... NOW from sheet opens enrollment dialog
+      await tester.tap(find.text('START SWASTIK SUVARNA VARSHA NOW'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OffersEnrollmentDialog), findsOneWidget);
     });
   });
 }
