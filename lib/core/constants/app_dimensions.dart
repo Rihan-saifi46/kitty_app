@@ -8,8 +8,11 @@ abstract final class AppDimensions {
   /// Maximum width for wide views like Offers and Settings (480px).
   static const double maxWideContainerWidth = 480.0;
 
-  /// Standard primary button height (50px).
-  static const double primaryButtonHeight = 50.0;
+  /// Standard primary button height (52px - meets minimum accessibility touch target).
+  static const double primaryButtonHeight = 52.0;
+
+  /// Minimum accessibility touch target constraint (48px).
+  static const double minTouchTarget = 48.0;
 
   /// Compact button height (40px).
   static const double compactButtonHeight = 40.0;
@@ -50,46 +53,74 @@ abstract final class AppDimensions {
 
 /// Centralized luxury shadows and ambient glows for Kitty App.
 abstract final class AppShadows {
-  /// Subtle card shadow for settings and light cards: 0 2px 8px rgba(0, 0, 0, 0.03)
+  /// Subtle card shadow for settings and light cards: 0 4px 14px rgba(6, 61, 46, 0.05)
   static const List<BoxShadow> cardSubtle = <BoxShadow>[
     BoxShadow(
-      color: Color(0x08000000),
-      offset: Offset(0, 2),
-      blurRadius: 8,
+      color: Color(0x0D063D2E),
+      offset: Offset(0, 4),
+      blurRadius: 14,
     ),
   ];
 
-  /// Elevated product card shadow: 0 6px 18px rgba(12, 43, 36, 0.04)
+  /// Elevated product card shadow: 0 6px 18px rgba(6, 61, 46, 0.08)
   static const List<BoxShadow> cardElevated = <BoxShadow>[
     BoxShadow(
-      color: Color(0x0A0C2B24),
+      color: Color(0x14063D2E),
       offset: Offset(0, 6),
       blurRadius: 18,
     ),
   ];
 
-  /// Luxury active emerald scheme card shadow: 0 14px 34px rgba(11, 48, 38, 0.22)
+  /// Luxury active emerald scheme card shadow: 0 14px 34px rgba(6, 61, 46, 0.22)
   static const List<BoxShadow> cardLuxury = <BoxShadow>[
     BoxShadow(
-      color: Color(0x380B3026),
+      color: Color(0x38063D2E),
       offset: Offset(0, 14),
       blurRadius: 34,
     ),
   ];
 
-  /// Primary gold action button glow: 0 4px 16px rgba(197, 155, 39, 0.35)
+  /// Primary emerald action button glow: 0 4px 14px rgba(6, 61, 46, 0.25)
+  static const List<BoxShadow> ctaEmerald = <BoxShadow>[
+    BoxShadow(
+      color: Color(0x40063D2E),
+      offset: Offset(0, 4),
+      blurRadius: 14,
+    ),
+  ];
+
+  /// Primary gold action button glow: 0 4px 16px rgba(212, 163, 74, 0.35)
   static const List<BoxShadow> ctaGold = <BoxShadow>[
     BoxShadow(
-      color: Color(0x59C59B27),
+      color: Color(0x59D4A34A),
       offset: Offset(0, 4),
       blurRadius: 16,
+    ),
+  ];
+
+  /// Modal dialog deep backdrop shadow
+  static const List<BoxShadow> modal = <BoxShadow>[
+    BoxShadow(
+      color: Color(0x66000000),
+      offset: Offset(0, 10),
+      blurRadius: 30,
+      spreadRadius: 2,
+    ),
+  ];
+
+  /// Modal bottom sheet top edge shadow
+  static const List<BoxShadow> bottomSheet = <BoxShadow>[
+    BoxShadow(
+      color: Color(0x4D000000),
+      offset: Offset(0, -6),
+      blurRadius: 24,
     ),
   ];
 
   /// Input focus gold glow
   static const List<BoxShadow> inputFocusGold = <BoxShadow>[
     BoxShadow(
-      color: Color(0x33C59B27),
+      color: Color(0x33D4A34A),
       offset: Offset(0, 0),
       blurRadius: 6,
       spreadRadius: 1,

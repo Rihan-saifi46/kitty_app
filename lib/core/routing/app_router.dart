@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/auth_success_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/onboarding_choice_screen.dart';
 import '../../features/auth/presentation/screens/otp_screen.dart';
 import '../../features/auth/presentation/screens/phone_screen.dart';
 import '../../features/auth/presentation/screens/register_profile_screen.dart';
@@ -11,12 +12,16 @@ import '../../features/calculator/presentation/screens/calculator_screen.dart';
 import '../../features/checkout/presentation/screens/checkout_screen.dart';
 import '../../features/coin_rates/presentation/screens/coin_rates_screen.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/jewellery/presentation/screens/jewellery_screen.dart';
 import '../../features/kyc/presentation/screens/kyc_screen.dart';
+import '../../features/live_rates/presentation/screens/live_rates_screen.dart';
 import '../../features/menu/presentation/screens/menu_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/offers/presentation/screens/offers_screen.dart';
+import '../../features/offers/presentation/screens/booking_screen.dart';
+import '../../features/offers/presentation/screens/review_plan_screen.dart';
+import '../../features/checkout/presentation/screens/cash_pickup_screen.dart';
+import '../../features/orders/presentation/screens/orders_screen.dart';
 import '../../features/passbook/presentation/screens/passbook_screen.dart';
 import '../../features/passbook/domain/entities/passbook_entry_entity.dart';
 import '../../features/payment_gateway/presentation/screens/gokwik_gateway_screen.dart';
@@ -33,24 +38,14 @@ import 'route_transitions.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _homeNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'home');
-final GlobalKey<NavigatorState> _coinRatesNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'coinRates');
-final GlobalKey<NavigatorState> _jewelleryNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'jewellery');
-final GlobalKey<NavigatorState> _calculatorNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'calculator');
-final GlobalKey<NavigatorState> _menuNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'menu');
-final GlobalKey<NavigatorState> _dashboardNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'dashboard');
-final GlobalKey<NavigatorState> _passbookNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'passbook');
 final GlobalKey<NavigatorState> _offersNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'offers');
-final GlobalKey<NavigatorState> _settingsNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'settings');
+final GlobalKey<NavigatorState> _dashboardNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'dashboard');
+final GlobalKey<NavigatorState> _liveRatesNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'liveRates');
+final GlobalKey<NavigatorState> _calculatorNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'calculator');
 
 /// Provider exposing the configured GoRouter instance with reactive auth guards.
 final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
@@ -68,10 +63,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       final bool isAuthRoute = location.startsWith('/auth');
       final bool isSplashRoute = location == RoutePaths.splash || location == '/';
 
-      // 1. Splash Screen & Root Entry: Allow the luxury 3D loading sequence to complete
-      //    its full animation without premature preemption on Android and Web.
-      //    SplashScreen internally resolves session state and navigates to /home or
-      //    /auth/login upon visual completion.
+      // 1. Splash Screen & Root Entry: Allow luxury animation to complete
       if (isSplashRoute) {
         return null;
       }
@@ -91,8 +83,10 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
 
       // 4. Authenticated User: Route according to statutory KYC status
       if (auth.isAuthenticated) {
-        if (location == RoutePaths.authSuccess || location == RoutePaths.profile) {
-          return null; // Allow welcome / biometric post-auth step or profile registration
+        if (location == RoutePaths.authSuccess ||
+            location == RoutePaths.profile ||
+            location == RoutePaths.postKycChoice) {
+          return null; // Allow welcome / biometric post-auth step, profile registration, or choice screen
         }
 
         // Statutory KYC Guard: If KYC is not completed, redirect to KYC screen
@@ -103,9 +97,9 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
           return RoutePaths.kyc; // Enforce KYC verification
         }
 
-        // Verified User: Redirect auth routes to home
+        // Verified User: Redirect auth routes to Gold Plans (new landing page)
         if (isAuthRoute) {
-          return RoutePaths.home;
+          return RoutePaths.offers;
         }
 
         return null; // Allow protected destinations
@@ -188,8 +182,18 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         },
       ),
 
+      // Redirect legacy /home path directly to Gold Plans (/offers)
+      GoRoute(
+        path: RoutePaths.home,
+        redirect: (BuildContext context, GoRouterState state) => RoutePaths.offers,
+      ),
+
       // =======================================================================
-      // 2. PROTECTED APPLICATION SHELL (STATEFUL TABS)
+      // 2. PROTECTED APPLICATION SHELL (4 CANONICAL TABS)
+      //    1. Gold Plans
+      //    2. My Plan
+      //    3. Live Rate
+      //    4. Calculator
       // =======================================================================
       StatefulShellRoute.indexedStack(
         builder: (
@@ -200,126 +204,7 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
           return AppShellScaffold(navigationShell: navigationShell);
         },
         branches: <StatefulShellBranch>[
-          // Branch 0: Home
-          StatefulShellBranch(
-            navigatorKey: _homeNavigatorKey,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutePaths.home,
-                name: AppRoute.home.name,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return RouteTransitions.fadeTransitionPage(
-                    key: state.pageKey,
-                    child: const HomeScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Branch 1: Coin Rates
-          StatefulShellBranch(
-            navigatorKey: _coinRatesNavigatorKey,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutePaths.coinRates,
-                name: AppRoute.coinRates.name,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return RouteTransitions.fadeTransitionPage(
-                    key: state.pageKey,
-                    child: const CoinRatesScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Branch 2: Jewellery
-          StatefulShellBranch(
-            navigatorKey: _jewelleryNavigatorKey,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutePaths.jewellery,
-                name: AppRoute.jewellery.name,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return RouteTransitions.fadeTransitionPage(
-                    key: state.pageKey,
-                    child: const JewelleryScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Branch 3: Calculator
-          StatefulShellBranch(
-            navigatorKey: _calculatorNavigatorKey,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutePaths.calculator,
-                name: AppRoute.calculator.name,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return RouteTransitions.fadeTransitionPage(
-                    key: state.pageKey,
-                    child: const CalculatorScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Branch: Menu
-          StatefulShellBranch(
-            navigatorKey: _menuNavigatorKey,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutePaths.menu,
-                name: AppRoute.menu.name,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return RouteTransitions.fadeTransitionPage(
-                    key: state.pageKey,
-                    child: const MenuScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Branch 1: My Kitty Scheme
-          StatefulShellBranch(
-            navigatorKey: _dashboardNavigatorKey,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutePaths.dashboard,
-                name: AppRoute.dashboard.name,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return RouteTransitions.fadeTransitionPage(
-                    key: state.pageKey,
-                    child: const DashboardScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Branch 2: Passbook Ledger
-          StatefulShellBranch(
-            navigatorKey: _passbookNavigatorKey,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutePaths.passbook,
-                name: AppRoute.passbook.name,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return RouteTransitions.fadeTransitionPage(
-                    key: state.pageKey,
-                    child: const PassbookScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Branch 3: Offers & Plans
+          // Branch 0: Gold Plans (Primary Landing Page)
           StatefulShellBranch(
             navigatorKey: _offersNavigatorKey,
             routes: <RouteBase>[
@@ -336,17 +221,51 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
             ],
           ),
 
-          // Branch 4: Settings & Security
+          // Branch 1: My Plan (Dashboard)
           StatefulShellBranch(
-            navigatorKey: _settingsNavigatorKey,
+            navigatorKey: _dashboardNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
-                path: RoutePaths.settings,
-                name: AppRoute.settings.name,
+                path: RoutePaths.dashboard,
+                name: AppRoute.dashboard.name,
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return RouteTransitions.fadeTransitionPage(
                     key: state.pageKey,
-                    child: const SettingsScreen(),
+                    child: const DashboardScreen(),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          // Branch 2: Live Rate
+          StatefulShellBranch(
+            navigatorKey: _liveRatesNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: RoutePaths.liveRates,
+                name: AppRoute.liveRates.name,
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return RouteTransitions.fadeTransitionPage(
+                    key: state.pageKey,
+                    child: const LiveRatesScreen(),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          // Branch 3: Calculator (Dedicated Page)
+          StatefulShellBranch(
+            navigatorKey: _calculatorNavigatorKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: RoutePaths.calculator,
+                name: AppRoute.calculator.name,
+                pageBuilder: (BuildContext context, GoRouterState state) {
+                  return RouteTransitions.fadeTransitionPage(
+                    key: state.pageKey,
+                    child: const CalculatorScreen(),
                   );
                 },
               ),
@@ -356,8 +275,77 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       ),
 
       // =======================================================================
-      // 3. PROTECTED TOP-LEVEL STACK & MODAL ROUTES
+      // 3. PROTECTED TOP-LEVEL STACK & SECONDARY ROUTES
       // =======================================================================
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.coinRates,
+        name: AppRoute.coinRates.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          final CoinMetal? initialMetal = state.extra is CoinMetal
+              ? state.extra as CoinMetal
+              : (state.uri.queryParameters['metal'] == 'silver' ? CoinMetal.silver : null);
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: CoinRatesScreen(initialMetal: initialMetal ?? CoinMetal.gold),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.jewellery,
+        name: AppRoute.jewellery.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.fadeTransitionPage(
+            key: state.pageKey,
+            child: const JewelleryScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.passbook,
+        name: AppRoute.passbook.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const PassbookScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.settings,
+        name: AppRoute.settings.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const SettingsScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.menu,
+        name: AppRoute.menu.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.fadeTransitionPage(
+            key: state.pageKey,
+            child: const MenuScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.orders,
+        name: AppRoute.orders.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const OrdersScreen(),
+          );
+        },
+      ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
         path: RoutePaths.notifications,
@@ -382,6 +370,17 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.postKycChoice,
+        name: AppRoute.postKycChoice.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.fadeTransitionPage(
+            key: state.pageKey,
+            child: const OnboardingChoiceScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
         path: RoutePaths.checkout,
         name: AppRoute.checkout.name,
         pageBuilder: (BuildContext context, GoRouterState state) {
@@ -389,6 +388,36 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
           return RouteTransitions.slideFromBottomPage(
             key: state.pageKey,
             child: CheckoutScreen(args: args),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.book,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const BookingScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.review,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const ReviewPlanScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.cashPickup,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.slideFromRightPage(
+            key: state.pageKey,
+            child: const CashPickupScreen(),
           );
         },
       ),

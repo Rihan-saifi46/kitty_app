@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/routing/route_paths.dart';
-import 'app_bottom_nav_bar.dart';
-import 'header_nav_bar.dart';
-import 'luxury_nav_drawer.dart';
 
-/// Persistent luxury application shell wrapping the primary navigation tabs.
-///
-/// Houses the sticky header, slide-out navigation drawer, blurry frosted-glass bottom navigation dock,
-/// and Android hardware back-button interceptor.
+import '../../../../core/routing/route_paths.dart';
+import '../../../features/menu/presentation/widgets/kitty_menu_sheet.dart';
+import 'app_bottom_nav_bar.dart';
+
+/// Persistent luxury application shell wrapping the 4 canonical navigation tabs:
+/// 1. Gold Plans
+/// 2. My Plan
+/// 3. Live Rate
+/// 4. Calculator
 class AppShellScaffold extends ConsumerStatefulWidget {
   const AppShellScaffold({
     required this.navigationShell,
@@ -28,12 +28,11 @@ class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   int _resolveBottomNavIndex(String location) {
-    if (location == RoutePaths.home || location == '/') return 0;
+    if (location.startsWith(RoutePaths.offers) || location == '/') return 0;
     if (location.startsWith(RoutePaths.dashboard)) return 1;
-    if (location.startsWith(RoutePaths.offers)) return 2;
+    if (location.startsWith(RoutePaths.liveRates)) return 2;
     if (location.startsWith(RoutePaths.calculator)) return 3;
-    if (location.startsWith(RoutePaths.jewellery)) return 4;
-    return -1; // Off-dock navigation routes (e.g. /coin-rates, /passbook, /settings, /orders, etc.)
+    return 0; // Default to Tab 0 (Gold Plans)
   }
 
   void _onBottomNavTapped(int index) {
@@ -53,13 +52,19 @@ class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
       onPopInvokedWithResult: (bool didPop, dynamic result) {
         if (didPop) return;
 
-        // 1. If drawer is open, close drawer first
+        // 1. If end drawer is open, close it first
+        if (_scaffoldKey.currentState?.isEndDrawerOpen ?? false) {
+          _scaffoldKey.currentState?.closeEndDrawer();
+          return;
+        }
+
+        // 2. If drawer is open, close it
         if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
           _scaffoldKey.currentState?.closeDrawer();
           return;
         }
 
-        // 2. If not on Tab 0 (Home), return to Tab 0
+        // 3. If not on Tab 0 (Gold Plans), return to Tab 0
         if (widget.navigationShell.currentIndex != 0) {
           widget.navigationShell.goBranch(0);
           return;
@@ -67,11 +72,14 @@ class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
       },
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: AppColors.homeCanvasBg,
-        appBar: HeaderNavBar(
-          onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        backgroundColor: const Color(0xFFFAF7F2),
+        endDrawer: const Drawer(
+          backgroundColor: Color(0xFF07392F),
+          child: SafeArea(
+            bottom: false,
+            child: KittyMenuSheet(),
+          ),
         ),
-        drawer: const LuxuryNavDrawer(),
         body: widget.navigationShell,
         bottomNavigationBar: AppBottomNavBar(
           currentIndex: activeIndex,

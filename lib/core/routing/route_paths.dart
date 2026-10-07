@@ -24,36 +24,49 @@ abstract final class RoutePaths {
   /// Authentication confirmation screen.
   static const String authSuccess = '/auth/success';
 
+  /// Post-KYC Onboarding Choice Screen (Instagram, Shop Gold, Shop Jewellery).
+  static const String postKycChoice = '/onboarding/choice';
+
   // ---------------------------------------------------------------------------
-  // Protected Application Shell Tabs (StatefulShellRoute)
+  // Protected Application Shell Tabs (5 Canonical Destinations)
   // ---------------------------------------------------------------------------
 
-  /// Tab 1: Home Screen (Brand showcase, promo carousel, category pills).
+  /// Tab 0: Home Screen (Brand showcase, promo carousel, category pills).
   static const String home = '/home';
 
-  /// Tab: Coin Rates Screen (1gm to 10gm gold coin prices, bulk coin booking).
-  static const String coinRates = '/coin-rates';
-
-  /// Tab: Jewellery Screen (Gold & Diamond jewellery dropdowns & categories).
-  static const String jewellery = '/jewellery';
-
-  /// Tab: Gold Valuation Calculator Screen (Shop by Gram & Shop by Money).
-  static const String calculator = '/calculator';
-
-  /// Tab: Menu Screen (Patron profile, drawer links, concierge, logout).
-  static const String menu = '/menu';
-
-  /// Tab: Active Kitty Scheme Dashboard (Hero card, circular gauge, stats).
+  /// Tab 1: My Kitty Scheme Dashboard (Hero card, circular gauge, stats).
   static const String dashboard = '/dashboard';
 
-  /// Tab: Passbook Screen (12-month installment timeline table / cards).
-  static const String passbook = '/passbook';
-
-  /// Tab: Offers Screen (Curated savings schemes, plan enrollment).
+  /// Tab 2: Kitty Plans & Offers Screen (Curated savings schemes, plan enrollment).
   static const String offers = '/offers';
 
-  /// Tab: Settings Screen (Security, MPIN, Biometrics, Nominee, Logout).
+  /// Tab 3: Gold Valuation Calculator Screen (Shop by Gram & Shop by Money).
+  static const String calculator = '/calculator';
+
+  /// Tab 4: Jewellery Screen (Gold & Diamond jewellery dropdowns & categories).
+  static const String jewellery = '/jewellery';
+
+  // ---------------------------------------------------------------------------
+  // Protected Drawer & Supporting Stack Routes
+  // ---------------------------------------------------------------------------
+
+  /// Dedicated Live Bullion Rates Screen (24K, 22K, 18K, 14K Gold + 999 Silver).
+  static const String liveRates = '/live-rates';
+
+  /// Coin Rates Screen (1gm to 10gm gold/silver coin prices, bullion booking via drawer).
+  static const String coinRates = '/coin-rates';
+
+  /// Passbook Screen (12-month installment timeline table / cards).
+  static const String passbook = '/passbook';
+
+  /// Settings Screen (Security, MPIN, Biometrics, Nominee, Logout).
   static const String settings = '/settings';
+
+  /// Menu Screen (Deep link fallback / patron options).
+  static const String menu = '/menu';
+
+  /// Orders & Bookings Screen (Coin orders, jewellery crafting, scheme redemptions).
+  static const String orders = '/orders';
 
   // ---------------------------------------------------------------------------
   // Protected Stack & Modal Routes
@@ -67,6 +80,15 @@ abstract final class RoutePaths {
 
   /// Payment checkout bottom sheet / modal.
   static const String checkout = '/checkout';
+
+  /// Select Your Numbers screen (dddd/book.html).
+  static const String book = '/book';
+
+  /// Review Your Plan screen (dddd/review.html).
+  static const String review = '/review';
+
+  /// Doorstep Cash Pickup screen (dddd/cash-pickup.html).
+  static const String cashPickup = '/cash-pickup';
 
   /// Digital tax receipt modal / screen. Parameterized by receipt ID.
   static const String receipt = '/receipt/:id';

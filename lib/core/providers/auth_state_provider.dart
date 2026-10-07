@@ -25,8 +25,11 @@ class AppAuthState {
     this.token,
     this.userName = 'Rihan',
     this.userPhone = '+91 98765 43210',
+    this.userEmail = 'rihan@swastikjewel.com',
+    this.userDob = '15/08/1995',
     this.tier = 'Tier 1 Verified Member',
     this.isKycVerified = true,
+    this.isOnboarded = true,
   });
 
   const AppAuthState.initial() : this(status: AuthStatus.initial);
@@ -37,23 +40,32 @@ class AppAuthState {
     required String token,
     String userName = 'Rihan',
     String userPhone = '+91 98765 43210',
+    String userEmail = 'rihan@swastikjewel.com',
+    String userDob = '15/08/1995',
     String tier = 'Tier 1 Verified Member',
     bool isKycVerified = true,
+    bool isOnboarded = true,
   }) : this(
           status: AuthStatus.authenticated,
           token: token,
           userName: userName,
           userPhone: userPhone,
+          userEmail: userEmail,
+          userDob: userDob,
           tier: tier,
           isKycVerified: isKycVerified,
+          isOnboarded: isOnboarded,
         );
 
   final AuthStatus status;
   final String? token;
   final String userName;
   final String userPhone;
+  final String userEmail;
+  final String userDob;
   final String tier;
   final bool isKycVerified;
+  final bool isOnboarded;
 
   bool get isAuthenticated => status == AuthStatus.authenticated;
   bool get isInitial => status == AuthStatus.initial;
@@ -64,16 +76,22 @@ class AppAuthState {
     String? token,
     String? userName,
     String? userPhone,
+    String? userEmail,
+    String? userDob,
     String? tier,
     bool? isKycVerified,
+    bool? isOnboarded,
   }) {
     return AppAuthState(
       status: status ?? this.status,
       token: token ?? this.token,
       userName: userName ?? this.userName,
       userPhone: userPhone ?? this.userPhone,
+      userEmail: userEmail ?? this.userEmail,
+      userDob: userDob ?? this.userDob,
       tier: tier ?? this.tier,
       isKycVerified: isKycVerified ?? this.isKycVerified,
+      isOnboarded: isOnboarded ?? this.isOnboarded,
     );
   }
 
@@ -85,8 +103,11 @@ class AppAuthState {
         other.token == token &&
         other.userName == userName &&
         other.userPhone == userPhone &&
+        other.userEmail == userEmail &&
+        other.userDob == userDob &&
         other.tier == tier &&
-        other.isKycVerified == isKycVerified;
+        other.isKycVerified == isKycVerified &&
+        other.isOnboarded == isOnboarded;
   }
 
   @override
@@ -95,8 +116,11 @@ class AppAuthState {
         token,
         userName,
         userPhone,
+        userEmail,
+        userDob,
         tier,
         isKycVerified,
+        isOnboarded,
       );
 }
 
@@ -119,8 +143,11 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
       if (token != null && token.trim().isNotEmpty) {
         String userName = 'Rihan';
         String userPhone = '+91 98765 43210';
+        String userEmail = 'rihan@swastikjewel.com';
+        String userDob = '15/08/1995';
         String tier = 'Tier 1 Verified Member';
         bool isKyc = true;
+        bool isOnboarded = true;
 
         final String? userJson = await _storage.getUserData();
         if (userJson != null && userJson.trim().isNotEmpty) {
@@ -132,8 +159,17 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
             if (data['phone'] is String && (data['phone'] as String).isNotEmpty) {
               userPhone = data['phone'] as String;
             }
+            if (data['email'] is String && (data['email'] as String).isNotEmpty) {
+              userEmail = data['email'] as String;
+            }
+            if (data['dob'] is String && (data['dob'] as String).isNotEmpty) {
+              userDob = data['dob'] as String;
+            }
             if (data['tier'] is String && (data['tier'] as String).isNotEmpty) {
               tier = data['tier'] as String;
+            }
+            if (data['isOnboarded'] is bool) {
+              isOnboarded = data['isOnboarded'] as bool;
             }
             if (data['kyc'] is Map<String, dynamic>) {
               final Map<String, dynamic> kyc = data['kyc'] as Map<String, dynamic>;
@@ -146,8 +182,11 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
           token: token,
           userName: userName,
           userPhone: userPhone,
+          userEmail: userEmail,
+          userDob: userDob,
           tier: tier,
           isKycVerified: isKyc,
+          isOnboarded: isOnboarded,
         );
       } else {
         state = const AppAuthState.unauthenticated();
@@ -162,42 +201,63 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
     required String token,
     String userName = 'Rihan',
     String userPhone = '+91 98765 43210',
+    String userEmail = 'rihan@swastikjewel.com',
+    String userDob = '',
     String tier = 'Tier 1 Verified Member',
     bool isKycVerified = true,
+    bool isOnboarded = true,
   }) async {
     await _storage.saveToken(token);
     state = AppAuthState.authenticated(
       token: token,
       userName: userName,
       userPhone: userPhone,
+      userEmail: userEmail,
+      userDob: userDob,
       tier: tier,
       isKycVerified: isKycVerified,
+      isOnboarded: isOnboarded,
     );
   }
 
-  /// Updates user profile details (Name, Email, Phone, City) and persists them in SecureStorage.
+  /// Updates user profile details (Name, Email, Phone, DOB, City) and persists them in SecureStorage.
   Future<void> updateProfile({
     required String userName,
     String? userEmail,
     String? userPhone,
+    String? userDob,
     String? city,
+    bool? isOnboarded,
   }) async {
     final String currentPhone = (userPhone != null && userPhone.isNotEmpty)
         ? userPhone
         : state.userPhone;
+    final String currentEmail = (userEmail != null && userEmail.isNotEmpty)
+        ? userEmail
+        : state.userEmail;
+    final String currentDob = (userDob != null && userDob.isNotEmpty)
+        ? userDob
+        : state.userDob;
+    final bool currentOnboarded = isOnboarded ?? state.isOnboarded;
+
     state = state.copyWith(
       userName: userName,
       userPhone: currentPhone,
+      userEmail: currentEmail,
+      userDob: currentDob,
+      isOnboarded: currentOnboarded,
     );
 
     // Persist to SecureStorage safely
     try {
       final Map<String, dynamic> userData = <String, dynamic>{
         'name': userName,
-        'email': userEmail ?? '',
+        'email': currentEmail,
         'phone': currentPhone,
+        'dob': currentDob,
         'city': city ?? '',
         'tier': state.tier,
+        'isOnboarded': currentOnboarded,
         'kyc': <String, dynamic>{
           'isVerified': state.isKycVerified,
           'status': state.isKycVerified ? 'VERIFIED' : 'PENDING',
@@ -209,6 +269,31 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
           );
     } catch (_) {}
   }
+
+  /// Marks KYC as complete and finishes user onboarding.
+  Future<void> completeKyc() async {
+    state = state.copyWith(
+      isKycVerified: true,
+      isOnboarded: true,
+    );
+
+    try {
+      final String? userJson = await _storage.getUserData();
+      Map<String, dynamic> userData = <String, dynamic>{};
+      if (userJson != null && userJson.trim().isNotEmpty) {
+        try {
+          userData = jsonDecode(userJson) as Map<String, dynamic>;
+        } catch (_) {}
+      }
+      userData['isOnboarded'] = true;
+      userData['kyc'] = <String, dynamic>{
+        'isVerified': true,
+        'status': 'VERIFIED',
+      };
+      await _storage.saveUserData(jsonEncode(userData));
+    } catch (_) {}
+  }
+
 
   /// Clears secure session and transitions state to unauthenticated.
   Future<void> logout() async {

@@ -38,7 +38,7 @@ class HomePlaceholderScreen extends StatelessWidget {
               side: const BorderSide(color: AppColors.goldPrimary),
               shape: const RoundedRectangleBorder(borderRadius: AppRadius.border12),
             ),
-            child: const Text('Discover Kitty Plans'),
+            child: const Text('Discover Gold Schemes'),
           ),
         ],
       ),

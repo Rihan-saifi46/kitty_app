@@ -105,15 +105,23 @@ class _StatCard extends StatelessWidget {
         vertical: AppSpacing.space14,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: <Color>[
+            Color(0xFF042D22),
+            Color(0xFF063D2E),
+            Color(0xFF084837),
+          ],
+        ),
         borderRadius: AppRadius.border18,
         border: Border.all(
-          color: const Color(0xFFEAECEF),
+          color: AppColors.richAntiqueGold.withValues(alpha: 0.35),
           width: 1,
         ),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x0A0C2B24),
+            color: Color(0x33063D2E),
             blurRadius: 16,
             offset: Offset(0, 4),
           ),
@@ -128,14 +136,14 @@ class _StatCard extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFFFBF8F1),
+              color: const Color(0xFF04281E),
               border: Border.all(
-                color: const Color(0x2EC59B27),
+                color: AppColors.richAntiqueGold.withValues(alpha: 0.35),
                 width: 1,
               ),
               boxShadow: const <BoxShadow>[
                 BoxShadow(
-                  color: Color(0x1AC59B27),
+                  color: Color(0x1A063D2E),
                   blurRadius: 6,
                   offset: Offset(0, 2),
                 ),
@@ -144,7 +152,7 @@ class _StatCard extends StatelessWidget {
             child: Center(
               child: Icon(
                 icon,
-                color: const Color(0xFFC59B27),
+                color: AppColors.honeyGoldAccent,
                 size: 20,
               ),
             ),
@@ -161,7 +169,7 @@ class _StatCard extends StatelessWidget {
                 Text(
                   label,
                   style: AppTypography.kickerCaps(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.honeyGoldAccent,
                   ).copyWith(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
@@ -173,7 +181,7 @@ class _StatCard extends StatelessWidget {
                 Text(
                   value,
                   style: AppTypography.cardTitle(
-                    color: valueColor ?? const Color(0xFF0C2B24),
+                    color: valueColor ?? Colors.white,
                   ).copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,

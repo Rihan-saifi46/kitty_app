@@ -164,7 +164,7 @@ class KittyBottomSheet extends StatelessWidget {
                           children: <Widget>[
                             Text(
                               title!,
-                              style: GoogleFonts.cinzel(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: titleColor,

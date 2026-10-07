@@ -155,8 +155,8 @@ void main() {
 
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('Accessing your Kitty schemes and bullion vault...'), findsOneWidget);
-      expect(find.text('Enter Kitty Vault'), findsOneWidget);
+      expect(find.text('Accessing your gold schemes and bullion vault...'), findsOneWidget);
+      expect(find.text('Enter Gold Vault'), findsOneWidget);
     });
 
     test('PHASE 4: SecureStorageService fastSessionHint reflects write/delete lifecycle', () async {

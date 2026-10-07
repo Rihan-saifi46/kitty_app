@@ -84,7 +84,7 @@ class NotFoundScreen extends StatelessWidget {
                     if (context.canPop()) {
                       context.pop();
                     } else {
-                      context.go(RoutePaths.home);
+                      context.go(RoutePaths.offers);
                     }
                   },
                   icon: const Icon(Icons.arrow_back_rounded, size: 18),

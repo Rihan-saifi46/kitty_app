@@ -83,7 +83,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Receipt Screen is presented
-      expect(find.text('Official Kitty Receipt'), findsOneWidget);
+      expect(find.text('Official Gold Scheme Receipt'), findsOneWidget);
       expect(find.text('PAYMENT CONFIRMED'), findsOneWidget);
 
       // Verify Done button pops back to Passbook

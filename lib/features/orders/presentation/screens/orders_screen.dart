@@ -7,6 +7,7 @@ import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/routing/route_paths.dart';
+import '../../../../shared/widgets/navigation/kitty_hamburger_button.dart';
 import '../../domain/entities/order_booking_entity.dart';
 import '../providers/orders_controller.dart';
 
@@ -52,16 +53,22 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
             if (context.canPop()) {
               context.pop();
             } else {
-              context.go(RoutePaths.home);
+              context.go(RoutePaths.offers);
             }
           },
         ),
         title: Text(
-          'My Orders & Bookings',
+          'My Bookings',
           style: AppTypography.cardTitle(
             color: AppColors.espressoCharcoal,
           ).copyWith(fontSize: 17, fontWeight: FontWeight.w800),
         ),
+        actions: const <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: KittyHamburgerButton(isLightSurface: true),
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
@@ -121,7 +128,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
             // Simple Empty State Message
             Text(
-              'You haven’t booked or ordered anything yet.',
+              "You haven't booked anything yet.",
               textAlign: TextAlign.center,
               style: AppTypography.cardTitle(
                 color: AppColors.espressoCharcoal,
@@ -143,7 +150,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                 label: 'Continue Shopping',
                 child: ElevatedButton(
                   key: const Key('orders_continue_shopping_btn'),
-                  onPressed: () => context.go(RoutePaths.home),
+                  onPressed: () => context.go(RoutePaths.offers),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryEmerald,
                     foregroundColor: Colors.white,

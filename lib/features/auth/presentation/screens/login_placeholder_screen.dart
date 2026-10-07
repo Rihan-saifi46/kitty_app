@@ -40,7 +40,7 @@ class LoginPlaceholderScreen extends ConsumerWidget {
                     userPhone: '+91 98765 43210',
                   );
               if (context.mounted) {
-                context.go(RoutePaths.home);
+                context.go(RoutePaths.offers);
               }
             },
             style: OutlinedButton.styleFrom(

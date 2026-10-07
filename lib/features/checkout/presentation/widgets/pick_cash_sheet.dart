@@ -218,10 +218,10 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
         bottom: keyboardPadding,
       ),
       decoration: const BoxDecoration(
-        color: Color(0xFF05241C), // Deep Emerald Base
+        color: AppColors.pureWhite, // White/Off-white Base
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         border: Border(
-          top: BorderSide(color: Color(0xFFC99A2E), width: 1.5),
+          top: BorderSide(color: AppColors.surfaceCardBorder, width: 1.5),
         ),
       ),
       child: SafeArea(
@@ -252,7 +252,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: const Color(0xFFCBD5E1),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -265,15 +265,15 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppColors.goldPrimary.withValues(alpha: 0.15),
+                  color: AppColors.primaryEmerald.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppColors.goldPrimary.withValues(alpha: 0.4),
+                    color: AppColors.primaryEmerald.withValues(alpha: 0.3),
                   ),
                 ),
                 child: const Icon(
                   Icons.payments_outlined,
-                  color: AppColors.goldPrimary,
+                  color: AppColors.primaryEmerald,
                   size: 22,
                 ),
               ),
@@ -285,7 +285,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                     Text(
                       'Doorstep Cash Pickup',
                       key: const Key('pick_cash_sheet_title'),
-                      style: AppTypography.cardTitle(color: Colors.white).copyWith(
+                      style: AppTypography.cardTitle(color: AppColors.espressoCharcoal).copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
@@ -294,7 +294,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                     Text(
                       'Authorized Swastik executive collects at your doorstep',
                       style: AppTypography.labelMeta(
-                        color: const Color(0xFF9EC0B4),
+                        color: AppColors.warmTaupeBrown,
                       ).copyWith(fontSize: 12),
                     ),
                   ],
@@ -302,7 +302,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
               ),
               IconButton(
                 key: const Key('pick_cash_close_btn'),
-                icon: const Icon(Icons.close_rounded, color: Colors.white70),
+                icon: const Icon(Icons.close_rounded, color: AppColors.espressoCharcoal),
                 onPressed: _isSubmitting ? null : widget.onClose,
                 splashRadius: 20,
               ),
@@ -315,10 +315,10 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: AppColors.primaryEmerald,
               borderRadius: AppRadius.border12,
               border: Border.all(
-                color: AppColors.goldBorder.withValues(alpha: 0.25),
+                color: AppColors.goldBorder.withValues(alpha: 0.35),
               ),
             ),
             child: Row(
@@ -330,7 +330,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                     Text(
                       'ACTIVE SCHEME',
                       style: AppTypography.labelMeta(
-                        color: const Color(0xFF8EAA9E),
+                        color: const Color(0xFFC7D9D1),
                       ).copyWith(letterSpacing: 0.8, fontSize: 10.5),
                     ),
                     const SizedBox(height: 2),
@@ -346,7 +346,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                     Text(
                       'CASH AMOUNT',
                       style: AppTypography.labelMeta(
-                        color: const Color(0xFF8EAA9E),
+                        color: const Color(0xFFC7D9D1),
                       ).copyWith(letterSpacing: 0.8, fontSize: 10.5),
                     ),
                     const SizedBox(height: 2),
@@ -370,7 +370,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
           TextFormField(
             key: const Key('pick_cash_input_name'),
             controller: _nameController,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: const TextStyle(color: AppColors.espressoCharcoal, fontSize: 14),
             decoration: _inputDecoration('Full Name', Icons.person_outline_rounded),
             validator: (String? value) {
               if (value == null || value.trim().isEmpty) {
@@ -394,7 +394,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                       key: const Key('pick_cash_input_phone'),
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                      style: const TextStyle(color: AppColors.espressoCharcoal, fontSize: 14),
                       decoration: _inputDecoration('+91 Phone', Icons.phone_outlined),
                       validator: (String? value) {
                         if (value == null || value.trim().isEmpty) {
@@ -420,7 +420,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                       key: const Key('pick_cash_input_email'),
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                      style: const TextStyle(color: AppColors.espressoCharcoal, fontSize: 14),
                       decoration: _inputDecoration('Email', Icons.mail_outline_rounded),
                       validator: (String? value) {
                         if (value == null || value.trim().isEmpty) {
@@ -446,7 +446,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
             key: const Key('pick_cash_input_address'),
             controller: _addressController,
             maxLines: 2,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: const TextStyle(color: AppColors.espressoCharcoal, fontSize: 14),
             decoration: _inputDecoration('House/Flat No., Street, Landmark', Icons.home_outlined),
             validator: (String? value) {
               if (value == null || value.trim().isEmpty) {
@@ -472,7 +472,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                     TextFormField(
                       key: const Key('pick_cash_input_city'),
                       controller: _cityController,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                      style: const TextStyle(color: AppColors.espressoCharcoal, fontSize: 14),
                       decoration: _inputDecoration('City', Icons.location_city_outlined),
                       validator: (String? value) {
                         if (value == null || value.trim().isEmpty) return 'City required';
@@ -494,7 +494,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                       controller: _pincodeController,
                       keyboardType: TextInputType.number,
                       maxLength: 6,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                      style: const TextStyle(color: AppColors.espressoCharcoal, fontSize: 14),
                       decoration: _inputDecoration('6 Digits', Icons.pin_drop_outlined).copyWith(
                         counterText: '',
                       ),
@@ -523,17 +523,20 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                 label: Text(
                   slot,
                   style: TextStyle(
-                    color: isSelected ? const Color(0xFF05241C) : Colors.white70,
+                    color: isSelected ? Colors.white : AppColors.espressoCharcoal,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     fontSize: 12,
                   ),
                 ),
                 selected: isSelected,
-                selectedColor: const Color(0xFFECC97D),
-                backgroundColor: Colors.white.withValues(alpha: 0.08),
+                selectedColor: AppColors.primaryEmerald,
+                backgroundColor: const Color(0xFFF8F9FA),
                 side: BorderSide(
-                  color: isSelected ? AppColors.goldPrimary : Colors.white12,
+                  color: isSelected ? AppColors.primaryEmerald : const Color(0xFFCBD5E1),
+                  width: isSelected ? 1.5 : 1,
                 ),
+                showCheckmark: isSelected,
+                checkmarkColor: Colors.white,
                 onSelected: (bool selected) {
                   if (selected) {
                     setState(() => _selectedSlot = slot);
@@ -550,7 +553,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
           TextFormField(
             key: const Key('pick_cash_input_notes'),
             controller: _notesController,
-            style: const TextStyle(color: Colors.white, fontSize: 13),
+            style: const TextStyle(color: AppColors.espressoCharcoal, fontSize: 13),
             decoration: _inputDecoration('e.g. Call before arrival, leave with security', Icons.note_alt_outlined),
           ),
 
@@ -560,21 +563,21 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.goldPrimary.withValues(alpha: 0.08),
+              color: AppColors.primaryEmerald.withValues(alpha: 0.08),
               borderRadius: AppRadius.border8,
               border: Border.all(
-                color: AppColors.goldPrimary.withValues(alpha: 0.25),
+                color: AppColors.primaryEmerald.withValues(alpha: 0.25),
               ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Icon(Icons.verified_user_outlined, color: AppColors.goldLight, size: 16),
+                const Icon(Icons.verified_user_outlined, color: AppColors.primaryEmerald, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Swastik Field Executive will carry official digital ID. A secure 4-digit verification OTP will be issued upon booking.',
-                    style: AppTypography.labelMeta(color: const Color(0xFFC7D9D1)).copyWith(
+                    style: AppTypography.labelMeta(color: const Color(0xFF2E6352)).copyWith(
                       fontSize: 11,
                       height: 1.35,
                     ),
@@ -589,7 +592,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
             Text(
               _errorMessage!,
               key: const Key('pick_cash_error_text'),
-              style: const TextStyle(color: Color(0xFFF87171), fontSize: 12.5),
+              style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12.5),
               textAlign: TextAlign.center,
             ),
           ],
@@ -601,13 +604,13 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
             key: const Key('btn_submit_pick_cash'),
             onPressed: _isSubmitting ? null : _handleSubmit,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFECC97D),
-              foregroundColor: const Color(0xFF05241C),
+              backgroundColor: AppColors.primaryEmerald,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
               ),
-              elevation: 4,
+              elevation: 2,
             ),
             child: _isSubmitting
                 ? const Row(
@@ -618,19 +621,19 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF05241C)),
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       ),
                       SizedBox(width: 10),
                       Text(
                         'Scheduling Doorstep Pickup...',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                        style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white),
                       ),
                     ],
                   )
                 : const Text(
                     'Confirm Cash Pickup Request',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5),
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5, color: Colors.white),
                   ),
           ),
           const SizedBox(height: AppSpacing.space8),
@@ -639,7 +642,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
             onPressed: _isSubmitting ? null : widget.onClose,
             child: const Text(
               'Cancel / Back to Payment Methods',
-              style: TextStyle(color: Color(0xFF9EC0B4), fontSize: 13),
+              style: TextStyle(color: AppColors.warmTaupeBrown, fontSize: 13),
             ),
           ),
         ],
@@ -674,7 +677,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
           'Doorstep Pickup Scheduled!',
           key: const Key('pick_cash_success_title'),
           textAlign: TextAlign.center,
-          style: AppTypography.cardTitle(color: Colors.white).copyWith(
+          style: AppTypography.cardTitle(color: AppColors.espressoCharcoal).copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
@@ -684,7 +687,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
           'Reference ID: ${_completedRequest?.requestId ?? "PCK-849201"}',
           key: const Key('pick_cash_ref_id'),
           textAlign: TextAlign.center,
-          style: AppTypography.labelMeta(color: const Color(0xFFFFD700)).copyWith(
+          style: AppTypography.labelMeta(color: AppColors.primaryEmerald).copyWith(
             fontWeight: FontWeight.w700,
             fontSize: 13.5,
           ),
@@ -695,17 +698,17 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.06),
+            color: const Color(0xFFF8F9FA),
             borderRadius: AppRadius.border14,
             border: Border.all(
-              color: AppColors.goldBorder.withValues(alpha: 0.35),
+              color: AppColors.surfaceCardBorder,
             ),
           ),
           child: Column(
             children: <Widget>[
               Text(
                 'HANDOVER VERIFICATION OTP',
-                style: AppTypography.labelMeta(color: const Color(0xFF8EAA9E)).copyWith(
+                style: AppTypography.labelMeta(color: AppColors.warmTaupeBrown).copyWith(
                   letterSpacing: 1.1,
                   fontWeight: FontWeight.w700,
                 ),
@@ -718,7 +721,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
                   fontFamily: 'Cinzel',
                   fontSize: 32,
                   fontWeight: FontWeight.w900,
-                  color: Color(0xFFFFE28A),
+                  color: AppColors.primaryEmerald,
                   letterSpacing: 8,
                 ),
               ),
@@ -726,7 +729,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
               Text(
                 'Only share this 4-digit OTP with the Swastik Field Executive once cash is physically collected and counted.',
                 textAlign: TextAlign.center,
-                style: AppTypography.labelMeta(color: const Color(0xFFC7D9D1)).copyWith(
+                style: AppTypography.labelMeta(color: AppColors.warmTaupeBrown).copyWith(
                   fontSize: 11.5,
                   height: 1.35,
                 ),
@@ -741,18 +744,18 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.04),
+            color: const Color(0xFFF8F9FA),
             borderRadius: AppRadius.border12,
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
           ),
           child: Column(
             children: <Widget>[
               _buildSummaryRow('Amount Due', formattedAmount),
-              const Divider(color: Colors.white12, height: 16),
+              const Divider(color: Color(0xFFE2E8F0), height: 16),
               _buildSummaryRow('Patron', _nameController.text),
-              const Divider(color: Colors.white12, height: 16),
+              const Divider(color: Color(0xFFE2E8F0), height: 16),
               _buildSummaryRow('Pickup Slot', _selectedSlot),
-              const Divider(color: Colors.white12, height: 16),
+              const Divider(color: Color(0xFFE2E8F0), height: 16),
               _buildSummaryRow('Address', '${_addressController.text}, ${_cityController.text} - ${_pincodeController.text}'),
             ],
           ),
@@ -764,8 +767,8 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
           key: const Key('btn_pick_cash_done'),
           onPressed: widget.onClose,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFECC97D),
-            foregroundColor: const Color(0xFF05241C),
+            backgroundColor: AppColors.primaryEmerald,
+            foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
             shape: const RoundedRectangleBorder(
               borderRadius: AppRadius.border12,
@@ -773,7 +776,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
           ),
           child: const Text(
             'Done / View In Passbook',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5),
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5, color: Colors.white),
           ),
         ),
       ],
@@ -787,14 +790,14 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
       children: <Widget>[
         Text(
           label,
-          style: AppTypography.labelMeta(color: const Color(0xFF8EAA9E)).copyWith(fontSize: 12),
+          style: AppTypography.labelMeta(color: AppColors.warmTaupeBrown).copyWith(fontSize: 12),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             value,
             textAlign: TextAlign.end,
-            style: const TextStyle(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w600),
+            style: const TextStyle(color: AppColors.espressoCharcoal, fontSize: 12.5, fontWeight: FontWeight.w600),
           ),
         ),
       ],
@@ -806,9 +809,9 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
       padding: const EdgeInsets.only(bottom: 5),
       child: Text(
         label,
-        style: AppTypography.labelMeta(color: const Color(0xFFC7D9D1)).copyWith(
-          fontSize: 11.5,
-          fontWeight: FontWeight.w600,
+        style: AppTypography.labelMeta(color: AppColors.espressoCharcoal).copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -817,33 +820,33 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
   InputDecoration _inputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 13),
-      prefixIcon: Icon(icon, color: AppColors.goldLight, size: 18),
+      hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+      prefixIcon: Icon(icon, color: AppColors.primaryEmerald, size: 18),
       filled: true,
-      fillColor: Colors.white.withValues(alpha: 0.06),
+      fillColor: const Color(0xFFF8F9FA),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       isDense: true,
-      border: OutlineInputBorder(
+      border: const OutlineInputBorder(
         borderRadius: AppRadius.border10,
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+        borderSide: BorderSide(color: Color(0xFFE2E8F0)),
       ),
-      enabledBorder: OutlineInputBorder(
+      enabledBorder: const OutlineInputBorder(
         borderRadius: AppRadius.border10,
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+        borderSide: BorderSide(color: Color(0xFFE2E8F0)),
       ),
       focusedBorder: const OutlineInputBorder(
         borderRadius: AppRadius.border10,
-        borderSide: BorderSide(color: AppColors.goldPrimary, width: 1.2),
+        borderSide: BorderSide(color: AppColors.primaryEmerald, width: 1.5),
       ),
       errorBorder: const OutlineInputBorder(
         borderRadius: AppRadius.border10,
-        borderSide: BorderSide(color: Color(0xFFF87171), width: 1.2),
+        borderSide: BorderSide(color: Color(0xFFDC2626), width: 1.2),
       ),
       focusedErrorBorder: const OutlineInputBorder(
         borderRadius: AppRadius.border10,
-        borderSide: BorderSide(color: Color(0xFFF87171), width: 1.2),
+        borderSide: BorderSide(color: Color(0xFFDC2626), width: 1.2),
       ),
-      errorStyle: const TextStyle(color: Color(0xFFF87171), fontSize: 11),
+      errorStyle: const TextStyle(color: Color(0xFFDC2626), fontSize: 11),
     );
   }
 }

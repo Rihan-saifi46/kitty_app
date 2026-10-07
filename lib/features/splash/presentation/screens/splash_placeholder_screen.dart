@@ -23,7 +23,7 @@ class SplashPlaceholderScreen extends ConsumerWidget {
         onPressed: () {
           final AppAuthState auth = ref.read(appAuthStateProvider);
           if (auth.isAuthenticated) {
-            context.go(RoutePaths.home);
+            context.go(RoutePaths.offers);
           } else {
             context.go(RoutePaths.login);
           }

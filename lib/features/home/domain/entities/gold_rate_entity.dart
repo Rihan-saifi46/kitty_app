@@ -11,6 +11,10 @@ class LiveGoldRateEntity {
     required this.changePct, // e.g. +0.64
     required this.isUp,
     required this.updatedAt,
+    this.silverRatePerGram,
+    this.rate22k,
+    this.rate18k,
+    this.rate14k,
   });
 
   final double ratePerGram;
@@ -21,4 +25,20 @@ class LiveGoldRateEntity {
   final double changePct;
   final bool isUp;
   final DateTime updatedAt;
+  final double? silverRatePerGram;
+  final double? rate22k;
+  final double? rate18k;
+  final double? rate14k;
+
+  /// Benchmark 24K rate per gram.
+  double get rate24k => ratePerGram;
+
+  /// Effective 22K rate per gram (explicit backend value or standard 22/24 fraction).
+  double get effectiveRate22k => rate22k ?? (ratePerGram * (22.0 / 24.0));
+
+  /// Effective 18K rate per gram (explicit backend value or standard 18/24 fraction).
+  double get effectiveRate18k => rate18k ?? (ratePerGram * (18.0 / 24.0));
+
+  /// Effective 14K rate per gram (explicit backend value or standard 14/24 fraction).
+  double get effectiveRate14k => rate14k ?? (ratePerGram * (14.0 / 24.0));
 }

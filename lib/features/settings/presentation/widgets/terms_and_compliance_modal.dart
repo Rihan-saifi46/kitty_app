@@ -96,7 +96,7 @@ class TermsAndComplianceModal extends StatelessWidget {
               children: <Widget>[
                 _buildPoint(
                   title: '100% BIS 24K Hallmarked (999 Purity)',
-                  desc: 'Every gram of gold credited under the Kitty scheme is backed by physical 24 Karat gold bullion with certified BIS hallmarking.',
+                  desc: 'Every gram of gold credited under the gold scheme is backed by physical 24 Karat gold bullion with certified BIS hallmarking.',
                   titleColor: titleColor,
                   descColor: subColor,
                 ),

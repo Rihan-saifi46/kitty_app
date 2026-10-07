@@ -3,16 +3,19 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/enums/app_enums.dart';
+import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../../../../shared/widgets/buttons/kitty_primary_button.dart';
 import '../../../../shared/widgets/feedback/kitty_error_state.dart';
 import '../../../../shared/widgets/feedback/kitty_loading_indicator.dart';
+import '../../../../shared/widgets/navigation/kitty_hamburger_button.dart';
 import '../../../auth/presentation/widgets/jewelry_constellation_painter.dart';
 import '../providers/kyc_controller.dart';
 import '../providers/kyc_state.dart';
@@ -38,6 +41,7 @@ class KycScreen extends ConsumerStatefulWidget {
 class _KycScreenState extends ConsumerState<KycScreen>
     with TickerProviderStateMixin {
   late final TextEditingController _docNumberController;
+  bool _termsAccepted = false;
 
   // Animation Controllers matching Login Screen
   late final AnimationController _cardEntranceController;
@@ -119,7 +123,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go(RoutePaths.home);
+      context.go(RoutePaths.offers);
     }
   }
 
@@ -129,8 +133,36 @@ class _KycScreenState extends ConsumerState<KycScreen>
   }
 
   Future<void> _handleSubmit() async {
+    if (!_termsAccepted) {
+      await HapticFeedback.heavyImpact();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please accept the Terms & Conditions to continue.',
+            style: GoogleFonts.plusJakartaSans(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
+          backgroundColor: const Color(0xFFEF4444),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      );
+      return;
+    }
+
     final KycController controller = ref.read(kycControllerProvider.notifier);
-    await controller.submitKyc();
+    final bool success = await controller.submitKyc();
+    if (success && mounted) {
+      await ref.read(appAuthStateProvider.notifier).completeKyc();
+      if (mounted) {
+        context.go(RoutePaths.postKycChoice);
+      }
+    }
   }
 
   @override
@@ -259,6 +291,13 @@ class _KycScreenState extends ConsumerState<KycScreen>
                   ),
                 ),
 
+                // Top-right Hamburger Menu Button
+                const Positioned(
+                  top: 8,
+                  right: 12,
+                  child: KittyHamburgerButton(isLightSurface: false),
+                ),
+
                 // Centered Glassmorphic Card Container matching Login Screen
                 Center(
                   child: RepaintBoundary(
@@ -378,7 +417,12 @@ class _KycScreenState extends ConsumerState<KycScreen>
     if (state.status == KycFormStatus.verified) {
       return KycApprovedView(
         result: state.kycResult,
-        onProceed: () => context.go(RoutePaths.home),
+        onProceed: () async {
+          await ref.read(appAuthStateProvider.notifier).completeKyc();
+          if (mounted) {
+            context.go(RoutePaths.postKycChoice);
+          }
+        },
       );
     }
 
@@ -386,7 +430,12 @@ class _KycScreenState extends ConsumerState<KycScreen>
     if (state.status == KycFormStatus.pending) {
       return KycPendingView(
         result: state.kycResult,
-        onReturnHome: () => context.go(RoutePaths.home),
+        onReturnHome: () async {
+          await ref.read(appAuthStateProvider.notifier).completeKyc();
+          if (mounted) {
+            context.go(RoutePaths.postKycChoice);
+          }
+        },
       );
     }
 
@@ -493,6 +542,9 @@ class _KycScreenState extends ConsumerState<KycScreen>
           enabled: !isSubmitting,
         ),
 
+        // 4.5 Mandatory Terms & Conditions Acceptance Checkbox (Requirement 11 & 12)
+        _buildTermsAndConditionsCheckbox(isSubmitting),
+
         // Error Message Banner (if any)
         if (state.errorMessage != null && state.errorMessage!.isNotEmpty) ...<Widget>[
           Container(
@@ -517,7 +569,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
                 Expanded(
                   child: Text(
                     state.errorMessage!,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFFEF4444),
@@ -533,15 +585,161 @@ class _KycScreenState extends ConsumerState<KycScreen>
         KittyPrimaryButton(
           label: isSubmitting
               ? 'Verifying & Encrypting...'
-              : 'Submit KYC Documents',
+              : 'Complete KYC',
           icon: const Icon(Icons.shield_outlined, size: 18),
           isLoading: isSubmitting,
-          isEnabled: state.canSubmit,
-          onPressed: state.canSubmit ? _handleSubmit : null,
+          isEnabled: !isSubmitting,
+          onPressed: _handleSubmit,
         ),
 
         const SizedBox(height: 8),
       ],
+    );
+  }
+
+  void _showTermsDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF05241C),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            side: const BorderSide(color: Color(0x59CCA243)),
+          ),
+          title: Text(
+            'Terms & Conditions',
+            style: GoogleFonts.cormorantGaramond(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFFF4E2AA),
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Text(
+              'By completing KYC verification and using Kitty App:\n\n'
+              '1. You confirm that all submitted identity information and documents belong to you and are legally valid under statutory PMLA guidelines.\n\n'
+              '2. You consent to statutory verification of your identity documents for bullion purchases and gold scheme enrollment.\n\n'
+              '3. Patron biometric data and personal information are secured with bank-grade 256-bit encryption and are never disclosed to unauthorized parties.\n\n'
+              '4. You agree to adhere to Swastik Jewellers terms of service, gold redemption policies, and digital bullion accumulation guidelines.',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13.0,
+                color: const Color(0xFF8FA499),
+                height: 1.5,
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(
+                'Close',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFFCCA243),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTermsAndConditionsCheckbox(bool isSubmitting) {
+    return Container(
+      margin: const EdgeInsets.only(top: 14, bottom: 18),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isSubmitting
+              ? null
+              : () {
+                  setState(() {
+                    _termsAccepted = !_termsAccepted;
+                  });
+                },
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // Custom 20x20 Checkbox matching Kitty App style
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOutCubic,
+                  width: 20,
+                  height: 20,
+                  margin: const EdgeInsets.only(top: 2, right: 12),
+                  decoration: BoxDecoration(
+                    gradient: _termsAccepted ? _goldGradient : null,
+                    color: _termsAccepted ? null : const Color(0xD9041913),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: _termsAccepted
+                          ? const Color(0xFFFFE899)
+                          : const Color(0x59CCA243),
+                      width: 1.5,
+                    ),
+                    boxShadow: _termsAccepted
+                        ? const <BoxShadow>[
+                            BoxShadow(
+                              color: Color(0x59CCA243),
+                              blurRadius: 10,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: _termsAccepted
+                      ? const Center(
+                          child: Icon(
+                            Icons.check_rounded,
+                            size: 14,
+                            color: Color(0xFF1A1404),
+                          ),
+                        )
+                      : null,
+                ),
+
+                // Terms text with clickable "Terms & Conditions"
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12.5,
+                        height: 1.5,
+                        color: const Color(0xFF8FA499),
+                      ),
+                      children: <InlineSpan>[
+                        const TextSpan(text: 'I agree to the '),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.baseline,
+                          baseline: TextBaseline.alphabetic,
+                          child: GestureDetector(
+                            onTap: _showTermsDialog,
+                            child: Text(
+                              'Terms & Conditions',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFF4E2AA),
+                                decoration: TextDecoration.underline,
+                                decorationColor: const Color(0xFFF4E2AA),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

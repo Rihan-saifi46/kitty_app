@@ -33,7 +33,7 @@ class DigitalReceiptModal extends StatelessWidget {
     return Container(
       constraints: const BoxConstraints(maxWidth: 480),
       decoration: BoxDecoration(
-        color: const Color(0xFF05241C),
+        color: AppColors.primaryEmerald,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: AppColors.goldBorder.withValues(alpha: 0.4),
@@ -61,7 +61,7 @@ class DigitalReceiptModal extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Official Kitty Receipt',
+                      'Official Gold Scheme Receipt',
                       key: const Key('receipt_modal_title'),
                       style: AppTypography.cardTitle(
                         color: Colors.white,

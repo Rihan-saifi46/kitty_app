@@ -18,6 +18,8 @@ abstract final class HomeMapper {
       changePct: dto.changePct,
       isUp: dto.isUp,
       updatedAt: parsedUpdatedAt,
+      silverRatePerGram: dto.silverRatePerGram,
+      rate22k: dto.rate22k,
     );
   }
 

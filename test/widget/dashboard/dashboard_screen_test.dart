@@ -46,34 +46,33 @@ void main() {
 
       // Verify sections
       expect(find.byType(DashboardHeroCard), findsOneWidget);
-      expect(find.byType(DashboardStatsGrid), findsOneWidget);
-      expect(find.byType(DashboardNextEmiCard), findsOneWidget);
-      expect(find.byType(DashboardTrustBar), findsOneWidget);
+      expect(find.byType(DashboardStatsGrid), findsNothing);
+      expect(find.byType(DashboardNextEmiCard), findsNothing);
+      expect(find.byType(DashboardTrustBar), findsNothing);
 
       // Verify text content
-      expect(find.text('Swastik Suvarna Varsha (12-Month Gold Kitty)'), findsOneWidget);
+      expect(find.text('Swastik Swarna Varsha'), findsOneWidget);
       expect(find.text('#SW-042'), findsOneWidget);
       expect(find.text('ACTIVE SCHEME'), findsOneWidget);
       expect(find.text('8 / 12'), findsOneWidget);
-      expect(find.text('3 to Pay'), findsOneWidget);
+      expect(find.text('8 EMIs Completed'), findsOneWidget);
+      expect(find.text('3 EMIs to Pay'), findsOneWidget);
       expect(find.text('✧ 1 Bonus Month Free'), findsOneWidget);
 
-      // Verify 2x2 Stats Grid items
+      // Verify Metrics Grid items (in hero card only, 4 stats cards above passbook removed)
       expect(find.text('SCHEME TARGET'), findsOneWidget);
       expect(find.text('₹60,000'), findsOneWidget);
       expect(find.text('PAID SO FAR'), findsOneWidget);
       expect(find.text('₹40,000'), findsOneWidget);
-      expect(find.text('₹41,036'), findsOneWidget);
-      expect(find.text('+2.59%'), findsOneWidget);
+      expect(find.text('MONTHLY INSTALLMENT'), findsOneWidget);
+      expect(find.text('UPCOMING INSTALLMENT'), findsOneWidget);
+      expect(find.text('Month 9 Due'), findsOneWidget);
+      expect(find.text('₹41,036'), findsNothing);
+      expect(find.text('+2.59%'), findsNothing);
+      expect(find.text('Passbook & Statements'), findsOneWidget);
 
-      // Verify Next EMI Card
-      expect(find.text('Month 9 Installment Due'), findsOneWidget);
-      expect(find.text('PAY NEXT EMI (₹5,000)'), findsOneWidget);
-
-      // Verify Trust Bar items
-      expect(find.text('Zero\nconvenience fee'), findsOneWidget);
-      expect(find.text('Instant 24K\ngold credit'), findsOneWidget);
-      expect(find.text('Secure &\nverified'), findsOneWidget);
+      // Verify Trust Bar items are removed
+      expect(find.text('Zero\nconvenience fee'), findsNothing);
     });
 
     testWidgets('2. Displays Empty State when no active scheme exists', (WidgetTester tester) async {
@@ -83,12 +82,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(KittyEmptyState), findsOneWidget);
-      expect(find.text('No Active Kitty Scheme'), findsOneWidget);
+      expect(find.text('No Active Gold Scheme'), findsOneWidget);
       expect(find.text('EXPLORE SCHEMES'), findsOneWidget);
       expect(find.byType(DashboardHeroCard), findsNothing);
     });
 
-    testWidgets('3. Displays PRE_JOIN banner and status badge for pre-join users', (WidgetTester tester) async {
+    testWidgets('3. Displays PRE_JOIN banner for pre-join users', (WidgetTester tester) async {
       mockRepository.setStatus(MembershipStatusEnum.preJoin);
 
       await tester.pumpWidget(createTestWidget());
@@ -96,7 +95,6 @@ void main() {
 
       expect(find.byType(DashboardPrejoinBanner), findsOneWidget);
       expect(find.text('PRE-JOIN SCHEME ENROLLED'), findsOneWidget);
-      expect(find.text('PRE-JOIN ENROLLED'), findsOneWidget);
     });
 
     testWidgets('4. Displays Error view on failure and recovers upon retry', (WidgetTester tester) async {
@@ -105,7 +103,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('Unable to Load Kitty Details'), findsOneWidget);
+      expect(find.text('Unable to Load Scheme Details'), findsOneWidget);
       expect(find.text('TRY AGAIN'), findsOneWidget);
 
       // Fix failure and tap retry

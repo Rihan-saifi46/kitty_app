@@ -235,16 +235,16 @@ class AuthController extends Notifier<AuthFlowState> {
           token: 'mock_jwt_phone_${DateTime.now().millisecondsSinceEpoch}',
           user: UserEntity(
             id: 'USR-LOCAL-PHONE',
-            name: 'Rihan Saifi',
+            name: '',
             phone: state.fullFormattedPhone.isNotEmpty
                 ? state.fullFormattedPhone
                 : '+91 98765 43210',
-            email: 'rihan@swastikjewel.com',
+            email: '',
             role: UserRoleEnum.customer,
-            tier: 'Tier 1 Verified Member',
+            tier: 'Tier 1 New Member',
             kyc: const KycInfoEntity(
-              isVerified: true,
-              status: KycStatusEnum.verified,
+              isVerified: false,
+              status: KycStatusEnum.notSubmitted,
             ),
             createdAt: DateTime.now(),
           ),
@@ -252,10 +252,13 @@ class AuthController extends Notifier<AuthFlowState> {
 
         await ref.read(appAuthStateProvider.notifier).setAuthenticated(
               token: fallbackSession.token,
-              userName: fallbackSession.user.name,
+              userName: '',
               userPhone: fallbackSession.user.phone,
+              userEmail: '',
+              userDob: '',
               tier: fallbackSession.user.tier,
-              isKycVerified: fallbackSession.user.kyc.isVerified,
+              isKycVerified: false,
+              isOnboarded: false,
             );
 
         state = state.copyWith(
@@ -279,48 +282,41 @@ class AuthController extends Notifier<AuthFlowState> {
     return sendOtp();
   }
 
-  /// Handles Instagram single sign-on / authentication abstraction.
-  Future<bool> loginWithInstagram() async {
+  /// Handles Google single sign-on authentication.
+  /// Prefills Name and Email from Google profile.
+  Future<bool> loginWithGoogle() async {
     if (state.isSubmitting) return false;
 
     state = state.copyWith(isSubmitting: true);
     try {
-      // Simulate mock Instagram OAuth authorization delay
-      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
 
-      AuthSessionEntity session;
-      try {
-        final IAuthRepository authRepo = ref.read(authRepositoryProvider);
-        session = await authRepo.verifyOtp(
-          phone: '+919876543210',
-          otp: '123456',
-        );
-      } catch (_) {
-        // Local frontend fallback for seamless UI testing without active backend
-        session = AuthSessionEntity(
-          token: 'mock_jwt_instagram_patron_${DateTime.now().millisecondsSinceEpoch}',
-          user: UserEntity(
-            id: 'USR-LOCAL-001',
-            name: 'Rihan Saifi',
-            phone: '+91 98765 43210',
-            email: 'rihan@swastikjewel.com',
-            role: UserRoleEnum.customer,
-            tier: 'Tier 1 Verified Member',
-            kyc: const KycInfoEntity(
-              isVerified: true,
-              status: KycStatusEnum.verified,
-            ),
-            createdAt: DateTime.now(),
+      final AuthSessionEntity session = AuthSessionEntity(
+        token: 'mock_jwt_google_patron_${DateTime.now().millisecondsSinceEpoch}',
+        user: UserEntity(
+          id: 'USR-GOOGLE-001',
+          name: 'Rihan Saifi',
+          phone: '',
+          email: 'rihan.saifi@gmail.com',
+          role: UserRoleEnum.customer,
+          tier: 'Tier 1 New Member',
+          kyc: const KycInfoEntity(
+            isVerified: false,
+            status: KycStatusEnum.notSubmitted,
           ),
-        );
-      }
+          createdAt: DateTime.now(),
+        ),
+      );
 
       await ref.read(appAuthStateProvider.notifier).setAuthenticated(
             token: session.token,
-            userName: session.user.name.isNotEmpty ? session.user.name : 'Rihan Saifi',
-            userPhone: session.user.phone.isNotEmpty ? session.user.phone : '+91 98765 43210',
+            userName: session.user.name,
+            userPhone: '',
+            userEmail: session.user.email ?? 'rihan.saifi@gmail.com',
+            userDob: '',
             tier: session.user.tier,
-            isKycVerified: session.user.kyc.isVerified,
+            isKycVerified: false,
+            isOnboarded: false,
           );
 
       state = state.copyWith(
@@ -331,14 +327,14 @@ class AuthController extends Notifier<AuthFlowState> {
     } catch (e) {
       state = state.copyWith(
         isSubmitting: false,
-        phoneError: 'Instagram authentication was not completed.',
+        phoneError: 'Google authentication was not completed.',
       );
       return false;
     }
   }
 
-  /// Legacy alias delegating to [loginWithInstagram].
-  Future<bool> loginWithGoogle() => loginWithInstagram();
+  /// Handles Instagram single sign-on / authentication abstraction.
+  Future<bool> loginWithInstagram() => loginWithGoogle();
 
   void _startTimers({required int resendSec, required int ttlSec}) {
     _countdownTimer?.cancel();

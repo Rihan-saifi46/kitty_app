@@ -2,27 +2,148 @@ import 'package:flutter/material.dart';
 
 /// Centralized color design tokens for Kitty App.
 ///
-/// Implements the Royal Indian Heritage Luxury palette with Deep Emerald Forest (#05241C)
-/// and Metallic Gold (#C59B27), paired with crisp light surfaces for financial clarity.
+/// Implements the Royal Indian Heritage Luxury palette with:
+/// - Primary Accent: Deep Emerald Green (#063D2E)
+/// - Secondary Accent: Vibrant Emerald (#0A6B4F)
+/// - Luxury Accent: Rich Antique Gold (#D4A34A)
+/// - Base / Canvas: Warm Pearl / Off-White (#F9F7F2)
+/// - Card Surface: Pure White (#FFFFFF)
+/// - Text Primary: Deep Forest / Charcoal (#18231E)
+/// - Text Secondary: Muted Slate Gray (#6E7A75)
+/// - Inactive Nav: Muted Gray (#8C9691)
 abstract final class AppColors {
   // ---------------------------------------------------------------------------
-  // Brand Emerald & Royal Green Palette
+  // Canonical Redesign Palette (User-Specified)
   // ---------------------------------------------------------------------------
 
-  /// Canvas background for Splash, Login, and high-impact hero screens (#05241C).
-  static const Color deepEmeraldBase = Color(0xFF05241C);
+  // HTML Design System Exact Tokens (from dddd/css/style.css & plans.css)
+  static const Color htmlEmeraldDeep = Color(0xFF022318);
+  static const Color htmlEmeraldBase = Color(0xFF053826);
+  static const Color htmlEmeraldLight = Color(0xFF07432E);
+  static const Color htmlEmeraldAccent = Color(0xFF0A6B48);
+  static const Color htmlEmeraldTrend = Color(0xFF0E7B50);
+  static const Color htmlEmeraldDark = Color(0xFF063B2C);
 
-  /// Luxury dark emerald card and container background (#092B22).
-  static const Color emeraldCard = Color(0xFF092B22);
+  static const Color htmlGoldIcon = Color(0xFF9A7342);
+  static const Color htmlGoldBorder = Color(0xFFEADBCA);
+  static const Color htmlGoldBgCircle = Color(0xFFF7EFE3);
+  static const Color htmlGoldBadge = Color(0xFFE6A838);
+  static const Color htmlGoldSoft = Color(0xFFF9F2E4);
+  static const Color htmlDotGold = Color(0xFFC88A35);
 
-  /// Alternate deep emerald card surface (#0B3026).
-  static const Color emeraldCardAlt = Color(0xFF0B3026);
+  static const Color htmlBgCanvas = Color(0xFF121514);
+  static const Color htmlBgMobile = Color(0xFFFAF7F2);
+  static const Color htmlCardWhite = Color(0xFFFFFFFF);
+  static const Color htmlBorderSubtle = Color(0xFFEFEAE0);
+  static const Color htmlTabInactiveBg = Color(0xFFF3EDE4);
 
-  /// Brand primary dark green used for headers and active filter buttons (#064E3B).
-  static const Color emeraldPrimary = Color(0xFF064E3B);
+  static const Color htmlTextHeader = Color(0xFFFFFFFF);
+  static const Color htmlTextHeaderSub = Color(0xFFA3C5B5);
+  static const Color htmlTextPrimary = Color(0xFF1C2420);
+  static const Color htmlTextSecondary = Color(0xFF7D786F);
+  static const Color htmlTextPlaceholder = Color(0xFF8E9591);
+  static const Color htmlTextBullets = Color(0xFF374841);
+  static const Color htmlTextMuted = Color(0xFF68726E);
 
-  /// Deep emerald container surface (#0C2B24).
-  static const Color emeraldContainer = Color(0xFF0C2B24);
+  /// Primary Accent: Deep Emerald Green (#063D2E).
+  /// Sidebar background, main buttons ("Book", "Enrol"), active state borders.
+  static const Color primaryEmerald = Color(0xFF063D2E);
+
+  /// Secondary Accent: Vibrant Emerald (#0A6B4F).
+  /// Live indicators, status tags ("Active", "Verified"), icons.
+  static const Color vibrantEmerald = Color(0xFF0A6B4F);
+
+  /// Luxury Accent: Rich Antique Gold (#D4A34A).
+  /// Header logo, gold rates tag, premium badges, focus highlights.
+  static const Color richAntiqueGold = Color(0xFFD4A34A);
+
+  /// Base / Canvas: Warm Pearl / Off-White (#F9F7F2).
+  /// App main background (fresh & clean off-white canvas, replaces beige).
+  static const Color warmPearl = Color(0xFFF9F7F2);
+
+  /// Card Surface: Pure White (#FFFFFF).
+  /// All product cards, list items, and input boxes.
+  static const Color pureWhite = Color(0xFFFFFFFF);
+
+  /// Text Primary: Deep Forest / Charcoal (#18231E).
+  /// Headings, amounts, and main titles (softer & more premium than pure black).
+  static const Color deepForestCharcoal = Color(0xFF18231E);
+
+  /// Text Secondary: Muted Slate Gray (#6E7A75).
+  /// Subtitles, labels, timestamps, transaction IDs.
+  static const Color mutedSlateGray = Color(0xFF6E7A75);
+
+  /// Inactive Tab / Neutral Muted Gray (#8C9691).
+  /// Inactive bottom bar tabs, neutral icons.
+  static const Color mutedNavGray = Color(0xFF8C9691);
+
+  // ---------------------------------------------------------------------------
+  // Canonical Semantic Tokens (Phase 2 Design System Foundation)
+  // ---------------------------------------------------------------------------
+
+  /// Semantic primary brand token (Deep Emerald Green #063D2E).
+  static const Color primary = primaryEmerald;
+
+  /// Semantic primary container token (Vibrant/Dark Emerald #064E3B).
+  static const Color primaryContainer = emeraldPrimary;
+
+  /// Semantic surface token (Crisp Pure White #FFFFFF).
+  static const Color surface = pureWhite;
+
+  /// Semantic surface variant token (Soft Warm Linen Inset #F0EBE1).
+  static const Color surfaceVariant = warmLinenInset;
+
+  /// Semantic page background canvas token (Warm Pearl #F9F7F2).
+  static const Color background = warmPearl;
+
+  /// Semantic primary high-contrast text token (#18231E).
+  static const Color textPrimary = deepForestCharcoal;
+
+  /// Semantic secondary muted text token (#6E7A75).
+  static const Color textSecondary = mutedSlateGray;
+
+  /// Semantic tertiary muted/disabled token (#8C9691).
+  static const Color textMuted = mutedNavGray;
+
+  /// Semantic border token for cards and inputs (#ECE7DE).
+  static const Color border = surfaceCardBorder;
+
+  /// Semantic success state token (#0A6B4F).
+  static const Color success = vibrantEmerald;
+
+  /// Semantic warning state token (#D97706).
+  static const Color warning = statusWarningText;
+
+  /// Semantic error state token (#DC2626).
+  static const Color error = statusErrorText;
+
+  /// Semantic info / identity verification state token (#2563EB).
+  static const Color info = Color(0xFF2563EB);
+
+  /// Semantic luxury gold token (#D4A34A).
+  static const Color gold = richAntiqueGold;
+
+  /// Semantic precious silver token (#94A3B8).
+  static const Color silver = Color(0xFF94A3B8);
+
+  // ---------------------------------------------------------------------------
+  // Brand Emerald & Royal Green Palette (Mapped to Primary & Vibrant Emerald)
+  // ---------------------------------------------------------------------------
+
+  /// Canvas background for Splash, Login, and high-impact hero screens (#063D2E).
+  static const Color deepEmeraldBase = primaryEmerald;
+
+  /// Luxury dark emerald card and container background (#08382B).
+  static const Color emeraldCard = Color(0xFF08382B);
+
+  /// Alternate deep emerald card surface (#0A4435).
+  static const Color emeraldCardAlt = Color(0xFF0A4435);
+
+  /// Brand primary dark green used for headers and active filter buttons (#063D2E).
+  static const Color emeraldPrimary = primaryEmerald;
+
+  /// Deep emerald container surface (#063D2E).
+  static const Color emeraldContainer = primaryEmerald;
 
   /// Secondary muted text and labels on dark emerald surfaces (#9FB8AE).
   static const Color emeraldTextSubtle = Color(0xFF9FB8AE);
@@ -30,167 +151,167 @@ abstract final class AppColors {
   /// Muted labels on dark cards (#A3BCB2).
   static const Color emeraldTextMuted = Color(0xFFA3BCB2);
 
-  /// Emerald accent border (#10B981 with 20% opacity).
-  static const Color emeraldBorder = Color(0x3310B981);
+  /// Emerald accent border (#0A6B4F with 25% opacity).
+  static const Color emeraldBorder = Color(0x400A6B4F);
 
   // ---------------------------------------------------------------------------
-  // Brand Metallic Gold Palette
+  // Brand Rich Antique Gold Palette
   // ---------------------------------------------------------------------------
 
-  /// Primary luxury metallic gold for logos, active badges, and key accents (#C59B27).
-  static const Color goldPrimary = Color(0xFFC59B27);
+  /// Primary luxury antique gold for logos, active badges, and key accents (#D4A34A).
+  static const Color goldPrimary = richAntiqueGold;
 
-  /// Secondary gold accent (#C49746).
-  static const Color goldAccent = Color(0xFFC49746);
+  /// Secondary gold accent (#D4A34A).
+  static const Color goldAccent = richAntiqueGold;
 
-  /// Gradient start for primary luxury CTAs (#E6C275).
-  static const Color goldGradientStart = Color(0xFFE6C275);
+  /// Gradient start for luxury CTAs / accents (#E4BA60).
+  static const Color goldGradientStart = Color(0xFFE4BA60);
 
-  /// Gradient end for primary luxury CTAs (#CCA043).
-  static const Color goldGradientEnd = Color(0xFFCCA043);
+  /// Gradient end for luxury CTAs / accents (#C79438).
+  static const Color goldGradientEnd = Color(0xFFC79438);
 
-  /// Light champagne gold for subtle highlights (#DFC178).
-  static const Color goldLight = Color(0xFFDFC178);
+  /// Light champagne gold for subtle highlights (#E6CA87).
+  static const Color goldLight = Color(0xFFE6CA87);
 
   /// Frosted champagne gold background for chips and icons (12% opacity).
-  static const Color goldSubtle = Color(0x1FC59B27);
+  static const Color goldSubtle = Color(0x1FD4A34A);
 
   /// Subtle gold border for badges and frames (28% opacity).
-  static const Color goldBorder = Color(0x47C59B27);
+  static const Color goldBorder = Color(0x47D4A34A);
 
   // ---------------------------------------------------------------------------
-  // Official Warm Luxury Palette (Warm Alabaster Silk & Polished Cream Ivory)
+  // Canvas & Light Surfaces (Warm Pearl #F9F7F2 & Pure White #FFFFFF)
   // ---------------------------------------------------------------------------
 
-  /// Warm Alabaster Silk (#FAF7F2): Full-screen base / canvas behind cards.
-  static const Color alabasterSilk = Color(0xFFFAF7F2);
+  /// Warm Pearl / Off-White (#F9F7F2): Full-screen base / canvas behind cards.
+  static const Color alabasterSilk = warmPearl;
 
-  /// Polished Cream Ivory (#F4F0EA): Active Jewel Plan card & Bottom Offers card background.
-  static const Color creamIvoryCard = Color(0xFFF4F0EA);
+  /// Pure White (#FFFFFF): Product cards, list items, input boxes.
+  static const Color creamIvoryCard = pureWhite;
 
-  /// Soft Warm Linen (#EDE8DF): The subtle inner box around "Total Deposited" & "Monthly EMI".
-  static const Color warmLinenInset = Color(0xFFEDE8DF);
+  /// Soft Warm Inset (#F0EBE1): Subtle inner box around stat metrics.
+  static const Color warmLinenInset = Color(0xFFF0EBE1);
 
-  /// Rich Warm Ochre / Honey Gold (#DCA237): "PAY INSTALLMENT" button, progress ring, active plan title, icon badge.
-  static const Color honeyGoldAccent = Color(0xFFDCA237);
+  /// Rich Antique Gold (#D4A34A): Accent icons, progress rings, and highlights.
+  static const Color honeyGoldAccent = richAntiqueGold;
 
-  /// Champagne Gold Foil (#F3E0B5): #SW-042 chip pill, 24K price banner pill, "Royal Club" badge.
-  static const Color champagneFoil = Color(0xFFF3E0B5);
+  /// Champagne Gold Foil (#F6E7C8): Tag pills, 24K price banner pill, badges.
+  static const Color champagneFoil = Color(0xFFF6E7C8);
 
-  /// Espresso Charcoal (#2B2521): High-contrast numbers (₹40,000), "Namaste, Rihan Saifi", main headings.
-  static const Color espressoCharcoal = Color(0xFF2B2521);
+  /// Deep Forest Charcoal (#18231E): High-contrast numbers, headings, main titles.
+  static const Color espressoCharcoal = deepForestCharcoal;
 
-  /// Warm Taupe Brown (#6E6259): Labels ("TOTAL DEPOSITED", "MONTHLY EMI", "8 of 12 installments").
-  static const Color warmTaupeBrown = Color(0xFF6E6259);
+  /// Muted Slate Gray (#6E7A75): Labels, subtitles, timestamps.
+  static const Color warmTaupeBrown = mutedSlateGray;
 
-  /// Dark Contrast CTA: Deep Umber Bronze (#26211E): "Explore Plan" button at the bottom.
-  static const Color deepUmberBronze = Color(0xFF26211E);
-
-  // ---------------------------------------------------------------------------
-  // Settings & Warm Luxury Palette (Exact User-Specified Hex Codes)
-  // ---------------------------------------------------------------------------
-
-  /// Warm Alabaster Silk (#FAF7F2): Screen base background.
-  static const Color settingsBg = Color(0xFFFAF7F2);
-
-  /// Polished Cream Ivory (#F5F1EB): Profile card, settings group cards background.
-  static const Color settingsCardBg = Color(0xFFF5F1EB);
-
-  /// Soft Warm Linen (#EAE4D9): Rounded icon boxes (UPI, Nominee, MPIN icons).
-  static const Color settingsIconBg = Color(0xFFEAE4D9);
-
-  /// Espresso Charcoal (#241E1A): Primary text & headings.
-  static const Color settingsTextPrimary = Color(0xFF241E1A);
-
-  /// Warm Taupe Brown (#6E6259): Secondary & subtitle captions.
-  static const Color settingsTextSecondary = Color(0xFF6E6259);
-
-  /// Warm Antique Gold (#B88B4A): Section titles & accents.
-  static const Color settingsAccentGold = Color(0xFFB88B4A);
-
-  /// Sage Mint Tint (#E1F2E9): Status pill background (Registered, Verified).
-  static const Color settingsBadgeBg = Color(0xFFE1F2E9);
-
-  /// Forest Jade Green (#1E7A4D): Status pill text and checkmark.
-  static const Color settingsBadgeText = Color(0xFF1E7A4D);
-
-  /// Light Sand Beige (#E6DFD5): Divider lines and 1px subtle borders.
-  static const Color settingsBorder = Color(0xFFE6DFD5);
+  /// Primary Action Dark / Emerald (#063D2E): CTAs and main buttons.
+  static const Color deepUmberBronze = primaryEmerald;
 
   // ---------------------------------------------------------------------------
-  // Luxury Design Tokens mapped to Warm Luxury Palette
+  // Settings & Warm Luxury Palette
   // ---------------------------------------------------------------------------
 
-  /// Canvas background canvas matching Warm Alabaster Silk (#FAF7F2).
-  static const Color homeCanvasBg = alabasterSilk;
+  /// Warm Pearl screen base background (#F9F7F2).
+  static const Color settingsBg = warmPearl;
 
-  /// Top luxury navbar & product card background matching Polished Cream Ivory (#F4F0EA).
-  static const Color homeNavbarBg = creamIvoryCard;
+  /// Pure White profile card, settings group cards background (#FFFFFF).
+  static const Color settingsCardBg = pureWhite;
 
-  /// Header & footer border matching Soft Warm Linen (#EDE8DF).
-  static const Color homeNavbarBorder = warmLinenInset;
+  /// Soft Warm Inset icon boxes (#F0EBE1).
+  static const Color settingsIconBg = warmLinenInset;
 
-  /// Primary heading font color matching Espresso Charcoal (#2B2521).
-  static const Color homePrimaryHeading = espressoCharcoal;
+  /// Primary text & headings (#18231E).
+  static const Color settingsTextPrimary = deepForestCharcoal;
 
-  /// Body & subtitle font color matching Warm Taupe Brown (#6E6259).
-  static const Color homeBodySubtitle = warmTaupeBrown;
+  /// Secondary & subtitle captions (#6E7A75).
+  static const Color settingsTextSecondary = mutedSlateGray;
 
-  /// Brand gold accent matching Rich Warm Ochre / Honey Gold (#DCA237).
-  static const Color homeBrandGold = honeyGoldAccent;
+  /// Section titles & accents (#D4A34A).
+  static const Color settingsAccentGold = richAntiqueGold;
 
-  /// Brand gold hover matching Rich Warm Ochre / Honey Gold (#C8902A).
-  static const Color homeBrandGoldHover = Color(0xFFC8902A);
+  /// Vibrant Mint Tint (#E7F3EE): Status pill background (Registered, Verified).
+  static const Color settingsBadgeBg = Color(0xFFE7F3EE);
 
-  /// Category ring background matching Polished Cream Ivory (#F4F0EA).
-  static const Color homeCategoryRingBg = creamIvoryCard;
+  /// Vibrant Emerald (#0A6B4F): Status pill text and checkmark.
+  static const Color settingsBadgeText = vibrantEmerald;
 
-  /// Category ring border matching Soft Warm Linen (#EDE8DF).
-  static const Color homeCategoryRingBorder = warmLinenInset;
+  /// Subtle light border (#ECE7DE): Divider lines and 1px subtle borders.
+  static const Color settingsBorder = Color(0xFFECE7DE);
 
-  /// Product card background matching Polished Cream Ivory (#F4F0EA).
-  static const Color homeProductCardBg = creamIvoryCard;
+  // ---------------------------------------------------------------------------
+  // Luxury Design Tokens mapped to Fresh Luxury Palette
+  // ---------------------------------------------------------------------------
 
-  /// Product card border matching Soft Warm Linen (#EDE8DF).
-  static const Color homeProductCardBorder = warmLinenInset;
+  /// Canvas background canvas matching Warm Pearl (#F9F7F2).
+  static const Color homeCanvasBg = warmPearl;
 
-  /// Promo banner emerald card.
-  static const Color homePromoBannerEmerald = creamIvoryCard;
+  /// Top luxury navbar & product card background matching Pure White (#FFFFFF).
+  static const Color homeNavbarBg = pureWhite;
 
-  /// Promo golden button matching Honey Gold (#DCA237).
-  static const Color homePromoGoldenBtn = honeyGoldAccent;
+  /// Header & footer border matching subtle divider (#ECE7DE).
+  static const Color homeNavbarBorder = Color(0xFFECE7DE);
+
+  /// Primary heading font color matching Deep Forest Charcoal (#18231E).
+  static const Color homePrimaryHeading = deepForestCharcoal;
+
+  /// Body & subtitle font color matching Muted Slate Gray (#6E7A75).
+  static const Color homeBodySubtitle = mutedSlateGray;
+
+  /// Brand gold accent matching Rich Antique Gold (#D4A34A).
+  static const Color homeBrandGold = richAntiqueGold;
+
+  /// Brand gold hover (#C49339).
+  static const Color homeBrandGoldHover = Color(0xFFC49339);
+
+  /// Category ring background matching Pure White (#FFFFFF).
+  static const Color homeCategoryRingBg = pureWhite;
+
+  /// Category ring border (#ECE7DE).
+  static const Color homeCategoryRingBorder = Color(0xFFECE7DE);
+
+  /// Product card background matching Pure White (#FFFFFF).
+  static const Color homeProductCardBg = pureWhite;
+
+  /// Product card border (#ECE7DE).
+  static const Color homeProductCardBorder = Color(0xFFECE7DE);
+
+  /// Promo banner surface matching Pure White (#FFFFFF).
+  static const Color homePromoBannerEmerald = pureWhite;
+
+  /// Promo button matching Deep Emerald Green (#063D2E).
+  static const Color homePromoGoldenBtn = primaryEmerald;
 
   // ---------------------------------------------------------------------------
   // Refined Light Surface Palette (Passbook & Settings)
   // ---------------------------------------------------------------------------
 
-  /// Soft modern off-white page background canvas (#FAF7F2).
-  static const Color surfacePageBg = alabasterSilk;
+  /// Soft modern Warm Pearl page background canvas (#F9F7F2).
+  static const Color surfacePageBg = warmPearl;
 
-  /// Crisp cream container card background (#F4F0EA).
-  static const Color surfaceCardBg = creamIvoryCard;
+  /// Crisp Pure White container card background (#FFFFFF).
+  static const Color surfaceCardBg = pureWhite;
 
-  /// Subtle modern warm border for cards and inputs (#EDE8DF).
-  static const Color surfaceCardBorder = warmLinenInset;
+  /// Subtle modern warm border for cards and inputs (#ECE7DE).
+  static const Color surfaceCardBorder = Color(0xFFECE7DE);
 
-  /// Secondary modern border (#EDE8DF).
-  static const Color surfaceCardBorderAlt = warmLinenInset;
+  /// Secondary modern border (#ECE7DE).
+  static const Color surfaceCardBorderAlt = Color(0xFFECE7DE);
 
-  /// Table row separator and section divider (#EDE8DF).
-  static const Color surfaceDivider = warmLinenInset;
+  /// Table row separator and section divider (#ECE7DE).
+  static const Color surfaceDivider = Color(0xFFECE7DE);
 
   // ---------------------------------------------------------------------------
   // Neutral Text Palette
   // ---------------------------------------------------------------------------
 
-  /// Primary high-contrast text on light cards (#2B2521 Espresso Charcoal).
-  static const Color textPrimaryDark = espressoCharcoal;
+  /// Primary high-contrast text on light cards (#18231E Deep Forest Charcoal).
+  static const Color textPrimaryDark = deepForestCharcoal;
 
-  /// Subtitles, helper text, and timestamps on light cards (#6E6259 Warm Taupe Brown).
-  static const Color textSecondaryMuted = warmTaupeBrown;
+  /// Subtitles, helper text, and timestamps on light cards (#6E7A75 Muted Slate Gray).
+  static const Color textSecondaryMuted = mutedSlateGray;
 
-  /// Tertiary placeholder and disabled text (#94A3B8).
-  static const Color textTertiary = Color(0xFF94A3B8);
+  /// Tertiary placeholder and disabled text (#8C9691 Muted Nav Gray).
+  static const Color textTertiary = mutedNavGray;
 
   /// Crisp white text on dark emerald cards (#FFFFFF).
   static const Color textPrimaryLight = Color(0xFFFFFFFF);
@@ -208,14 +329,14 @@ abstract final class AppColors {
   // Status & Lifecycle Colors
   // ---------------------------------------------------------------------------
 
-  /// Green tint pill background for PAID / Verified (#ECFDF5).
-  static const Color statusSuccessBg = Color(0xFFECFDF5);
+  /// Green tint pill background for PAID / Verified (#E7F3EE).
+  static const Color statusSuccessBg = Color(0xFFE7F3EE);
 
-  /// Green text and icon for success state (#047857).
-  static const Color statusSuccessText = Color(0xFF047857);
+  /// Vibrant Emerald text and icon for success state (#0A6B4F).
+  static const Color statusSuccessText = vibrantEmerald;
 
-  /// Green border for verified / paid pills (#A7F3D0).
-  static const Color statusSuccessBorder = Color(0xFFA7F3D0);
+  /// Emerald border for verified / paid pills (rgba(10, 107, 79, 0.25)).
+  static const Color statusSuccessBorder = Color(0x400A6B4F);
 
   /// Amber highlight background for CURRENT due month (#FFFBEB).
   static const Color statusWarningBg = Color(0xFFFFFBEB);
@@ -229,7 +350,7 @@ abstract final class AppColors {
   /// Amber border for warning badges (#FDE68A).
   static const Color statusWarningBorder = Color(0xFFFDE68A);
 
-  /// Yellow highlight background for 12th month 100% Jeweler BONUS deposit (#FEFCE8).
+  /// Yellow highlight background for 12th month bonus deposit (#FEFCE8).
   static const Color statusBonusBg = Color(0xFFFEFCE8);
 
   /// Bonus text color (#CA8A04).
@@ -248,7 +369,14 @@ abstract final class AppColors {
   // Gradients
   // ---------------------------------------------------------------------------
 
-  /// Primary metallic gold button and CTA gradient.
+  /// Primary Deep Emerald button and CTA gradient.
+  static const LinearGradient emeraldPrimaryGradient = LinearGradient(
+    colors: <Color>[Color(0xFF094E3B), primaryEmerald],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  /// Rich Antique Gold button and CTA gradient.
   static const LinearGradient goldPrimaryGradient = LinearGradient(
     colors: <Color>[goldGradientStart, goldGradientEnd],
     begin: Alignment.centerLeft,
@@ -257,14 +385,14 @@ abstract final class AppColors {
 
   /// Deep emerald luxury card gradient.
   static const LinearGradient emeraldHeroGradient = LinearGradient(
-    colors: <Color>[emeraldCard, deepEmeraldBase],
+    colors: <Color>[emeraldCard, primaryEmerald],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   /// Light gold accent gradient.
   static const LinearGradient goldCardGradient = LinearGradient(
-    colors: <Color>[goldLight, goldPrimary],
+    colors: <Color>[goldLight, richAntiqueGold],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

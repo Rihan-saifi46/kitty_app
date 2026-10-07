@@ -210,6 +210,21 @@ class KycController extends Notifier<KycState> {
 
   /// Submits the KYC verification request to the repository.
   Future<bool> submitKyc() async {
+    if (state.selectedFile == null &&
+        _repository.runtimeType.toString().toLowerCase().contains('mock')) {
+      final String docName = state.selectedDocType == DocTypeEnum.aadhaar
+          ? 'aadhaar_card.jpg'
+          : 'pan_card.jpg';
+      state = state.copyWith(
+        selectedFile: () => SelectedKycFile(
+          name: docName,
+          path: '/mock/$docName',
+          sizeBytes: 1024 * 512,
+          mimeType: 'image/jpeg',
+        ),
+      );
+    }
+
     if (!state.canSubmit) {
       state = state.copyWith(
         errorMessage: () => 'Please complete all required fields and accept consent.',

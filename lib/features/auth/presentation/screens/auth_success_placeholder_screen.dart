@@ -18,7 +18,7 @@ class AuthSuccessPlaceholderScreen extends StatelessWidget {
       subtitle: 'Confirmation card with patron name, loyalty badge, and continue button.',
       icon: Icons.check_circle_outline_rounded,
       actionButton: ElevatedButton(
-        onPressed: () => context.go(RoutePaths.home),
+        onPressed: () => context.go(RoutePaths.offers),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.goldPrimary,
           foregroundColor: AppColors.deepEmeraldBase,

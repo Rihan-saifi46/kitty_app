@@ -167,7 +167,7 @@ void main() {
       final productRepo = MockProductRepository(engineConfig: engineConfig);
 
       final rate = await goldRepo.getLiveGoldRate();
-      expect(rate.ratePerGram, 7120.500);
+      expect(rate.ratePerGram, 15268.000);
 
       final categories = await productRepo.getCategories();
       expect(categories.length, 6);

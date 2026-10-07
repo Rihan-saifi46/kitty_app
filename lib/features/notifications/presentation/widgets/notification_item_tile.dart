@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -223,7 +223,7 @@ class NotificationItemTile extends StatelessWidget {
     switch (type) {
       case NotificationTypeEnum.transaction:
         return _TypeStyle(
-          icon: Icons.account_balance_wallet_outlined,
+          icon: Icons.payments_rounded,
           iconColor: AppColors.goldPrimary,
           backgroundColor: isDark ? AppColors.goldSubtle : const Color(0xFFFFFBEB),
           borderColor: AppColors.goldBorder.withValues(alpha: 0.5),
@@ -232,16 +232,16 @@ class NotificationItemTile extends StatelessWidget {
         );
       case NotificationTypeEnum.scheme:
         return _TypeStyle(
-          icon: Icons.savings_outlined,
-          iconColor: const Color(0xFF2563EB),
-          backgroundColor: isDark ? const Color(0x1F3B82F6) : const Color(0xFFEFF6FF),
-          borderColor: const Color(0x473B82F6),
+          icon: Icons.workspace_premium_rounded,
+          iconColor: AppColors.honeyGoldAccent,
+          backgroundColor: isDark ? AppColors.goldSubtle : const Color(0xFFFFFBEB),
+          borderColor: AppColors.goldBorder.withValues(alpha: 0.5),
           label: 'GOLD SCHEME',
-          labelColor: const Color(0xFF2563EB),
+          labelColor: AppColors.honeyGoldAccent,
         );
       case NotificationTypeEnum.offer:
         return _TypeStyle(
-          icon: Icons.auto_awesome_rounded,
+          icon: Icons.loyalty_rounded,
           iconColor: const Color(0xFFD97706),
           backgroundColor: isDark ? const Color(0x1FF59E0B) : const Color(0xFFFFF7ED),
           borderColor: const Color(0x47F59E0B),
@@ -250,7 +250,7 @@ class NotificationItemTile extends StatelessWidget {
         );
       case NotificationTypeEnum.system:
         return _TypeStyle(
-          icon: Icons.shield_outlined,
+          icon: Icons.verified_user_rounded,
           iconColor: const Color(0xFF059669),
           backgroundColor: isDark ? const Color(0x1F10B981) : const Color(0xFFECFDF5),
           borderColor: const Color(0x4710B981),
@@ -259,7 +259,7 @@ class NotificationItemTile extends StatelessWidget {
         );
       case NotificationTypeEnum.unknown:
         return _TypeStyle(
-          icon: Icons.notifications_outlined,
+          icon: Icons.notifications_active_rounded,
           iconColor: isDark ? AppColors.emeraldTextSubtle : const Color(0xFF64748B),
           backgroundColor: isDark ? const Color(0x1FFFFFFF) : const Color(0xFFF1F5F9),
           borderColor: isDark ? AppColors.emeraldBorder : const Color(0xFFE2E8F0),

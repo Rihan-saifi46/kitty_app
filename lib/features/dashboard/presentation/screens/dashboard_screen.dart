@@ -1,270 +1,1497 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/constants/app_typography.dart';
 import '../../../../core/routing/route_paths.dart';
-import '../../../../shared/widgets/feedback/kitty_empty_state.dart';
-import '../../../../shared/widgets/feedback/kitty_error_state.dart';
+import '../../../../shared/widgets/navigation/kitty_hamburger_button.dart';
 import '../../../checkout/presentation/screens/checkout_screen.dart';
-import '../../../home/presentation/widgets/home_section_heading.dart';
 import '../../domain/entities/dashboard_summary_entity.dart';
 import '../providers/dashboard_controller.dart';
 import '../providers/dashboard_state.dart';
-import '../widgets/dashboard_multi_scheme_carousel.dart';
-import '../widgets/dashboard_prejoin_banner.dart';
-import '../widgets/dashboard_skeleton_loader.dart';
 
-/// Authenticated Kitty Dashboard screen presenting in-depth active scheme metrics,
-/// horizontal multi-scheme carousel, circular progress gauge, financial summary,
-/// next installment due countdown, and passbook statements.
-class DashboardScreen extends ConsumerWidget {
+/// Recreated 100% identically from `dddd/scheme.html`.
+///
+/// Features:
+/// - Light App Background: #F8F6F0
+/// - Header: Back arrow & "Your Active Plan" (Playfair Display 20px bold #1A2024)
+/// - Card 1: Top Main Plan Card (#FFFFFF, rounded 24px, border #EFEAE2)
+///   * 3D Stack of Gold Coins Vector Graphic in rounded 16px gradient box
+///   * Plan Title ("11 Month Gold Plan") & Plan ID ("SJ360123")
+///   * Circular 45% Progress Wheel (70x70) with dark pine progress ring (#073B30)
+///   * Financial Split: Paid ("₹55,000") vs Total Plan ("₹1,20,000")
+///   * Lower Inner Panel: Next Instalment Due ("₹5,000" on 5 Oct 2026) & "Pay Now" CTA (#073B30)
+/// - Card 2: Your Plan Details Card (#FFFFFF, rounded 22px, border #EFEAE2)
+///   * Golden Icon Rows: Start Date, End Date, Monthly Instalment, Total Plan Amount
+/// - Card 3: Your Progress Card (#FFFFFF, rounded 22px, border #EFEAE2)
+///   * 11-Month Horizontal Stepper Tracker (Jan to Nov nodes with green checkmarks)
+///   * Split stats pills: Instalments Paid (5 / 11) & Instalments Remaining (6)
+///   * "View All" button opening All 11 Instalments bottom sheet
+/// - Card 4: Upcoming Payment Card (#FFFFFF, rounded 22px, border #EFEAE2)
+///   * Mint Inner Container (#EFF7F3) with calendar icon, Next Instalment, and "Pay Now" CTA
+/// - Payment Confirmation Modal with Breakdown & Gokwik/Checkout authorization
+/// - View All Instalments History Bottom Sheet
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  static const Color _appBg = Color(0xFFF8F6F0);
+  static const Color _cardBg = Color(0xFFFFFFFF);
+  static const Color _cardBorder = Color(0xFFEFEAE2);
+  static const Color _darkPine = Color(0xFF073B30);
+  static const Color _goldAccent = Color(0xFFC99542);
+  static const Color _textMain = Color(0xFF1A2024);
+  static const Color _textMuted = Color(0xFF67717A);
+  static const Color _textSub = Color(0xFF8D969F);
+  static const Color _mintBg = Color(0xFFECF6F1);
+  static const Color _amberBg = Color(0xFFFBF5EB);
+
+  // 11 Months data matching scheme.html
+  final List<_MonthInstallment> _months = const <_MonthInstallment>[
+    _MonthInstallment(name: 'Jan', isPaid: true, date: '5 Jan 2026', amount: '₹5,000', txnId: 'TXN98421'),
+    _MonthInstallment(name: 'Feb', isPaid: true, date: '5 Feb 2026', amount: '₹5,000', txnId: 'TXN98488'),
+    _MonthInstallment(name: 'Mar', isPaid: true, date: '5 Mar 2026', amount: '₹5,000', txnId: 'TXN98532'),
+    _MonthInstallment(name: 'Apr', isPaid: true, date: '5 Apr 2026', amount: '₹5,000', txnId: 'TXN98601'),
+    _MonthInstallment(name: 'May', isPaid: true, date: '5 May 2026', amount: '₹5,000', txnId: 'TXN98725'),
+    _MonthInstallment(name: 'Jun', isPaid: false, date: '5 Jun 2026', amount: '₹5,000', txnId: null),
+    _MonthInstallment(name: 'Jul', isPaid: false, date: '5 Jul 2026', amount: '₹5,000', txnId: null),
+    _MonthInstallment(name: 'Aug', isPaid: false, date: '5 Aug 2026', amount: '₹5,000', txnId: null),
+    _MonthInstallment(name: 'Sep', isPaid: false, date: '5 Sep 2026', amount: '₹5,000', txnId: null),
+    _MonthInstallment(name: 'Oct', isPaid: false, date: '5 Oct 2026', amount: '₹5,000', txnId: null),
+    _MonthInstallment(name: 'Nov', isPaid: false, date: '5 Nov 2026', amount: '₹5,000', txnId: null),
+  ];
+
+  void _openPaymentModal(int emiAmount, String planTitle) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext ctx) {
+        return _PaymentModalSheet(
+          emiAmount: emiAmount,
+          planTitle: planTitle,
+          onAuthorizePay: () {
+            Navigator.of(ctx).pop();
+            context.push(
+              RoutePaths.checkout,
+              extra: CheckoutArgs(
+                membershipId: 'SJ360123',
+                chitToken: '#SW-042',
+                monthFor: 6,
+                amount: emiAmount,
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _openHistoryDrawer() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext ctx) {
+        return _HistoryModalSheet(months: _months);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final DashboardState state = ref.watch(dashboardControllerProvider);
     final DashboardController controller = ref.read(dashboardControllerProvider.notifier);
 
-    // Show floating error notification if pull-to-refresh fails while data is already loaded
-    ref.listen<DashboardState>(dashboardControllerProvider, (previous, next) {
-      if (next.status == DashboardStatus.loaded &&
-          next.errorMessage != null &&
-          previous?.errorMessage != next.errorMessage) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.errorMessage!),
-            backgroundColor: AppColors.statusErrorText,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    });
+    final DashboardSummaryEntity? scheme = state.selectedScheme ??
+        (state.schemes.isNotEmpty
+            ? state.schemes.first
+            : state.data);
+
+    // Live backend metrics with fallback to scheme.html design constants
+    final int paidCount = _months.where((m) => m.isPaid).length;
+    final int totalCount = _months.length;
+    final double calculatedProgress = (paidCount / totalCount) * 100.0;
+    final double progressPercent = scheme?.progressPercentage != null
+        ? scheme!.progressPercentage.toDouble().clamp(0.0, 100.0)
+        : calculatedProgress;
+
+    final String paidAmount = scheme?.totalPaidAmount != null
+        ? '₹${NumberFormat('#,##,###').format(scheme!.totalPaidAmount)}'
+        : '₹55,000';
+    final String targetAmount = scheme?.targetAmount != null
+        ? '₹${NumberFormat('#,##,###').format(scheme!.targetAmount)}'
+        : '₹1,20,000';
+    final String planTitle = scheme?.schemeName?.isNotEmpty == true
+        ? scheme!.schemeName!
+        : '11 Month Gold Plan';
+    final String planId = scheme?.membershipId?.isNotEmpty == true
+        ? scheme!.membershipId!
+        : 'SJ360123';
+    const String startDate = '5 Jan 2026';
+    const String endDate = '5 Dec 2026';
+    final String nextDueDate = scheme?.nextInstallment?.dueDate != null
+        ? DateFormat('d MMM yyyy').format(scheme!.nextInstallment!.dueDate)
+        : '5 Oct 2026';
+    final int emiAmount = scheme?.nextInstallment?.amount ?? scheme?.customMonthlyEmi ?? 5000;
+    final String monthlyAmountStr = '₹${NumberFormat('#,##,###').format(emiAmount)}';
 
     return Scaffold(
-      backgroundColor: AppColors.surfacePageBg,
+      backgroundColor: _appBg,
       body: SafeArea(
-        top: false,
-        bottom: false,
-        child: switch (state.status) {
-          DashboardStatus.initial || DashboardStatus.loading => const DashboardSkeletonLoader(),
-          DashboardStatus.empty => _buildEmptyView(context, controller),
-          DashboardStatus.error => _buildErrorView(context, state.errorMessage, controller),
-          DashboardStatus.loaded || DashboardStatus.refreshing => _buildLoadedView(
-              context,
-              state,
-              controller,
-            ),
-        },
-      ),
-    );
-  }
-
-  Widget _buildEmptyView(BuildContext context, DashboardController controller) {
-    return RefreshIndicator(
-      onRefresh: () => controller.loadDashboard(refresh: true),
-      color: AppColors.goldPrimary,
-      backgroundColor: AppColors.surfaceCardBg,
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        children: <Widget>[
-          SizedBox(height: MediaQuery.of(context).size.height * 0.15),
-          KittyEmptyState(
-            title: 'No Active Gold Scheme',
-            description:
-                'Enroll in our exclusive 100% jeweler bonus gold savings schemes to start accumulating 24K pure gold monthly.',
-            icon: const Icon(
-              Icons.savings_outlined,
-              color: AppColors.goldPrimary,
-              size: 32,
-            ),
-            actionLabel: 'EXPLORE SCHEMES',
-            onAction: () => context.push(RoutePaths.offers),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorView(
-    BuildContext context,
-    String? errorMessage,
-    DashboardController controller,
-  ) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.space24),
-        child: KittyErrorState(
-          title: 'Unable to Load Scheme Details',
-          message: errorMessage ??
-              'Unable to load your scheme details. Please check your connection and try again.',
-          retryLabel: 'Try Again',
-          onRetry: controller.retry,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoadedView(
-    BuildContext context,
-    DashboardState dashboardState,
-    DashboardController controller,
-  ) {
-    final List<DashboardSummaryEntity> schemes = dashboardState.schemes.isNotEmpty
-        ? dashboardState.schemes
-        : (dashboardState.data != null
-            ? <DashboardSummaryEntity>[dashboardState.data!]
-            : <DashboardSummaryEntity>[]);
-
-    final DashboardSummaryEntity selectedScheme =
-        dashboardState.selectedScheme ?? (schemes.isNotEmpty ? schemes.first : const DashboardSummaryEntity(hasActiveScheme: false));
-
-    return RefreshIndicator(
-      onRefresh: () => controller.loadDashboard(refresh: true),
-      color: AppColors.goldPrimary,
-      backgroundColor: AppColors.surfaceCardBg,
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
-        ),
-        slivers: <Widget>[
-          const SliverToBoxAdapter(
-            child: SizedBox(height: AppSpacing.space8),
-          ),
-
-          // PRE_JOIN Status Banner (if applicable)
-          if (selectedScheme.isPreJoin)
-            const SliverToBoxAdapter(
-              child: DashboardPrejoinBanner(),
-            ),
-
-          // Active Scheme Section Heading
-          const SliverToBoxAdapter(
-            child: HomeSectionHeading(
-              title: 'Active Scheme',
-              fontSize: 14,
-              padding: EdgeInsets.symmetric(vertical: AppSpacing.space12),
-            ),
-          ),
-
-          // Multi-Scheme Carousel or Single Hero Card
-          SliverToBoxAdapter(
-            child: DashboardMultiSchemeCarousel(
-              schemes: schemes,
-              selectedIndex: dashboardState.selectedSchemeIndex,
-              onSchemeChanged: controller.selectScheme,
-              onPaySelected: (DashboardSummaryEntity scheme) {
-                context.push(
-                  RoutePaths.checkout,
-                  extra: CheckoutArgs(
-                    membershipId: scheme.membershipId ?? 'mem_994411',
-                    chitToken: scheme.chitToken ?? '#SW-042',
-                    monthFor: scheme.nextInstallment?.month ?? 1,
-                    amount: scheme.nextInstallment?.amount ?? scheme.customMonthlyEmi ?? 5000,
-                  ),
-                );
-              },
-              onViewPassbook: (DashboardSummaryEntity scheme) {
-                context.go(RoutePaths.passbook);
-              },
-            ),
-          ),
-
-          const SliverToBoxAdapter(
-            child: SizedBox(height: AppSpacing.space8),
-          ),
-
-          const SliverToBoxAdapter(
-            child: SizedBox(height: AppSpacing.space4),
-          ),
-
-          // Passbook & Statements Quick Link Card
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.space16,
-                vertical: AppSpacing.space4,
-              ),
-              child: InkWell(
-                key: const Key('dashboard_view_passbook_link'),
-                onTap: () => context.go(RoutePaths.passbook),
-                borderRadius: AppRadius.border16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.space16,
-                    vertical: AppSpacing.space12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceCardBg,
-                    borderRadius: AppRadius.border16,
-                    border: Border.all(
-                      color: AppColors.surfaceCardBorder,
-                      width: 1,
+        child: Column(
+          children: <Widget>[
+            // -----------------------------------------------------------------
+            // SCREEN HEADER (scheme.html line 106)
+            // -----------------------------------------------------------------
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  IconButton(
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go(RoutePaths.offers);
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: _textMain,
+                      size: 22,
                     ),
-                    boxShadow: AppShadows.cardSubtle,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
                   ),
-                  child: Row(
+                  Text(
+                    'Your Active Plan',
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: _textMain,
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                  const KittyHamburgerButton(isLightSurface: true),
+                ],
+              ),
+            ),
+
+            // -----------------------------------------------------------------
+            // SCROLLABLE SCREEN CONTENT AREA (scheme.html line 120)
+            // -----------------------------------------------------------------
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => controller.loadDashboard(refresh: true),
+                color: _darkPine,
+                backgroundColor: Colors.white,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
+                  child: Column(
                     children: <Widget>[
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.goldSubtle,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.goldBorder.withValues(alpha: 0.35),
-                            width: 1,
-                          ),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.menu_book_outlined,
-                            color: AppColors.goldPrimary,
-                            size: 20,
-                          ),
-                        ),
+                      // 1. TOP MAIN PLAN CARD (scheme.html line 123)
+                      _buildTopPlanCard(
+                        planTitle: planTitle,
+                        planId: planId,
+                        progressPercent: progressPercent,
+                        paidAmount: paidAmount,
+                        targetAmount: targetAmount,
+                        monthlyAmountStr: monthlyAmountStr,
+                        nextDueDate: nextDueDate,
+                        onPayNow: () => _openPaymentModal(emiAmount, planTitle),
                       ),
-                      const SizedBox(width: AppSpacing.space12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Passbook & Statements',
-                              style: AppTypography.cardTitle(
-                                color: AppColors.textPrimaryDark,
-                              ).copyWith(fontSize: 14, fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'View 12-month installment history & gold allocation',
-                              style: AppTypography.bodySmall(
-                                color: AppColors.textSecondaryMuted,
-                              ).copyWith(fontSize: 11),
-                            ),
-                          ],
-                        ),
+
+                      const SizedBox(height: 16),
+
+                      // 2. YOUR PLAN DETAILS CARD (scheme.html line 253)
+                      _buildPlanDetailsCard(
+                        startDate: startDate,
+                        endDate: endDate,
+                        monthlyAmountStr: monthlyAmountStr,
+                        targetAmount: targetAmount,
                       ),
-                      const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 14,
-                        color: AppColors.textTertiary,
+
+                      const SizedBox(height: 16),
+
+                      // 3. YOUR PROGRESS CARD (scheme.html line 334)
+                      _buildProgressCard(
+                        paidCount: paidCount,
+                        totalCount: totalCount,
+                        onViewAll: _openHistoryDrawer,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 4. UPCOMING PAYMENT CARD (scheme.html line 372)
+                      _buildUpcomingPaymentCard(
+                        monthlyAmountStr: monthlyAmountStr,
+                        nextDueDate: nextDueDate,
+                        onPayNow: () => _openPaymentModal(emiAmount, planTitle),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
 
-          // Bottom Spacing for smooth navigation dock clearance
-          const SliverToBoxAdapter(
-            child: SizedBox(height: AppSpacing.space64),
+  // ---------------------------------------------------------------------------
+  // 1. TOP MAIN PLAN CARD
+  // ---------------------------------------------------------------------------
+  Widget _buildTopPlanCard({
+    required String planTitle,
+    required String planId,
+    required double progressPercent,
+    required String paidAmount,
+    required String targetAmount,
+    required String monthlyAmountStr,
+    required String nextDueDate,
+    required VoidCallback onPayNow,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: _cardBorder),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x05000000),
+            blurRadius: 20,
+            offset: Offset(0, 4),
           ),
         ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: <Widget>[
+          // Upper part of card
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    // Left: 3D Stack of Gold Coins Vector Graphic in rounded 16px gradient box
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: <Color>[
+                            Color(0xFFFBF3E4),
+                            Color(0xFFF1DFC0),
+                          ],
+                        ),
+                        boxShadow: const <BoxShadow>[
+                          BoxShadow(
+                            color: Color(0x12000000),
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(6),
+                      child: CustomPaint(
+                        painter: _GoldCoinStackPainter(),
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    // Plan Title & ID
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            planTitle,
+                            style: GoogleFonts.playfairDisplay(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: _textMain,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Plan ID: $planId',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: _textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Right: Circular Progress Wheel (70x70)
+                    SizedBox(
+                      width: 70,
+                      height: 70,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          CustomPaint(
+                            size: const Size(70, 70),
+                            painter: _CircularProgressPainter(
+                              progress: progressPercent / 100.0,
+                              backgroundColor: const Color(0xFFEFE5D5),
+                              progressColor: _darkPine,
+                              strokeWidth: 7,
+                            ),
+                          ),
+                          Text(
+                            '${progressPercent.toInt()}%',
+                            style: GoogleFonts.playfairDisplay(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: _textMain,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 18),
+
+                // Financial Split: Paid vs Total Plan
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Paid',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: _textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              paidAmount,
+                              style: GoogleFonts.playfairDisplay(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: _textMain,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 38,
+                        width: 1,
+                        color: const Color(0xFFECE6DE),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Total Plan',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: _textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              targetAmount,
+                              style: GoogleFonts.playfairDisplay(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: _textMain,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Lower Inner Panel: Next Instalment Due & Pay Now CTA
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: const BoxDecoration(
+              color: Color(0xFFFAF7F2),
+              border: Border(
+                top: BorderSide(color: Color(0xFFF2ECE2)),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Next Instalment',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: _textMuted,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: <Widget>[
+                        Text(
+                          monthlyAmountStr,
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: _textMain,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Due on $nextDueDate',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w400,
+                            color: _textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+                ElevatedButton(
+                  onPressed: onPayNow,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _darkPine,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Pay Now',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // 2. YOUR PLAN DETAILS CARD
+  // ---------------------------------------------------------------------------
+  Widget _buildPlanDetailsCard({
+    required String startDate,
+    required String endDate,
+    required String monthlyAmountStr,
+    required String targetAmount,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _cardBorder),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x05000000),
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Your Plan Details',
+            style: GoogleFonts.playfairDisplay(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: _textMain,
+              letterSpacing: -0.2,
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          _buildDetailRow(
+            icon: Icons.calendar_today_rounded,
+            label: 'Start Date',
+            value: startDate,
+          ),
+          const Divider(color: Color(0xFFF4EFE7), height: 16),
+
+          _buildDetailRow(
+            icon: Icons.event_available_rounded,
+            label: 'End Date',
+            value: endDate,
+          ),
+          const Divider(color: Color(0xFFF4EFE7), height: 16),
+
+          _buildDetailRow(
+            icon: Icons.monetization_on_outlined,
+            label: 'Monthly Instalment',
+            value: monthlyAmountStr,
+          ),
+          const Divider(color: Color(0xFFF4EFE7), height: 16),
+
+          _buildDetailRow(
+            icon: Icons.adjust_rounded,
+            label: 'Total Plan Amount',
+            value: targetAmount,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFAF5EB),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Icon(icon, size: 16, color: _goldAccent),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w500,
+                color: _textMuted,
+              ),
+            ),
+          ],
+        ),
+        Text(
+          value,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w600,
+            color: _textMain,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // 3. YOUR PROGRESS CARD (11-Month Horizontal Stepper)
+  // ---------------------------------------------------------------------------
+  Widget _buildProgressCard({
+    required int paidCount,
+    required int totalCount,
+    required VoidCallback onViewAll,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _cardBorder),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x05000000),
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Header with "View All" action
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Your Progress',
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: _textMain,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              InkWell(
+                onTap: onViewAll,
+                child: Text(
+                  'View All',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: _darkPine,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 11-Month Horizontal Stepper Tracker
+          SizedBox(
+            height: 48,
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final double totalWidth = constraints.maxWidth;
+                final double nodeWidth = totalWidth / totalCount;
+                final double progressWidth = ((paidCount - 1) / (totalCount - 1)).clamp(0.0, 1.0) * (totalWidth - nodeWidth);
+
+                return Stack(
+                  children: <Widget>[
+                    // Inactive Background Line
+                    Positioned(
+                      top: 9,
+                      left: nodeWidth / 2,
+                      right: nodeWidth / 2,
+                      height: 2,
+                      child: Container(
+                        color: const Color(0xFFE9E1D5),
+                      ),
+                    ),
+
+                    // Active Green Segment Line
+                    Positioned(
+                      top: 9,
+                      left: nodeWidth / 2,
+                      width: progressWidth,
+                      height: 2,
+                      child: Container(
+                        color: _darkPine,
+                      ),
+                    ),
+
+                    // Month Nodes (Jan to Nov = 11 months)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: _months.map((_MonthInstallment m) {
+                        return SizedBox(
+                          width: nodeWidth,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              if (m.isPaid)
+                                Container(
+                                  width: 18,
+                                  height: 18,
+                                  decoration: const BoxDecoration(
+                                    color: _darkPine,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.check_rounded,
+                                      size: 11,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              else
+                                Container(
+                                  width: 18,
+                                  height: 18,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: const Color(0xFFD8CEBF),
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(height: 5),
+                              Text(
+                                m.name,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: m.isPaid ? _textMain : _textSub,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Stats Counter Split Cards
+          Row(
+            children: <Widget>[
+              // Paid Pill
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _mintBg.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFDCEDE3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '$paidCount / $totalCount',
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: _darkPine,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Instalments Paid',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF4E7667),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // Remaining Pill
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _amberBg,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFF2E5D0)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${totalCount - paidCount}',
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF9E641B),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Instalments Remaining',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF937553),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. UPCOMING PAYMENT CARD
+  // ---------------------------------------------------------------------------
+  Widget _buildUpcomingPaymentCard({
+    required String monthlyAmountStr,
+    required String nextDueDate,
+    required VoidCallback onPayNow,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: _cardBorder),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x05000000),
+            blurRadius: 20,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Upcoming Payment',
+            style: GoogleFonts.playfairDisplay(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: _textMain,
+              letterSpacing: -0.2,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Mint Tint Inner Container
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEFF7F3),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFFDCEEE3)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDDF1E6),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.calendar_month_rounded,
+                            size: 20,
+                            color: _darkPine,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Next Instalment',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: _textMuted,
+                              ),
+                            ),
+                            Text(
+                              monthlyAmountStr,
+                              style: GoogleFonts.playfairDisplay(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: _textMain,
+                              ),
+                            ),
+                            Text(
+                              'Due on $nextDueDate',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w500,
+                                color: _textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: onPayNow,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _darkPine,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Pay Now',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// -----------------------------------------------------------------------------
+// MONTH MODEL
+// -----------------------------------------------------------------------------
+class _MonthInstallment {
+  const _MonthInstallment({
+    required this.name,
+    required this.isPaid,
+    required this.date,
+    required this.amount,
+    this.txnId,
+  });
+
+  final String name;
+  final bool isPaid;
+  final String date;
+  final String amount;
+  final String? txnId;
+}
+
+// -----------------------------------------------------------------------------
+// CIRCULAR PROGRESS PAINTER (scheme.html Progress Ring)
+// -----------------------------------------------------------------------------
+class _CircularProgressPainter extends CustomPainter {
+  const _CircularProgressPainter({
+    required this.progress,
+    required this.backgroundColor,
+    required this.progressColor,
+    required this.strokeWidth,
+  });
+
+  final double progress;
+  final Color backgroundColor;
+  final Color progressColor;
+  final double strokeWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Offset center = Offset(size.width / 2, size.height / 2);
+    final double radius = (size.width - strokeWidth) / 2;
+
+    // Track circle
+    final Paint trackPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+    canvas.drawCircle(center, radius, trackPaint);
+
+    // Active progress arc
+    final Paint progressPaint = Paint()
+      ..color = progressColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    const double startAngle = -math.pi / 2;
+    final double sweepAngle = 2 * math.pi * progress;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      startAngle,
+      sweepAngle,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _CircularProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.backgroundColor != backgroundColor ||
+        oldDelegate.progressColor != progressColor;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// 3D GOLD COIN STACK PAINTER (scheme.html SVG reproduction)
+// -----------------------------------------------------------------------------
+class _GoldCoinStackPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double w = size.width;
+    final double h = size.height;
+
+    // Base scale and translations from 100x100 SVG
+    final double s = math.min(w, h) / 100.0;
+
+    void drawCoin(double x, double y, double rx, double ry, double thickness) {
+      final Rect sideRect = Rect.fromLTWH(x * s, y * s, rx * 2 * s, thickness * s);
+      final Paint sidePaint = Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: <Color>[
+            Color(0xFF9C6B13),
+            Color(0xFFF2C558),
+            Color(0xFF805407),
+          ],
+        ).createShader(sideRect);
+
+      final Path sidePath = Path()
+        ..moveTo(x * s, (y + ry) * s)
+        ..arcToPoint(
+          Offset((x + rx * 2) * s, (y + ry) * s),
+          radius: Radius.elliptical(rx * s, ry * s),
+          clockwise: false,
+        )
+        ..lineTo((x + rx * 2) * s, (y + ry + thickness) * s)
+        ..arcToPoint(
+          Offset(x * s, (y + ry + thickness) * s),
+          radius: Radius.elliptical(rx * s, ry * s),
+          clockwise: true,
+        )
+        ..close();
+      canvas.drawPath(sidePath, sidePaint);
+
+      // Top ellipse
+      final Rect topRect = Rect.fromLTWH(x * s, y * s, rx * 2 * s, ry * 2 * s);
+      final Paint topPaint = Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: <Color>[
+            Color(0xFFFFE89E),
+            Color(0xFFE5AF39),
+            Color(0xFFBE851C),
+          ],
+        ).createShader(topRect);
+      canvas.drawOval(topRect, topPaint);
+
+      // Inner rim detail
+      final Rect rimRect = Rect.fromLTWH(
+        (x + rx * 0.2) * s,
+        (y + ry * 0.2) * s,
+        rx * 1.6 * s,
+        ry * 1.6 * s,
+      );
+      final Paint rimPaint = Paint()
+        ..color = const Color(0xFFFFF2B8).withValues(alpha: 0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8 * s;
+      canvas.drawOval(rimRect, rimPaint);
+    }
+
+    // Left bottom coin
+    drawCoin(14, 50, 13, 5.5, 6);
+    // Right bottom coin
+    drawCoin(44, 46, 14, 6, 6);
+    // Center tall stack (4 tiers)
+    drawCoin(28, 58, 16, 7, 6);
+    drawCoin(28, 50, 16, 7, 6);
+    drawCoin(28, 42, 16, 7, 6);
+    drawCoin(28, 34, 16, 7, 6);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// -----------------------------------------------------------------------------
+// PAYMENT CONFIRMATION MODAL BOTTOM SHEET (scheme.html line 413)
+// -----------------------------------------------------------------------------
+class _PaymentModalSheet extends StatelessWidget {
+  const _PaymentModalSheet({
+    required this.emiAmount,
+    required this.planTitle,
+    required this.onAuthorizePay,
+  });
+
+  final int emiAmount;
+  final String planTitle;
+  final VoidCallback onAuthorizePay;
+
+  @override
+  Widget build(BuildContext context) {
+    final String formattedAmount = NumberFormat('#,##,###.00').format(emiAmount);
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // Header with Close
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Confirm Payment',
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1A2024),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF67717A)),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                ),
+              ],
+            ),
+            const Divider(color: Color(0xFFF0EBE1), height: 16),
+
+            const SizedBox(height: 8),
+
+            // Amount Display
+            Text(
+              'Instalment Amount',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF67717A),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '₹$formattedAmount',
+              style: GoogleFonts.playfairDisplay(
+                fontSize: 30,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1A2024),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFBF5EB),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                'Month 6 of 11 • June 2026',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF9E641B),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 18),
+
+            // Details card
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFAF7F2),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFF0EBE1)),
+              ),
+              child: Column(
+                children: <Widget>[
+                  _buildModalRow('Gold Plan', planTitle),
+                  const SizedBox(height: 8),
+                  _buildModalRow('Payment Method', 'UPI / NetBanking'),
+                  const SizedBox(height: 8),
+                  _buildModalRow('Convenience Fee', '₹0 (Free)', isFree: true),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Authorize & Pay Button
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: onAuthorizePay,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF073B30),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: Text(
+                  'Authorize & Pay ₹${NumberFormat('#,##,###').format(emiAmount)}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModalRow(String label, String value, {bool isFree = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 12.5,
+            color: const Color(0xFF67717A),
+          ),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w600,
+            color: isFree ? const Color(0xFF047857) : const Color(0xFF1A2024),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ALL INSTALMENTS HISTORY BOTTOM SHEET (scheme.html line 459)
+// -----------------------------------------------------------------------------
+class _HistoryModalSheet extends StatelessWidget {
+  const _HistoryModalSheet({required this.months});
+
+  final List<_MonthInstallment> months;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.78,
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children: <Widget>[
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 16, 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'All 11 Instalments',
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1A2024),
+                        ),
+                      ),
+                      Text(
+                        'Plan ID: SJ360123',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: const Color(0xFF67717A),
+                        ),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF67717A)),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(color: Color(0xFFF0EBE1), height: 1),
+
+            // Scrollable List
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                itemCount: months.length,
+                separatorBuilder: (BuildContext _, int index) => const SizedBox(height: 8),
+                itemBuilder: (BuildContext context, int index) {
+                  final _MonthInstallment m = months[index];
+                  return Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFAF7F2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFF0EBE1)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: m.isPaid
+                                    ? const Color(0xFFECF6F1)
+                                    : const Color(0xFFEAE4DC),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${index + 1}',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: m.isPaid
+                                        ? const Color(0xFF073B30)
+                                        : const Color(0xFF8D969F),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '${m.name} 2026 Instalment',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF1A2024),
+                                  ),
+                                ),
+                                Text(
+                                  m.date,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 11,
+                                    color: const Color(0xFF67717A),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              m.amount,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF1A2024),
+                              ),
+                            ),
+                            Text(
+                              m.isPaid ? 'Completed' : 'Upcoming',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w600,
+                                color: m.isPaid
+                                    ? const Color(0xFF047857)
+                                    : const Color(0xFFB45309),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            // Bottom Close CTA
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                height: 44,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF1A2024),
+                    side: const BorderSide(color: Color(0xFFEFEAE2)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Close',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

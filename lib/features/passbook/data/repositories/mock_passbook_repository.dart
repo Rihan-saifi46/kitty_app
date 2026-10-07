@@ -58,7 +58,7 @@ class MockPassbookRepository implements IPassbookRepository {
     return PassbookSummaryEntity(
       chitToken: dashboard['chitToken'] as String? ?? '#SW-042',
       schemeName: dashboard['schemeName'] as String? ??
-          'Swastik Suvarna Varsha (12-Month Gold Kitty)',
+          'Swastik Swarna Varsha',
       totalMonths: dashboard['totalMonths'] as int? ?? 12,
       monthsPaid: monthsPaid,
       monthlyEmi: monthlyEmi,

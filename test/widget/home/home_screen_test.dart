@@ -11,13 +11,14 @@ import 'package:kitty_app/features/home/presentation/providers/home_controller.d
 import 'package:kitty_app/features/home/presentation/providers/home_state.dart';
 import 'package:kitty_app/features/home/presentation/screens/home_screen.dart';
 import 'package:kitty_app/features/home/presentation/widgets/home_active_kitty_card.dart';
-import 'package:kitty_app/features/home/presentation/widgets/home_curated_product_grid.dart';
-import 'package:kitty_app/features/home/presentation/widgets/home_store_video_section.dart';
-import 'package:kitty_app/features/home/presentation/widgets/home_editorial_banner.dart';
-import 'package:kitty_app/features/home/presentation/widgets/home_gold_rate_strip.dart';
-import 'package:kitty_app/features/home/presentation/widgets/home_greeting_bar.dart';
-import 'package:kitty_app/features/home/presentation/widgets/home_kyc_reminder_banner.dart';
+import 'package:kitty_app/features/home/presentation/widgets/home_footer.dart';
+import 'package:kitty_app/features/home/presentation/widgets/home_gold_price_last_3_days.dart';
+import 'package:kitty_app/features/home/presentation/widgets/home_jewellery_collections.dart';
+import 'package:kitty_app/features/home/presentation/widgets/home_no_active_kitty_card.dart';
 import 'package:kitty_app/features/home/presentation/widgets/home_offers_carousel.dart';
+import 'package:kitty_app/features/home/presentation/widgets/home_quick_actions.dart';
+import 'package:kitty_app/features/home/presentation/widgets/home_store_video_section.dart';
+import 'package:kitty_app/features/home/presentation/widgets/home_today_gold_rates.dart';
 import 'package:kitty_app/features/offers/data/repositories/mock_scheme_repository.dart';
 import 'package:kitty_app/shared/widgets/feedback/kitty_error_state.dart';
 
@@ -29,6 +30,7 @@ void main() {
   });
 
   Widget createSubject({
+    MockDashboardRepository? dashboardRepo,
     AppAuthState authState = const AppAuthState.authenticated(
       token: 'mock_jwt_token',
       userName: 'Rihan Saifi',
@@ -51,7 +53,7 @@ void main() {
           MockSchemeRepository(engineConfig: instantConfig),
         ),
         dashboardRepositoryProvider.overrideWithValue(
-          MockDashboardRepository(engineConfig: instantConfig),
+          dashboardRepo ?? MockDashboardRepository(engineConfig: instantConfig),
         ),
       ],
       child: const MaterialApp(
@@ -60,9 +62,9 @@ void main() {
     );
   }
 
-  group('HomeScreen Widget Tests', () {
-    testWidgets('1. Fully renders loaded Home screen with all sections', (WidgetTester tester) async {
-      tester.view.physicalSize = const Size(1080, 2400);
+  group('HomeScreen Redesign (Phase 3) Widget Tests', () {
+    testWidgets('1. Fully renders Kitty-First Home Dashboard when Active Kitty exists', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 4800);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(() {
         tester.view.resetPhysicalSize();
@@ -72,71 +74,115 @@ void main() {
       await tester.pumpWidget(createSubject());
       await tester.pumpAndSettle();
 
-      // Top Sections - Greeting Bar removed per user design request
-      expect(find.byType(HomeGreetingBar), findsNothing);
-      expect(find.text('ROYAL CLUB'), findsNothing);
+      // 1. Today's Gold Rates (24K, 22K, 18K, 14K with live badge)
+      expect(find.byType(HomeTodayGoldRates), findsOneWidget);
+      expect(find.text("TODAY'S GOLD RATES"), findsOneWidget);
+      expect(find.text('LIVE'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(HomeTodayGoldRates),
+          matching: find.text('24K'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(HomeTodayGoldRates),
+          matching: find.text('22K'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(HomeTodayGoldRates),
+          matching: find.text('18K'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(HomeTodayGoldRates),
+          matching: find.text('14K'),
+        ),
+        findsOneWidget,
+      );
 
+      // 2. Active Kitty Card (Prominent Next Payment & PAY NOW CTA)
       expect(find.byType(HomeActiveKittyCard), findsOneWidget);
-      expect(find.text('ACTIVE JEWEL PLAN'), findsOneWidget);
-      expect(find.text('SEE ACTIVE SCHEME'), findsOneWidget);
-      expect(find.text('PAY INSTALLMENT'), findsNothing);
+      expect(find.byType(HomeNoActiveKittyCard), findsNothing);
+      expect(find.text('Swastik Suvarna Varsha'), findsWidgets);
+      expect(find.text('PAYMENT DUE'), findsOneWidget);
+      expect(find.text('NEXT PAYMENT'), findsOneWidget);
+      expect(find.textContaining('NOW'), findsOneWidget);
+      expect(find.text('View Savings History'), findsOneWidget);
 
+      // 3. Quick Actions (Start Kitty, Calculator, Jewellery)
+      expect(find.byType(HomeQuickActions), findsOneWidget);
+      expect(find.text('Start Kitty'), findsOneWidget);
+      expect(find.text('Calculator'), findsOneWidget);
+      expect(find.text('Jewellery'), findsOneWidget);
+
+      // 4. Special Kitty Privileges Carousel
       expect(find.byType(HomeOffersCarousel), findsOneWidget);
 
-      // Video section is placed directly below Kitty Scheme Banners
-      expect(find.byType(HomeStoreVideoSection), findsOneWidget);
-      expect(find.text('Experience Swastik'), findsOneWidget);
+      // 5. Curated Masterpieces / Explore Our Jewellery
+      expect(find.byType(HomeJewelleryCollections), findsOneWidget);
+      expect(find.text('Explore Our Jewellery'), findsOneWidget);
+      expect(find.text('Rings'), findsOneWidget);
+      expect(find.text('Earrings'), findsOneWidget);
 
-      // Shop by Category is removed per design request
-      expect(find.text('SHOP BY CATEGORY'), findsNothing);
+      // 6. Gold Price — Last 3 Days
+      expect(find.byType(HomeGoldPriceLast3Days), findsOneWidget);
+      expect(find.text('GOLD PRICE — LAST 3 DAYS'), findsOneWidget);
 
-      expect(find.byType(HomeCuratedProductGrid), findsOneWidget);
-      expect(find.text('CURATED FOR YOU'), findsOneWidget);
+      // 7. Luxury Footer
+      expect(find.byType(HomeFooter), findsOneWidget);
+      expect(find.text('About Us'), findsOneWidget);
+      expect(find.text('Contact Us'), findsOneWidget);
+      expect(find.text('Privacy Policy'), findsOneWidget);
 
-      // Scroll to view bottom sections
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -1200));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(HomeEditorialBanner), findsOneWidget);
-      expect(find.text('The Everyday Gold Edit'), findsOneWidget);
-
-      expect(find.byType(HomeGoldRateStrip), findsOneWidget);
-      expect(find.text("TODAY'S GOLD RATE (PER G)"), findsOneWidget);
-      expect(find.text('100% BIS'), findsOneWidget);
+      // 8. Verify legacy deprecated items are absent
+      expect(find.byType(HomeStoreVideoSection), findsNothing);
+      expect(find.text('EXPERIENCE SWASTIK'), findsNothing);
+      expect(find.text('ROYAL CLUB'), findsNothing);
     });
 
-    testWidgets('2. Displays KYC reminder banner when user is not verified', (WidgetTester tester) async {
-      await tester.pumpWidget(createSubject(
-        authState: const AppAuthState.authenticated(
-          token: 'mock_jwt',
-          userName: 'Rihan Saifi',
-          isKycVerified: false,
-        ),
-      ));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(HomeKycReminderBanner), findsOneWidget);
-      expect(find.text('Statutory KYC Pending'), findsOneWidget);
-      expect(find.text('VERIFY'), findsOneWidget);
-    });
-
-    testWidgets('3. Store video section renders with play toggle', (WidgetTester tester) async {
-      tester.view.physicalSize = const Size(1080, 2400);
+    testWidgets('2. Renders HomeNoActiveKittyCard onboarding state when user has no active scheme', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 4800);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(() {
         tester.view.resetPhysicalSize();
         tester.view.resetDevicePixelRatio();
       });
 
-      await tester.pumpWidget(createSubject());
+      final MockDashboardRepository emptyDashboardRepo =
+          MockDashboardRepository(engineConfig: instantConfig);
+      emptyDashboardRepo.setHasActiveScheme(false);
+
+      await tester.pumpWidget(createSubject(dashboardRepo: emptyDashboardRepo));
       await tester.pumpAndSettle();
 
-      expect(find.byType(HomeStoreVideoSection), findsOneWidget);
-      expect(find.text('Experience Swastik'), findsOneWidget);
-      expect(find.byIcon(Icons.play_arrow_rounded), findsWidgets);
+      // Active Kitty Card should not be present
+      expect(find.byType(HomeActiveKittyCard), findsNothing);
+
+      // No Active Kitty Onboarding Card should be present
+      expect(find.byType(HomeNoActiveKittyCard), findsOneWidget);
+      expect(find.text('READY TO START'), findsOneWidget);
+      expect(find.text('Start Your Gold Savings Today'), findsOneWidget);
+      expect(find.text('11+1 Bonus Month'), findsOneWidget);
+      expect(find.text('START A KITTY'), findsOneWidget);
+      expect(find.text('Calculate Gold Value & Plan'), findsOneWidget);
+
+      // Gold rates, quick actions, offers, collections, and footer remain visible
+      expect(find.byType(HomeTodayGoldRates), findsOneWidget);
+      expect(find.byType(HomeQuickActions), findsOneWidget);
+      expect(find.byType(HomeOffersCarousel), findsOneWidget);
+      expect(find.byType(HomeJewelleryCollections), findsOneWidget);
+      expect(find.byType(HomeGoldPriceLast3Days), findsOneWidget);
+      expect(find.byType(HomeFooter), findsOneWidget);
     });
 
-    testWidgets('4. Displays Error state and retry button when error occurs', (WidgetTester tester) async {
+    testWidgets('3. Displays Error state and retry button when error occurs', (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [

@@ -106,7 +106,7 @@ abstract final class MockFixtures {
             '25% Flat Discount on Fine Jewellery Making Charges',
             'Accumulate 24K 999 Hallmark Purity Fine Gold Monthly',
           ],
-          'bannerImageUrl': 'assets/images/kitty_banner_11_plus_1.jpg',
+          'bannerImageUrl': 'assets/images/kitty_banner_royal_gold.jpg',
           'isPopular': true,
         },
         <String, dynamic>{
@@ -122,7 +122,7 @@ abstract final class MockFixtures {
             '1.5 Months Jeweler Bonus Contribution on Maturity',
             'Zero Wastage Charges on Selected Diamond Jewellery',
           ],
-          'bannerImageUrl': 'assets/images/kitty_banner_akshaya_coin.jpg',
+          'bannerImageUrl': 'assets/images/kitty_banner_gold_coins.jpg',
           'isPopular': false,
         },
         <String, dynamic>{
@@ -138,7 +138,7 @@ abstract final class MockFixtures {
             'Fast-track 6-month gold accumulation for festive redemption',
             'Priority Showroom Concierge Access',
           ],
-          'bannerImageUrl': 'assets/images/kitty_banner_bridal_royal.jpg',
+          'bannerImageUrl': 'assets/images/kitty_banner_diamond_solitaire.jpg',
           'isPopular': false,
         },
       ],
@@ -204,7 +204,7 @@ abstract final class MockFixtures {
       'dashboard': <String, dynamic>{
         'membershipId': 'mem_994411',
         'chitToken': '#SW-042',
-        'schemeName': 'Swastik Suvarna Varsha (12-Month Gold Kitty)',
+        'schemeName': 'Swastik Swarna Varsha',
         'targetAmount': 60000,
         'customMonthlyEmi': 5000,
         'totalMonths': 12,
@@ -382,7 +382,7 @@ abstract final class MockFixtures {
 
   static const Map<String, dynamic> paymentStatusSuccessJson = <String, dynamic>{
     'success': true,
-    'message': 'Payment verified and credited to gold kitty vault.',
+    'message': 'Payment verified and credited to gold scheme vault.',
     'data': <String, dynamic>{
       'orderId': 'gokwik_ord_771829',
       'status': 'SUCCESS',
@@ -427,14 +427,15 @@ abstract final class MockFixtures {
     'success': true,
     'message': 'Live gold rate retrieved.',
     'data': <String, dynamic>{
-      'ratePerGram': 7120.500,
+      'ratePerGram': 15268.000,
+      'silverRatePerGram': 92.500,
       'purity': '24K (999)',
       'purityFraction': 0.999,
       'currency': 'INR',
-      'change24h': 45.250,
-      'changePct': 0.64,
-      'isUp': true,
-      'updatedAt': '2026-09-16T09:30:00.000Z',
+      'change24h': -16.000,
+      'changePct': -0.10,
+      'isUp': false,
+      'updatedAt': '2026-09-26T09:40:00.000Z',
     },
   };
 
@@ -600,8 +601,8 @@ abstract final class MockFixtures {
       'chitToken': '#SW-042',
       'monthNumber': 1,
       'amount': 5000,
-      'goldGramsAllocated': 0.702,
-      'goldRatePerGram': 7122.500,
+      'goldGramsAllocated': 0.327,
+      'goldRatePerGram': 15268.000,
       'paymentMethod': 'ONLINE',
       'paidAt': '2026-01-15T10:30:00.000Z',
       'pdfUrl': 'https://res.cloudinary.com/swastik/image/upload/receipts/rec_10821.pdf',

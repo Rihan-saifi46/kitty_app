@@ -76,8 +76,8 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      // Header title
-      expect(find.text('Patron Settings'), findsOneWidget);
+      // Header title removed per specification
+      expect(find.text('Patron Settings'), findsNothing);
 
       // Patron Profile Card
       expect(find.text('Rihan Saifi'), findsOneWidget);
@@ -85,7 +85,7 @@ void main() {
       expect(find.text('Tier 1 Verified Member'), findsOneWidget);
 
       // Section titles
-      expect(find.text('GOLD KITTY & SCHEME SETTINGS'), findsOneWidget);
+      expect(find.text('GOLD SCHEME & SAVINGS SETTINGS'), findsOneWidget);
       expect(find.text('SECURITY & PIN'), findsOneWidget);
       expect(find.text('KYC VERIFICATION'), findsOneWidget);
       expect(find.text('APP & LEGAL'), findsOneWidget);
@@ -95,8 +95,9 @@ void main() {
       expect(find.text('Nominee Registration'), findsOneWidget);
       expect(find.text('Biometric App Lock'), findsOneWidget);
       expect(find.text('Change 4-Digit MPIN'), findsOneWidget);
-      expect(find.text('Theme Appearance'), findsOneWidget);
-      expect(find.text('Language'), findsOneWidget);
+      expect(find.text('Gold Scheme Terms & BIS 24K Hallmarking'), findsOneWidget);
+      expect(find.text('Theme Appearance'), findsNothing);
+      expect(find.text('Language'), findsNothing);
 
       // Destructive button and footer
       expect(find.text('Log Out of Account'), findsOneWidget);
@@ -176,7 +177,7 @@ void main() {
       expect(storedMpin, isNot(equals('9876')));
     });
 
-    testWidgets('5. Tapping Theme Appearance opens bottom sheet and changes theme', (WidgetTester tester) async {
+    testWidgets('5. Verifies Theme Appearance and Language are absent from settings', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -185,18 +186,9 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Theme Appearance'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Choose Theme'), findsOneWidget);
-      expect(find.text('Dark Emerald Luxury'), findsOneWidget);
-      expect(find.text('Light Bank-Grade'), findsOneWidget);
-
-      await tester.tap(find.text('Dark Emerald Luxury'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Choose Theme'), findsNothing);
-      expect(await fakeStorage.read(key: 'kitty_theme_mode'), 'dark');
+      expect(find.text('Theme Appearance'), findsNothing);
+      expect(find.text('Language'), findsNothing);
+      expect(find.text('Gold Scheme Terms & BIS 24K Hallmarking'), findsOneWidget);
     });
 
     testWidgets('6. Tapping Log Out shows confirmation dialog', (WidgetTester tester) async {

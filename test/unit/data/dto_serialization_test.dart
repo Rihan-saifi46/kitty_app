@@ -94,8 +94,8 @@ void main() {
       final rateDto = LiveGoldRateDto.fromJson(
         MockFixtures.liveGoldRateJson['data'] as Map<String, dynamic>,
       );
-      expect(rateDto.ratePerGram, 7120.500);
-      expect(rateDto.change24h, 45.250);
+      expect(rateDto.ratePerGram, 15268.000);
+      expect(rateDto.change24h, -16.000);
 
       final productsRaw = MockFixtures.curatedProductsJson['data']['products'] as List<dynamic>;
       final products = productsRaw
@@ -114,8 +114,8 @@ void main() {
         MockFixtures.digitalReceiptJson['data'] as Map<String, dynamic>,
       );
       expect(receiptDto.receiptId, 'rec_10821');
-      expect(receiptDto.goldRateAtPayment, 7122.500);
-      expect(receiptDto.goldWeightCreditedGrams, 0.702);
+      expect(receiptDto.goldRateAtPayment, 15268.000);
+      expect(receiptDto.goldWeightCreditedGrams, 0.327);
 
       final profileDto = ProfileDto.fromJson(
         MockFixtures.userProfileJson['data'] as Map<String, dynamic>,

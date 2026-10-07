@@ -9,8 +9,8 @@ import 'package:kitty_app/core/theme/app_theme.dart';
 import 'package:kitty_app/features/menu/presentation/screens/menu_screen.dart';
 
 void main() {
-  group('MenuScreen Widget Tests', () {
-    testWidgets('Renders all 3-lines drawer items and concierge footer', (WidgetTester tester) async {
+  group('MenuScreen Widget Tests (menu.html Approved Layout)', () {
+    testWidgets('Renders patron details, all 7 approved menu items and logout', (WidgetTester tester) async {
       final GoRouter dummyRouter = GoRouter(
         initialLocation: '/menu',
         routes: <RouteBase>[
@@ -53,25 +53,22 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // Check Patron card
       expect(find.text('Rihan'), findsOneWidget);
       expect(find.text('+91 98765 43210'), findsOneWidget);
-      expect(find.text('Tier 1 Verified Member'), findsOneWidget);
+      expect(find.text('Edit Profile'), findsOneWidget);
 
-      // Check Navigation items matching 3-line drawer
-      expect(find.text('Home'), findsOneWidget);
-      expect(find.text('My Kitty Scheme'), findsOneWidget);
-      expect(find.text('Passbook Ledger'), findsOneWidget);
-      expect(find.text('Kitty Offers & Plans'), findsOneWidget);
-      expect(find.text('Notifications'), findsOneWidget);
-      expect(find.text('KYC Compliance'), findsOneWidget);
-      expect(find.text('Settings & Security'), findsOneWidget);
-      expect(find.text('Log Out of Account'), findsOneWidget);
-
-      // Check VIP Concierge footer
-      expect(find.text('Swastik VIP Concierge • 1800-SWASTIK'), findsOneWidget);
+      // Check Navigation items matching menu.html
+      expect(find.text('My Gold Plans'), findsOneWidget);
+      expect(find.text('My Bookings'), findsOneWidget);
+      expect(find.text('Live Gold Rate'), findsOneWidget);
+      expect(find.text('Gold Coins'), findsOneWidget);
+      expect(find.text('Gold Calculator'), findsOneWidget);
+      expect(find.text('KYC Details'), findsOneWidget);
+      expect(find.text('Logout'), findsOneWidget);
     });
   });
 }

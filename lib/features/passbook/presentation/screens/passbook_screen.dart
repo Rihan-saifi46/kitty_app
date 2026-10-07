@@ -105,7 +105,7 @@ class PassbookScreen extends ConsumerWidget {
           KittyEmptyState(
             title: 'No Active Passbook Ledger',
             description:
-                'Enroll in a Swastik Gold Kitty Scheme to view your monthly installment timeline, gold allocations, and tax receipts.',
+                'Enroll in a Swastik Gold Scheme to view your monthly installment timeline, gold allocations, and tax receipts.',
             icon: const Icon(
               Icons.menu_book_outlined,
               color: AppColors.goldPrimary,

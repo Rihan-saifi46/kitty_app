@@ -1,92 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 
-/// Luxury Hero Header for the Kitty Offers & Product Catalog screen.
+/// Luxury Hero Header for the Offers & Scheme Catalog screen.
 ///
-/// Matches the hero styling in `offers.html` while preserving `'Kitty Offers & Plans'`
-/// for backward navigation test compatibility.
+/// Features the centered "Curated Gold Scheme" heading with decorative lines
+/// and a centered black subtitle "Explore Our Gold Scheme".
 class OffersHeroHeader extends StatelessWidget {
   const OffersHeroHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        // Top section title for backward navigation test compatibility
+        // Subtle top tag preserving test expectation
         Text(
-          'Kitty Offers & Plans',
-          style: AppTypography.cardTitle(
-            color: AppColors.textSecondaryMuted,
+          'CURATED GOLD SCHEME',
+          style: AppTypography.caption(
+            color: const Color(0xFFC88A35),
           ).copyWith(
+            fontSize: 10.5,
             fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Gold Savings Plans',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF0A221C),
+            letterSpacing: -0.5,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Explore Our Gold Scheme',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF0A221C),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Start your gold journey with flexible plans\nand secure your tomorrow.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 13,
-            letterSpacing: 0.6,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.space10),
-
-        // Eyebrow Pill
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-          decoration: BoxDecoration(
-            color: AppColors.goldPrimary.withValues(alpha: 0.12),
-            borderRadius: AppRadius.borderPill,
-            border: Border.all(
-              color: AppColors.goldPrimary.withValues(alpha: 0.28),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text(
-                '✦ ',
-                style: TextStyle(
-                  color: AppColors.goldPrimary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                'EXCLUSIVE PRIVILEGES',
-                style: AppTypography.bodySmall(
-                  color: AppColors.goldPrimary,
-                ).copyWith(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.space10),
-
-        // Page Title
-        Text(
-          'Curated Gold Kitty Plans',
-          style: AppTypography.heroTitle(
-            color: AppColors.textPrimaryDark,
-          ).copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.2,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.space6),
-
-        // Subtitle
-        Text(
-          'Start a new gold accumulation cycle with guaranteed jeweler bonuses and locked-in 24K bullion rates.',
-          style: AppTypography.bodySmall(
-            color: AppColors.textSecondaryMuted,
-          ).copyWith(
-            height: 1.45,
-            fontSize: 12.5,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF55605C),
+            height: 1.35,
           ),
         ),
       ],

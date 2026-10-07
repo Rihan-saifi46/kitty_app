@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kitty_app/core/providers/auth_state_provider.dart';
@@ -8,8 +7,8 @@ import 'package:kitty_app/core/theme/app_theme.dart';
 import 'package:kitty_app/shared/widgets/navigation/luxury_nav_drawer.dart';
 
 void main() {
-  group('LuxuryNavDrawer Widget Tests', () {
-    testWidgets('Renders patron card, drawer navigation links, and concierge pill', (WidgetTester tester) async {
+  group('LuxuryNavDrawer / KittyMenuSheet Widget Tests (menu.html Approved Design)', () {
+    testWidgets('Renders patron profile and all 7 approved menu items plus logout', (WidgetTester tester) async {
       final GoRouter dummyRouter = GoRouter(
         initialLocation: '/test',
         routes: <RouteBase>[
@@ -46,7 +45,6 @@ void main() {
                   token: 'test_token',
                   userName: 'Rihan Patron',
                   userPhone: '+91 98765 43210',
-                  tier: 'Tier 1 Verified Member',
                 ),
               ),
             ),
@@ -60,28 +58,22 @@ void main() {
 
       // Open the drawer
       await tester.tap(find.text('Open'));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
 
-      // Verify Brand Header Logo SVG
-      expect(find.byType(SvgPicture), findsWidgets);
-
-      // Verify Patron Profile Card
+      // 1. Verify Patron Profile
       expect(find.text('Rihan Patron'), findsOneWidget);
       expect(find.text('+91 98765 43210'), findsOneWidget);
-      expect(find.text('Tier 1 Verified Member'), findsOneWidget);
+      expect(find.text('Edit Profile'), findsOneWidget);
 
-      // Verify Navigation Links
-      expect(find.text('Home'), findsOneWidget);
-      expect(find.text('My Kitty Scheme'), findsOneWidget);
-      expect(find.text('Passbook Ledger'), findsOneWidget);
-      expect(find.text('Kitty Offers & Plans'), findsOneWidget);
-      expect(find.text('Notifications'), findsOneWidget);
-      expect(find.text('KYC Compliance'), findsOneWidget);
-      expect(find.text('Settings & Security'), findsOneWidget);
-      expect(find.text('Log Out of Account'), findsOneWidget);
-
-      // Verify VIP Concierge Footer
-      expect(find.text('Swastik VIP Concierge • 1800-SWASTIK'), findsOneWidget);
+      // 2. Verify all menu items from menu.html
+      expect(find.text('My Gold Plans'), findsOneWidget);
+      expect(find.text('My Bookings'), findsOneWidget);
+      expect(find.text('Live Gold Rate'), findsOneWidget);
+      expect(find.text('Gold Coins'), findsOneWidget);
+      expect(find.text('Gold Calculator'), findsOneWidget);
+      expect(find.text('KYC Details'), findsOneWidget);
+      expect(find.text('Logout'), findsOneWidget);
     });
   });
 }

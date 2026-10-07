@@ -22,11 +22,14 @@ enum AppRoute {
   settings('settings'),
 
   // Supporting / Stack Routes
+  liveRates('liveRates'),
+  orders('orders'),
   notifications('notifications'),
   kyc('kyc'),
   checkout('checkout'),
   receipt('receipt'),
   gokwikGateway('gokwikGateway'),
+  postKycChoice('postKycChoice'),
 
   // Fallback
   notFound('notFound');

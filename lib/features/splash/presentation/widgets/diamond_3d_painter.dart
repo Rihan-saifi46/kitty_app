@@ -223,8 +223,8 @@ class Diamond3DPainter extends CustomPainter {
       }
     }
 
-    // Painter's algorithm: sort back-to-front by depth
-    renderedFaces.sort((_RenderedFace a, _RenderedFace b) => a.zAvg.compareTo(b.zAvg));
+    // Painter's algorithm: sort back-to-front by depth (descending: furthest face with largest zAvg painted first)
+    renderedFaces.sort((_RenderedFace a, _RenderedFace b) => b.zAvg.compareTo(a.zAvg));
 
     for (int i = 0; i < renderedFaces.length; i++) {
       final _RenderedFace item = renderedFaces[i];

@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../../../../shared/widgets/feedback/kitty_error_state.dart';
+import '../../../../shared/widgets/navigation/kitty_hamburger_button.dart';
 import '../providers/settings_controller.dart';
 import '../providers/settings_state.dart';
 import '../widgets/mpin_dialog.dart';
@@ -24,30 +25,11 @@ class SettingsScreen extends ConsumerWidget {
     final SettingsController controller = ref.read(settingsControllerProvider.notifier);
     const bool isDark = false;
     const Color pageBg = AppColors.settingsBg;
-    const Color headerBg = AppColors.settingsCardBg;
-    const Color headerBorder = AppColors.settingsBorder;
-    const Color titleColor = AppColors.settingsTextPrimary;
 
     return Scaffold(
       backgroundColor: pageBg,
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            // 1. Top Navigation Bar (Sticky Header)
-            _buildTopNavBar(
-              context: context,
-              headerBg: headerBg,
-              headerBorder: headerBorder,
-              titleColor: titleColor,
-              isDark: isDark,
-            ),
-
-            // 2. Scrollable Settings Content
-            Expanded(
-              child: _buildBody(context, ref, state, controller, isDark),
-            ),
-          ],
-        ),
+        child: _buildBody(context, ref, state, controller, isDark),
       ),
     );
   }
@@ -79,17 +61,47 @@ class SettingsScreen extends ConsumerWidget {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    // Patron Profile Quick Card
-                    PatronProfileCard(user: state.user),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // Top Bar with Back Button, Title, and Hamburger Menu
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                onPressed: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go(RoutePaths.offers);
+                  }
+                },
+                icon: const Icon(Icons.arrow_back_rounded, size: 22, color: Color(0xFF1E1B18)),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              ),
+              const Text(
+                'Settings & Security',
+                style: TextStyle(
+                  fontFamily: 'Playfair',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1E1B18),
+                ),
+              ),
+              const KittyHamburgerButton(isLightSurface: true),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Patron Profile Quick Card
+          PatronProfileCard(user: state.user),
                     const SizedBox(height: AppSpacing.space20),
 
                     // Section 1: Gold Kitty & Scheme Automation
                     SettingsGroupCard(
-                      title: 'Gold Kitty & Scheme Settings',
+                      title: 'Gold Scheme & Savings Settings',
                       items: <SettingsItemModel>[
                         SettingsItemModel(
                           icon: Icons.autorenew_rounded,
@@ -178,20 +190,8 @@ class SettingsScreen extends ConsumerWidget {
                       title: 'App & Legal',
                       items: <SettingsItemModel>[
                         SettingsItemModel(
-                          icon: Icons.palette_outlined,
-                          title: 'Theme Appearance',
-                          subtitle: _getThemeLabel(state.preferences.themeMode),
-                          onTap: () => _showThemeSelectionModal(context, controller, state.preferences.themeMode),
-                        ),
-                        SettingsItemModel(
-                          icon: Icons.language_rounded,
-                          title: 'Language',
-                          subtitle: state.preferences.language == 'hi' ? 'Hindi (हिन्दी)' : 'English (UK)',
-                          onTap: () => _showLanguageSelectionModal(context, controller, state.preferences.language),
-                        ),
-                        SettingsItemModel(
                           icon: Icons.verified_outlined,
-                          title: 'Kitty Scheme Terms & BIS 24K Hallmarking',
+                          title: 'Gold Scheme Terms & BIS 24K Hallmarking',
                           subtitle: '100% Guaranteed 999 purity compliance',
                           onTap: () => TermsAndComplianceModal.show(context),
                         ),
@@ -211,100 +211,6 @@ class SettingsScreen extends ConsumerWidget {
               );
   }
 
-  Widget _buildTopNavBar({
-    required BuildContext context,
-    required Color headerBg,
-    required Color headerBorder,
-    required Color titleColor,
-    required bool isDark,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: headerBg,
-        border: Border(bottom: BorderSide(color: headerBorder)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          // Back Button Circle (Soft Warm Linen #EAE4D9 with subtle border)
-          GestureDetector(
-            onTap: () {
-              if (Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
-              } else {
-                context.go(RoutePaths.home);
-              }
-            },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.settingsIconBg,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.settingsBorder,
-                  width: 1,
-                ),
-                boxShadow: const <BoxShadow>[
-                  BoxShadow(
-                    color: Color(0x0F241E1A),
-                    blurRadius: 6,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 16,
-                  color: AppColors.settingsTextPrimary,
-                ),
-              ),
-            ),
-          ),
-
-          // Header Title
-          Text(
-            'Patron Settings',
-            style: TextStyle(
-              fontFamily: 'Cinzel',
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: titleColor,
-              letterSpacing: 0.5,
-            ),
-          ),
-
-          // 3-Lines Navigation Icon (Hamburger)
-          GestureDetector(
-            onTap: () {
-              Scaffold.maybeOf(context)?.openDrawer();
-            },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.settingsIconBg,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.settingsBorder,
-                  width: 1,
-                ),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.menu_rounded,
-                  size: 20,
-                  color: AppColors.settingsTextPrimary,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
     return InkWell(
@@ -390,122 +296,5 @@ class SettingsScreen extends ConsumerWidget {
       ],
     );
   }
-
-  String _getThemeLabel(String mode) {
-    switch (mode) {
-      case 'dark':
-        return 'Dark Emerald Luxury';
-      case 'light':
-        return 'Light Bank-Grade';
-      case 'system':
-      default:
-        return 'System Default';
-    }
-  }
-
-  void _showThemeSelectionModal(BuildContext context, SettingsController controller, String currentMode) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext ctx) {
-        final bool isDark = Theme.of(ctx).brightness == Brightness.dark;
-        return Material(
-          color: isDark ? AppColors.emeraldCard : AppColors.settingsCardBg,
-          shape: RoundedRectangleBorder(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            side: BorderSide(color: isDark ? AppColors.emeraldBorder : AppColors.settingsBorder),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Choose Theme',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? AppColors.textPrimaryLight : AppColors.settingsTextPrimary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _buildThemeOption(ctx, controller, 'System Default', 'system', currentMode == 'system'),
-                _buildThemeOption(ctx, controller, 'Dark Emerald Luxury', 'dark', currentMode == 'dark'),
-                _buildThemeOption(ctx, controller, 'Light Bank-Grade', 'light', currentMode == 'light'),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildThemeOption(
-    BuildContext ctx,
-    SettingsController controller,
-    String label,
-    String mode,
-    bool isSelected,
-  ) {
-    return ListTile(
-      title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-      trailing: isSelected ? const Icon(Icons.check_rounded, color: AppColors.settingsAccentGold) : null,
-      onTap: () {
-        controller.setThemeMode(mode);
-        Navigator.of(ctx).pop();
-      },
-    );
-  }
-
-  void _showLanguageSelectionModal(BuildContext context, SettingsController controller, String currentLang) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext ctx) {
-        final bool isDark = Theme.of(ctx).brightness == Brightness.dark;
-        return Material(
-          color: isDark ? AppColors.emeraldCard : AppColors.settingsCardBg,
-          shape: RoundedRectangleBorder(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            side: BorderSide(color: isDark ? AppColors.emeraldBorder : AppColors.settingsBorder),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Select App Language',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? AppColors.textPrimaryLight : AppColors.settingsTextPrimary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ListTile(
-                  title: const Text('English (UK)', style: TextStyle(fontWeight: FontWeight.w600)),
-                  trailing: currentLang == 'en' ? const Icon(Icons.check_rounded, color: AppColors.settingsAccentGold) : null,
-                  onTap: () {
-                    controller.setLanguage('en');
-                    Navigator.of(ctx).pop();
-                  },
-                ),
-                ListTile(
-                  title: const Text('Hindi (हिन्दी)', style: TextStyle(fontWeight: FontWeight.w600)),
-                  trailing: currentLang == 'hi' ? const Icon(Icons.check_rounded, color: AppColors.settingsAccentGold) : null,
-                  onTap: () {
-                    controller.setLanguage('hi');
-                    Navigator.of(ctx).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
+

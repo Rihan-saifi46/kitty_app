@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -49,72 +50,157 @@ class OffersSchemeCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.space16),
       decoration: BoxDecoration(
-        color: AppColors.creamIvoryCard,
-        borderRadius: AppRadius.border20,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: scheme.isPopular ? AppColors.honeyGoldAccent : AppColors.warmLinenInset,
-          width: scheme.isPopular ? 1.6 : 1.2,
+          color: scheme.isPopular ? const Color(0xFFC88A35) : const Color(0xFFEFE6DB),
+          width: scheme.isPopular ? 1.5 : 1.0,
         ),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x0D063D2E),
+            color: Color(0x0E785F3C),
             blurRadius: 14,
-            offset: Offset(0, 4),
+            offset: Offset(0, 3),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: AppRadius.border20,
+        borderRadius: BorderRadius.circular(22),
         child: InkWell(
           onTap: () => _openDetailsSheet(context),
-          borderRadius: AppRadius.border20,
+          borderRadius: BorderRadius.circular(22),
           child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.space20),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Header (Title & Badge)
+                // Header (Coin Thumbnail + Title + Figures + Badge)
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    // Golden Coin Stack Thumbnail
+                    Container(
+                      width: 62,
+                      height: 62,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFAF2E5),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFEFE2CF)),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.asset(
+                        'assets/images/gold-coins.jpg',
+                        fit: BoxFit.cover,
+                        errorBuilder: (BuildContext _, Object _, StackTrace? _) => const Icon(
+                          Icons.savings_rounded,
+                          color: Color(0xFFC88A35),
+                          size: 32,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
                             scheme.name,
-                            style: AppTypography.cardTitle(
-                              color: AppColors.espressoCharcoal,
-                            ).copyWith(
-                              fontFamily: 'Cinzel',
-                              fontSize: 18,
+                            style: GoogleFonts.playfairDisplay(
+                              fontSize: 17,
                               fontWeight: FontWeight.w700,
-                              letterSpacing: 0.2,
+                              color: const Color(0xFF0A221C),
+                              letterSpacing: -0.2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
                             durationSub,
-                            style: AppTypography.bodySmall(
-                              color: AppColors.warmTaupeBrown,
-                            ).copyWith(
-                              fontSize: 12.5,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 11.5,
                               fontWeight: FontWeight.w500,
+                              color: const Color(0xFF68726E),
                             ),
+                          ),
+                          const SizedBox(height: 8),
+                          // 2-Column Metrics Row
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      'Monthly Investment',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: const Color(0xFF68726E),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      formattedMonthly,
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w800,
+                                        color: const Color(0xFF121A16),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      'Total Contribution',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: const Color(0xFF68726E),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      CurrencyFormatter.formatRupees(totalMaturity),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w800,
+                                        color: const Color(0xFF121A16),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Wrap(
-                      spacing: 6,
-                      runSpacing: 4,
+                      direction: Axis.vertical,
+                      spacing: 4,
                       alignment: WrapAlignment.end,
                       children: <Widget>[
                         if (scheme.isPopular)
-                          const KittyStatusBadge(
-                            status: KittyInstallmentStatus.bonus,
-                            customLabel: 'POPULAR SAVINGS',
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3.5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF063B2C),
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: const Text(
+                              'Most Popular',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         if (scheme.durationMonths == 12)
                           const KittyStatusBadge(

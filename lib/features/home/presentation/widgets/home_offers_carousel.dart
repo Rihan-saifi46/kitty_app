@@ -1,22 +1,22 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
-import '../../../../shared/widgets/display/kitty_section_header.dart';
 import '../../../offers/domain/entities/scheme_entity.dart';
 
-/// Interactive promotional carousel showcasing exclusive Kitty offers & schemes.
+/// Interactive promotional carousel showcasing exclusive Gold offers & schemes.
 class HomeOffersCarousel extends StatefulWidget {
   const HomeOffersCarousel({
     super.key,
     required this.schemes,
-    required this.onViewAllTap,
+    this.onViewAllTap,
     required this.onSchemeTap,
   });
 
   final List<SchemeEntity> schemes;
-  final VoidCallback onViewAllTap;
+  final VoidCallback? onViewAllTap;
   final ValueChanged<SchemeEntity> onSchemeTap;
 
   @override
@@ -30,19 +30,19 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
 
   static const List<Map<String, String>> _fallbackBanners = <Map<String, String>>[
     <String, String>{
-      'title': '11+1 Month Bonus Kitty',
-      'cta': 'Enrol Plan',
-      'asset': 'assets/images/banner_clean_bonus.jpg',
-    },
-    <String, String>{
-      'title': 'Akshaya Gold Coin Plan',
-      'cta': 'Claim Coin',
-      'asset': 'assets/images/banner_clean_coin.jpg',
-    },
-    <String, String>{
-      'title': 'Royal Bridal Kitty',
+      'title': 'Heritage Emerald Royalty Gold Scheme',
       'cta': 'Explore Plan',
-      'asset': 'assets/images/banner_clean_bridal.jpg',
+      'asset': 'assets/images/kitty_banner_royal_gold.jpg',
+    },
+    <String, String>{
+      'title': '24K 999 Pure Gold Bullion & Coins',
+      'cta': 'Enrol Plan',
+      'asset': 'assets/images/kitty_banner_gold_coins.jpg',
+    },
+    <String, String>{
+      'title': 'Solitaire Diamond Privilege Plan',
+      'cta': 'Discover More',
+      'asset': 'assets/images/kitty_banner_diamond_solitaire.jpg',
     },
   ];
 
@@ -79,24 +79,11 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
     final int itemCount = widget.schemes.isNotEmpty ? widget.schemes.length : _fallbackBanners.length;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        // Section Header
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
-          child: KittySectionHeader(
-            title: 'KITTY OFFERS & SCHEMES',
-            eyebrow: 'EXCLUSIVE PRIVILEGES',
-            actionLabel: 'View All →',
-            onAction: widget.onViewAllTap,
-            isDarkSurface: false,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.space12),
-
         // Carousel Slider
         SizedBox(
-          height: 225,
+          height: 265,
           child: PageView.builder(
             controller: _pageController,
             itemCount: itemCount,
@@ -129,8 +116,8 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
                   ),
                   boxShadow: const <BoxShadow>[
                     BoxShadow(
-                      color: Color(0x0A2B2521),
-                      blurRadius: 16,
+                      color: Color(0x0D063D2E),
+                      blurRadius: 14,
                       offset: Offset(0, 4),
                     ),
                   ],
@@ -195,15 +182,16 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
                                 if (scheme != null) {
                                   widget.onSchemeTap(scheme);
                                 } else {
-                                  widget.onViewAllTap();
+                                  widget.onViewAllTap?.call();
                                 }
                               },
                               borderRadius: AppRadius.border10,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                 decoration: const BoxDecoration(
-                                  color: AppColors.deepUmberBronze,
+                                  color: AppColors.primaryEmerald,
                                   borderRadius: AppRadius.border10,
+                                  boxShadow: AppShadows.ctaEmerald,
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -211,14 +199,14 @@ class _HomeOffersCarouselState extends State<HomeOffersCarousel> {
                                     Text(
                                       cta,
                                       style: AppTypography.labelMeta(
-                                        color: AppColors.champagneFoil,
+                                        color: Colors.white,
                                       ).copyWith(fontWeight: FontWeight.w800),
                                     ),
                                     const SizedBox(width: 4),
                                     const Icon(
                                       Icons.arrow_forward_rounded,
                                       size: 12,
-                                      color: AppColors.champagneFoil,
+                                      color: Colors.white,
                                     ),
                                   ],
                                 ),

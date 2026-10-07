@@ -79,7 +79,7 @@ void main() {
 
       // Should transition to success step
       expect(find.textContaining('Welcome Back'), findsOneWidget);
-      expect(find.text('Enter Kitty Vault'), findsOneWidget);
+      expect(find.text('Enter Gold Vault'), findsOneWidget);
     });
   });
 }

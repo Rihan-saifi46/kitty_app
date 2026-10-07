@@ -89,7 +89,7 @@ class NotificationsScreen extends ConsumerWidget {
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
               } else {
-                context.go(RoutePaths.home);
+                context.go(RoutePaths.offers);
               }
             },
             child: Container(

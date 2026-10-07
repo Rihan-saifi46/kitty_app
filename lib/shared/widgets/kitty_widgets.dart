@@ -4,12 +4,15 @@ library;
 // Buttons
 export 'buttons/kitty_ghost_button.dart';
 export 'buttons/kitty_icon_button.dart';
+export 'buttons/kitty_outlined_button.dart';
 export 'buttons/kitty_primary_button.dart';
 export 'buttons/kitty_secondary_button.dart';
 
 // Inputs
 export 'inputs/kitty_otp_input.dart';
 export 'inputs/kitty_phone_input_field.dart';
+export 'inputs/kitty_search_field.dart';
+export 'inputs/kitty_selector.dart';
 export 'inputs/kitty_text_field.dart';
 
 // Cards
@@ -19,6 +22,7 @@ export 'cards/kitty_stat_card.dart';
 
 // Badges & Pills
 export 'badges/kitty_chit_token_pill.dart';
+export 'badges/kitty_number_pill.dart';
 export 'badges/kitty_status_badge.dart';
 
 // Progress

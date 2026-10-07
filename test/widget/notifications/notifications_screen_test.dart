@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kitty_app/core/constants/app_colors.dart';
 import 'package:kitty_app/core/errors/app_exception.dart';
 import 'package:kitty_app/core/mock/mock_engine_config.dart';
 import 'package:kitty_app/core/providers/repository_providers.dart';
@@ -165,6 +166,25 @@ void main() {
       expect(find.text('Unable to Load Notifications'), findsOneWidget);
       expect(find.text('Simulated notification network failure'), findsOneWidget);
       expect(find.widgetWithText(KittyPrimaryButton, 'TRY AGAIN'), findsOneWidget);
+    });
+
+    testWidgets('6. Renders Gold Scheme heading in honey gold and uses modern relevant icons',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // Gold Scheme heading label
+      final goldSchemeHeading = find.text('GOLD SCHEME');
+      expect(goldSchemeHeading, findsOneWidget);
+      final Text headingWidget = tester.widget<Text>(goldSchemeHeading);
+      expect(headingWidget.style?.color, equals(AppColors.honeyGoldAccent));
+
+      // Modern icons for notification types
+      expect(find.byIcon(Icons.payments_rounded), findsOneWidget); // Transaction
+      expect(find.byIcon(Icons.workspace_premium_rounded), findsOneWidget); // Gold Scheme
+      expect(find.byIcon(Icons.loyalty_rounded), findsOneWidget); // Offer
+      expect(find.byIcon(Icons.verified_user_rounded), findsOneWidget); // System
+      expect(find.byIcon(Icons.notifications_active_rounded), findsOneWidget); // Unknown/Notice
     });
   });
 }

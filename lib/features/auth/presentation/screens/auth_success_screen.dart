@@ -1,253 +1,360 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_dimensions.dart';
-import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/providers/auth_state_provider.dart';
-import '../../../../core/routing/route_paths.dart';
-import '../providers/auth_controller.dart';
 
-/// Post-Authentication Success Screen (View 3 of Auth Flow).
-///
-/// Displays user status tier, welcome greeting, and primary action to enter
-/// the main Kitty App shell (/home).
+import '../../../../core/routing/route_paths.dart';
+
+/// Recreated 100% identically from dddd/success.html
+/// Features:
+/// - Light cream background #FAF7F2
+/// - Header with back arrow & "Done" action
+/// - Central Celebration Illustration with mint circles and diamond confetti particles
+/// - "Payment Successful!" (Playfair Display 28px bold)
+/// - Payment Breakdown Card with "Paid Successfully" green badge & key-value rows
+/// - "View My Plan" CTA in #073B2C
+/// - "Explore Jewellery" outlined CTA in #073B2C
 class AuthSuccessScreen extends ConsumerWidget {
-  const AuthSuccessScreen({super.key});
+  const AuthSuccessScreen({
+    super.key,
+    this.planTitle = '6 Month Gold Plan',
+    this.amount = '₹5,000',
+    this.nextDueDate = '5 Oct 2026',
+  });
+
+  final String planTitle;
+  final String amount;
+  final String nextDueDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppAuthState auth = ref.watch(appAuthStateProvider);
-    final AuthFlowState authFlow = ref.watch(authControllerProvider);
-
-    final String displayName = auth.userName.isNotEmpty
-        ? auth.userName
-        : (authFlow.authSession?.user.name.isNotEmpty == true
-            ? authFlow.authSession!.user.name
-            : 'Patron');
-
-    final String tierText = auth.tier.isNotEmpty
-        ? auth.tier
-        : (authFlow.authSession?.user.tier.isNotEmpty == true
-            ? authFlow.authSession!.user.tier
-            : 'Tier 1 Verified Member');
-
     return Scaffold(
-      backgroundColor: AppColors.deepEmeraldBase, // Exact: #05241C
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          // Subtle Damask Wallpaper Pattern
-          Opacity(
-            opacity: 0.08,
-            child: Image.asset(
-              'assets/patterns/damask-pattern.jpg',
-              fit: BoxFit.cover,
-              repeat: ImageRepeat.repeat,
-              color: AppColors.goldPrimary,
-              colorBlendMode: BlendMode.screen,
-              errorBuilder: (BuildContext ctx, Object error, StackTrace? st) {
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-
-          // Ambient Radial Glow
-          Center(
-            child: Container(
-              width: 380,
-              height: 380,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: <Color>[
-                    AppColors.goldPrimary.withValues(alpha: 0.15),
-                    const Color(0xFF0D4A3A).withValues(alpha: 0.20),
-                    Colors.transparent,
-                  ],
-                  stops: const <double>[0.0, 0.45, 0.70],
-                ),
+      backgroundColor: const Color(0xFFFAF7F2),
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            // Top Navigation Bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  IconButton(
+                    onPressed: () => context.go(RoutePaths.offers),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: Color(0xFF161616),
+                      size: 24,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.go(RoutePaths.dashboard),
+                    child: const Text(
+                      'Done',
+                      style: TextStyle(
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF073B2C),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
 
-          SafeArea(
-            child: Center(
+            // Main Content Area
+            Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.space20,
-                  vertical: AppSpacing.space24,
-                ),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 440),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xD8041913),
-                      borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-                      border: Border.all(
-                        color: AppColors.goldBorder,
-                        width: 1.2,
-                      ),
-                      boxShadow: const <BoxShadow>[
-                        BoxShadow(
-                          color: Color(0x73000000),
-                          blurRadius: 36,
-                          offset: Offset(0, 16),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.space24,
-                      vertical: AppSpacing.space32,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        // Success Checkmark Badge
-                        Container(
-                          width: 68,
-                          height: 68,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: const LinearGradient(
-                              colors: <Color>[
-                                Color(0xFF10B981),
-                                Color(0xFF059669),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            border: Border.all(
-                              color: AppColors.goldLight.withValues(alpha: 0.8),
-                              width: 2.0,
-                            ),
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                color: const Color(0xFF10B981).withValues(alpha: 0.35),
-                                blurRadius: 20,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.check_rounded,
-                              size: 38,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.space24),
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(height: 12),
 
-                        // Title
-                        Text(
-                          'Welcome Back, $displayName',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.cormorantGaramond(
-                            fontSize: 26,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimaryLight,
-                            letterSpacing: 0.3,
+                    // Central Celebration Illustration with Confetti
+                    SizedBox(
+                      width: 160,
+                      height: 160,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          // Diamond Confetti Particles
+                          Positioned(
+                            top: 10,
+                            left: 24,
+                            child: _buildDiamondConfetti(const Color(0xFFE67E38), 9),
                           ),
-                        ),
-                        const SizedBox(height: AppSpacing.space10),
+                          Positioned(
+                            top: 40,
+                            left: 8,
+                            child: _buildDiamondConfetti(const Color(0xFFF5B738), 9),
+                          ),
+                          Positioned(
+                            bottom: 36,
+                            left: 6,
+                            child: _buildDiamondConfetti(const Color(0xFF56C288), 9),
+                          ),
+                          Positioned(
+                            bottom: 8,
+                            left: 32,
+                            child: _buildDiamondConfetti(const Color(0xFF5BBCE4), 9),
+                          ),
+                          Positioned(
+                            top: 14,
+                            right: 28,
+                            child: _buildDiamondConfetti(const Color(0xFF5BBCE4), 9),
+                          ),
+                          Positioned(
+                            top: 38,
+                            right: 8,
+                            child: _buildDiamondConfetti(const Color(0xFFF5B738), 9),
+                          ),
+                          Positioned(
+                            bottom: 36,
+                            right: 8,
+                            child: _buildDiamondConfetti(const Color(0xFFE67E38), 9),
+                          ),
 
-                        // Tier Badge Chip
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.space12,
-                            vertical: AppSpacing.space6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.goldPrimary.withValues(alpha: 0.15),
-                            borderRadius: AppRadius.border20,
-                            border: Border.all(
-                              color: AppColors.goldPrimary.withValues(alpha: 0.4),
-                              width: 1.0,
+                          // Large Outer Pastel Circle
+                          Container(
+                            width: 128,
+                            height: 128,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFE5F5EC),
+                              shape: BoxShape.circle,
                             ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              const Icon(
-                                Icons.workspace_premium_rounded,
-                                size: 14,
-                                color: AppColors.goldPrimary,
-                              ),
-                              const SizedBox(width: AppSpacing.space6),
-                              Text(
-                                tierText,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.goldLight,
-                                  letterSpacing: 0.2,
+                            child: Center(
+                              // Inner Mint Green Circle
+                              child: Container(
+                                width: 94,
+                                height: 94,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF7BD49D),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.check_rounded,
+                                    size: 52,
+                                    color: Color(0xFF073B2C),
+                                  ),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: AppSpacing.space14),
+                        ],
+                      ),
+                    ),
 
-                        // Subtitle
-                        Text(
-                          'Accessing your Kitty schemes and bullion vault...',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.emeraldTextSubtle,
-                            height: 1.4,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.space32),
+                    const SizedBox(height: 18),
 
-                        // Enter Kitty Vault Button
-                        Container(
-                          width: double.infinity,
-                          height: AppDimensions.primaryButtonHeight,
-                          decoration: const BoxDecoration(
-                            gradient: AppColors.goldPrimaryGradient,
-                            borderRadius: AppRadius.border12,
-                            boxShadow: AppShadows.ctaGold,
+                    // Heading & Subtitle
+                    const Text(
+                      'Payment Successful!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Playfair',
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF111827),
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Your $planTitle has been activated.\nYou’re one step closer to your dream jewellery.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF555F6D),
+                        height: 1.4,
+                      ),
+                    ),
+
+                    const SizedBox(height: 22),
+
+                    // Payment Breakdown Card
+                    Container(
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFCF8F2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFFEFE7DC)),
+                        boxShadow: const <BoxShadow>[
+                          BoxShadow(
+                            color: Color(0x05000000),
+                            blurRadius: 4,
+                            offset: Offset(0, 1),
                           ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                context.go(RoutePaths.home);
-                              },
-                              borderRadius: AppRadius.border12,
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                        ],
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          // Status Header
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF1EA64E),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.check_rounded,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    'Enter Kitty Vault',
-                                    style: TextStyle(
+                                    amount,
+                                    style: const TextStyle(
                                       fontFamily: 'Plus Jakarta Sans',
-                                      fontSize: 14.5,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.deepEmeraldBase,
-                                      letterSpacing: 0.3,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF111827),
                                     ),
                                   ),
-                                  SizedBox(width: AppSpacing.space8),
-                                  Icon(
-                                    Icons.arrow_forward_rounded,
-                                    size: 17,
-                                    color: AppColors.deepEmeraldBase,
+                                  const SizedBox(height: 1),
+                                  const Text(
+                                    'Paid Successfully',
+                                    style: TextStyle(
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF1EA64E),
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 14),
+                          const Divider(color: Color(0xFFEFE7DC), height: 1),
+                          const SizedBox(height: 10),
+
+                          // Breakdown Rows
+                          _buildBreakdownRow('Plan', planTitle),
+                          _buildBreakdownRow('Next Installment', nextDueDate),
+                          _buildBreakdownRow('Installment Amount', amount),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // View My Plan CTA Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: () => context.go(RoutePaths.dashboard),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF073B2C),
+                          foregroundColor: Colors.white,
+                          elevation: 3,
+                          shadowColor: const Color(0x33073B2C),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(26),
                           ),
                         ),
-                      ],
+                        child: const Text(
+                          'View My Plan',
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 15.5,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 12),
+
+                    // Explore Jewellery Outlined Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: OutlinedButton(
+                        onPressed: () => context.go(RoutePaths.jewellery),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: const Color(0xFF073B2C),
+                          side: const BorderSide(color: Color(0xFF073B2C), width: 1.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                        child: const Text(
+                          'Explore Jewellery',
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF073B2C),
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
+                  ],
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDiamondConfetti(Color color, double size) {
+    return Transform.rotate(
+      angle: 0.785398, // 45 degrees
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(1),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBreakdownRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 13.5,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF636F7E),
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 13.5,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF111827),
             ),
           ),
         ],

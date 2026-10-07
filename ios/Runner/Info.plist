@@ -66,5 +66,18 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Swastik Kitty App requires access to the camera to photograph KYC identification documents.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Swastik Kitty App requires access to your photo library to select KYC documents for verification.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Swastik Kitty App uses Face ID for secure authentication and biometric login.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+		<string>tel</string>
+		<string>whatsapp</string>
+	</array>
 </dict>
 </plist>

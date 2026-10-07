@@ -141,7 +141,7 @@ class _OffersEnrollmentDialogState extends State<OffersEnrollmentDialog> {
 
               // Title
               Text(
-                'Enrol in Kitty Scheme',
+                'Enrol in Gold Scheme',
                 style: AppTypography.cardTitle(color: AppColors.textPrimaryDark).copyWith(
                   fontFamily: 'Cinzel',
                   fontSize: 18,
@@ -222,7 +222,7 @@ class _OffersEnrollmentDialogState extends State<OffersEnrollmentDialog> {
               SizedBox(
                 width: double.infinity,
                 child: KittyPrimaryButton(
-                  label: 'Confirm & Start Kitty',
+                  label: 'Confirm & Start Gold Scheme',
                   onPressed: _handleConfirm,
                 ),
               ),

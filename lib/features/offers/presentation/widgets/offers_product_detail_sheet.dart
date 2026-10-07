@@ -179,7 +179,7 @@ class OffersProductDetailSheet extends StatelessWidget {
                   _buildSpecPill('Purity', product.purity),
                   _buildSpecPill('Weight', '${product.weightGrams} g'),
                   if (product.makingDiscountPct > 0)
-                    _buildSpecPill('Kitty Perk', '${product.makingDiscountPct.toInt()}% Off Making'),
+                    _buildSpecPill('Scheme Perk', '${product.makingDiscountPct.toInt()}% Off Making'),
                 ],
               ),
               const SizedBox(height: AppSpacing.space16),
@@ -200,7 +200,7 @@ class OffersProductDetailSheet extends StatelessWidget {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Redeemable with your Swastik Gold Kitty Scheme balance at 0% making charges upon maturity.',
+                        'Redeemable with your Swastik Gold Scheme balance at 0% making charges upon maturity.',
                         style: AppTypography.bodySmall(color: const Color(0xFFFDE68A)).copyWith(
                           fontSize: 11.5,
                           height: 1.4,

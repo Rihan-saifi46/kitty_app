@@ -75,7 +75,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Header and Title
-      expect(find.text('Official Kitty Receipt'), findsOneWidget);
+      expect(find.text('Official Gold Scheme Receipt'), findsOneWidget);
       expect(find.text('Swastik Jewellers Tax & Gold Passbook Invoice'), findsOneWidget);
 
       // Verify Transaction and Status
@@ -150,7 +150,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
 
       // In flight, receipt modal is not yet rendered
-      expect(find.text('Official Kitty Receipt'), findsNothing);
+      expect(find.text('Official Gold Scheme Receipt'), findsNothing);
       // Wait for completion
       await tester.pumpAndSettle();
     });
@@ -174,7 +174,7 @@ void main() {
       await tester.tap(find.widgetWithText(KittyPrimaryButton, 'RETRY LOAD'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Official Kitty Receipt'), findsOneWidget);
+      expect(find.text('Official Gold Scheme Receipt'), findsOneWidget);
       expect(find.text('PAYMENT CONFIRMED'), findsOneWidget);
     });
 

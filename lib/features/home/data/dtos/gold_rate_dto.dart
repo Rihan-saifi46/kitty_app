@@ -12,6 +12,7 @@ class LiveGoldRateDto {
     this.rate24k,
     this.rate22k,
     this.benchmark,
+    this.silverRatePerGram,
   });
 
   factory LiveGoldRateDto.fromJson(Map<String, dynamic> json) {
@@ -19,6 +20,9 @@ class LiveGoldRateDto {
     final double? rawRate24k = (json['rate24k'] as num?)?.toDouble();
     final double? rawRate22k = (json['rate22k'] as num?)?.toDouble();
     final double? rawRateChangePct = (json['rateChangePct'] as num?)?.toDouble();
+    final double? rawSilverRate = (json['silverRatePerGram'] as num?)?.toDouble() ??
+        (json['silverRate'] as num?)?.toDouble() ??
+        (json['rateSilver'] as num?)?.toDouble();
 
     final double ratePerGram = rawRate24k ??
         (json['ratePerGram'] as num?)?.toDouble() ??
@@ -41,6 +45,7 @@ class LiveGoldRateDto {
       rate24k: rawRate24k,
       rate22k: rawRate22k,
       benchmark: json['benchmark'] as String?,
+      silverRatePerGram: rawSilverRate,
     );
   }
 
@@ -55,6 +60,7 @@ class LiveGoldRateDto {
   final double? rate24k;
   final double? rate22k;
   final String? benchmark;
+  final double? silverRatePerGram;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'ratePerGram': ratePerGram,

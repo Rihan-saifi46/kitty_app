@@ -157,7 +157,7 @@ void main() {
 
       expect(find.byType(KycApprovedView), findsOneWidget);
       expect(find.text('KYC Verified & Approved'), findsOneWidget);
-      expect(find.text('ENTER KITTY DASHBOARD'), findsOneWidget);
+      expect(find.text('ENTER GOLD SCHEME DASHBOARD'), findsOneWidget);
     });
 
     testWidgets('5. KycScreen displays Rejected view with reason and retry action', (WidgetTester tester) async {

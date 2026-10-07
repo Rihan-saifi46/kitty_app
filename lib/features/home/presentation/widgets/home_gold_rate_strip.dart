@@ -16,7 +16,7 @@ class HomeGoldRateStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double rate24k = goldRate?.ratePerGram ?? 7120.500;
+    final double rate24k = goldRate?.ratePerGram ?? 15268.000;
     final double rate22k = rate24k * (22 / 24);
 
     return Container(

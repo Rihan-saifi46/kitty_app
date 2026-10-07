@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/constants/app_typography.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-/// Model representing a quick action shortcut.
+import '../../../../core/constants/app_colors.dart';
+
+/// Model representing a quick action shortcut item.
 class QuickActionItem {
   const QuickActionItem({
     required this.title,
-    required this.icon,
+    this.icon,
+    this.svgAsset,
     required this.onTap,
+    this.subtitle,
   });
 
   final String title;
-  final IconData icon;
+  final IconData? icon;
+  final String? svgAsset;
   final VoidCallback onTap;
+  final String? subtitle;
 }
 
-/// Fast action shortcut row for instant navigation.
+/// Fast action shortcut row matching the exact approved HTML quick-actions design.
+///
+/// Features circular gold icons (.action-icon-circle: 48x48, #F7EFE3 background,
+/// #EADBCA border, subtle shadow) and clean 10.5px typography (#38322B).
 class HomeQuickActions extends StatelessWidget {
   const HomeQuickActions({
     super.key,
@@ -29,54 +37,76 @@ class HomeQuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.space16,
-        vertical: AppSpacing.space6,
+        horizontal: 14,
+        vertical: 4,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: actions.map((QuickActionItem action) {
-          return InkWell(
-            onTap: action.onTap,
-            borderRadius: AppRadius.border12,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.homeNavbarBg,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.homeCategoryRingBorder,
-                        width: 1.2,
-                      ),
-                      boxShadow: const <BoxShadow>[
-                        BoxShadow(
-                          color: Color(0x0A0C2B24),
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
+          return Expanded(
+            child: Semantics(
+              button: true,
+              label: action.title,
+              child: InkWell(
+                onTap: action.onTap,
+                borderRadius: BorderRadius.circular(24),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      // Circular Icon Avatar matching .action-icon-circle
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFFF7EFE3),
+                          border: Border.all(
+                            color: const Color(0xFFEADBCA),
+                            width: 1,
+                          ),
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(
+                              color: Color(0x14B4966E),
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Icon(
-                        action.icon,
-                        color: AppColors.homeBrandGold,
-                        size: 22,
+                        child: Center(
+                          child: action.svgAsset != null
+                              ? SvgPicture.asset(
+                                  action.svgAsset!,
+                                  width: 22,
+                                  height: 22,
+                                )
+                              : Icon(
+                                  action.icon ?? Icons.star_rounded,
+                                  color: AppColors.htmlEmeraldBase,
+                                  size: 22,
+                                ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 5),
+
+                      // Label matching .action-label
+                      Text(
+                        action.title,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF38322B),
+                          height: 1.2,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    action.title,
-                    style: AppTypography.labelMeta(
-                      color: AppColors.homeBodySubtitle,
-                    ).copyWith(fontWeight: FontWeight.w600),
-                  ),
-                ],
+                ),
               ),
             ),
           );
@@ -85,3 +115,4 @@ class HomeQuickActions extends StatelessWidget {
     );
   }
 }
+

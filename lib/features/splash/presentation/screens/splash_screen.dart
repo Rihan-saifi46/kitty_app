@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_typography.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../widgets/diamond_3d_painter.dart';
@@ -24,7 +25,7 @@ import 'web_loader_stub.dart' if (dart.library.js_interop) 'web_loader_web.dart'
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({
     super.key,
-    this.totalDuration = const Duration(milliseconds: 2800),
+    this.totalDuration = const Duration(milliseconds: 3200),
     this.autoNavigate = true,
   });
 
@@ -42,9 +43,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   bool _isNavigated = false;
 
   static const double _diamondStartFraction = 0.0;
-  static const double _diamondEndFraction = 1750.0 / 2800.0;
-  static const double _logoRevealStartFraction = 1350.0 / 2800.0;
-  static const double _logoRevealEndFraction = 1950.0 / 2800.0;
+  static const double _diamondEndFraction = 2000.0 / 3200.0;
+  static const double _logoRevealStartFraction = 1600.0 / 3200.0;
+  static const double _logoRevealEndFraction = 2200.0 / 3200.0;
 
   static const Curve _luxuryCurve = Cubic(0.16, 1.0, 0.3, 1.0);
 
@@ -104,7 +105,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         if (!auth.isKycVerified) {
           context.go(RoutePaths.kyc);
         } else {
-          context.go(RoutePaths.home);
+          context.go(RoutePaths.offers);
         }
       } else {
         context.go(RoutePaths.login);
@@ -168,7 +169,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               // --- PHASE 1: 3D DIAMOND ---
               double diamondOpacity = 0.0;
               double diamondRotationY = 0.0;
-              double diamondModelScale = 0.85;
+              double diamondModelScale = 1.45;
               double diamondZoomScale = 1.0;
               bool showDiamond = false;
 
@@ -183,28 +184,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     : 1.0 - math.pow(-2.0 * p + 2.0, 3) / 2.0;
                 diamondRotationY = rotProgress * math.pi * 2.0;
 
-                // Natural luxury scale progression without extreme viewport exit jumps
-                diamondModelScale = 0.85 + (p * 0.20);
-                diamondZoomScale = 0.95 + (p * 0.20);
+                // Prominent luxury scale progression
+                diamondModelScale = 1.45 + (p * 0.45);
+                diamondZoomScale = 1.0 + (p * 0.20);
 
-                // Smooth progressive opacity envelope (fade in smoothly, hold gleaming, dissolve softly)
-                if (p < 0.15) {
-                  diamondOpacity = p / 0.15;
-                } else if (p > 0.65) {
-                  diamondOpacity = math.max(0.0, (1.0 - p) / 0.35);
+                // Smooth progressive opacity envelope (instant frame-1 presence)
+                if (p < 0.08) {
+                  diamondOpacity = (p / 0.08).clamp(0.20, 1.0);
+                } else if (p > 0.80) {
+                  diamondOpacity = math.max(0.0, (1.0 - p) / 0.20);
                 } else {
                   diamondOpacity = 1.0;
                 }
               }
 
-              // --- PHASE 2 & 3: LOGO BRANDING ---
+              // --- PHASE 2 & 3: LOGO BRANDING & LOADING PROGRESS ---
               double rawBrandingProgress = 0.0;
               if (animValue >= _logoRevealStartFraction) {
                 if (animValue >= _logoRevealEndFraction) {
-                  // Phase 3: Fully revealed; static luxury pause in center until totalDuration completes
                   rawBrandingProgress = 1.0;
                 } else {
-                  // Phase 2: Smooth luxury reveal between 1.35s and 1.95s
                   rawBrandingProgress = ((animValue - _logoRevealStartFraction) /
                       (_logoRevealEndFraction - _logoRevealStartFraction)).clamp(0.0, 1.0);
                 }
@@ -212,9 +211,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               final double curvedBranding = _luxuryCurve.transform(rawBrandingProgress);
 
               final Size screenSize = MediaQuery.sizeOf(context);
-              // Make logo significantly larger and more prominent
               final double logoWidth = (screenSize.width * 0.74).clamp(260.0, 360.0);
               final double logoHeight = logoWidth * (47.0 / 181.0);
+
+              final double progressFraction = ((animValue - _logoRevealStartFraction) /
+                      (1.0 - _logoRevealStartFraction))
+                  .clamp(0.0, 1.0);
 
               return Stack(
                 fit: StackFit.expand,
@@ -222,22 +224,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   // A. Phase 1: Full-Viewport 3D Faceted Crystal Diamond
                   if (showDiamond && diamondOpacity > 0.001)
                     Positioned.fill(
-                      child: Transform.scale(
-                        scale: diamondZoomScale,
-                        alignment: Alignment.center,
-                        child: RepaintBoundary(
-                          child: CustomPaint(
-                            painter: Diamond3DPainter(
-                              rotationY: diamondRotationY,
-                              scaleFactor: diamondModelScale,
-                              opacity: diamondOpacity,
+                      child: Center(
+                        child: Transform.scale(
+                          scale: diamondZoomScale,
+                          alignment: Alignment.center,
+                          child: RepaintBoundary(
+                            child: CustomPaint(
+                              size: Size(screenSize.width, screenSize.height),
+                              painter: Diamond3DPainter(
+                                rotationY: diamondRotationY,
+                                scaleFactor: diamondModelScale,
+                                opacity: diamondOpacity,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
 
-                  // B. Phase 2: Authentic Swastik Brand Logo (Prominent, No Kitty Vault text)
+                  // B. Phase 2: Authentic Swastik Brand Logo & Loading Progress
                   if (curvedBranding > 0.001)
                     Center(
                       child: Opacity(
@@ -246,28 +251,72 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           offset: Offset(0, (1.0 - curvedBranding) * 12.0),
                           child: Transform.scale(
                             scale: 0.94 + (0.06 * curvedBranding),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Color(0x66000000),
-                                    blurRadius: 32,
-                                    offset: Offset(0, 6),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        color: Color(0x66000000),
+                                        blurRadius: 32,
+                                        offset: Offset(0, 6),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              child: SvgPicture.asset(
-                                'assets/icons/swastiklogo.svg',
-                                width: logoWidth,
-                                height: logoHeight,
-                                fit: BoxFit.contain,
-                                placeholderBuilder: (BuildContext context) {
-                                  return SizedBox(
+                                  child: SvgPicture.asset(
+                                    'assets/icons/swastiklogo.svg',
                                     width: logoWidth,
                                     height: logoHeight,
-                                  );
-                                },
-                              ),
+                                    fit: BoxFit.contain,
+                                    placeholderBuilder: (BuildContext context) {
+                                      return SizedBox(
+                                        width: logoWidth,
+                                        height: logoHeight,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 28),
+                                // Elegant Golden Loading Progress Line
+                                Container(
+                                  width: 140,
+                                  height: 3,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(1.5),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(1.5),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Container(
+                                        width: 140 * progressFraction,
+                                        height: 3,
+                                        decoration: const BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: <Color>[
+                                              AppColors.honeyGoldAccent,
+                                              Color(0xFFFFE082),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'INITIALIZING SECURE VAULT...',
+                                  style: AppTypography.kickerCaps(
+                                    color: AppColors.honeyGoldAccent,
+                                  ).copyWith(
+                                    fontSize: 9,
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kitty_app/shared/widgets/buttons/kitty_ghost_button.dart';
 import 'package:kitty_app/shared/widgets/buttons/kitty_icon_button.dart';
+import 'package:kitty_app/shared/widgets/buttons/kitty_outlined_button.dart';
 import 'package:kitty_app/shared/widgets/buttons/kitty_primary_button.dart';
 import 'package:kitty_app/shared/widgets/buttons/kitty_secondary_button.dart';
 
@@ -67,6 +68,70 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.text('VERIFYING...'), findsOneWidget);
+    });
+
+    testWidgets('verifies minimum 52px physical height for primary action button',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: KittyPrimaryButton(
+              label: 'Pay Now',
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+
+      final Size buttonSize = tester.getSize(find.byType(KittyPrimaryButton));
+      expect(buttonSize.height, greaterThanOrEqualTo(52.0));
+    });
+  });
+
+  group('KittyOutlinedButton Widget Tests', () {
+    testWidgets('renders label and responds to tap when enabled',
+        (WidgetTester tester) async {
+      bool tapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: KittyOutlinedButton(
+              label: 'Cancel Payment',
+              onPressed: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Cancel Payment'), findsOneWidget);
+      await tester.tap(find.byType(KittyOutlinedButton));
+      await tester.pumpAndSettle();
+
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('renders spinner and does not fire when isLoading is true',
+        (WidgetTester tester) async {
+      bool tapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: KittyOutlinedButton(
+              label: 'Processing',
+              isLoading: true,
+              onPressed: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      await tester.tap(find.byType(KittyOutlinedButton));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(tapped, isFalse);
     });
   });
 

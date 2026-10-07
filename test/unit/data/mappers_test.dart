@@ -91,8 +91,8 @@ void main() {
       );
       final rateEntity = HomeMapper.toGoldRateEntity(rateDto);
 
-      expect(rateEntity.ratePerGram, 7120.500);
-      expect(rateEntity.change24h, 45.250);
+      expect(rateEntity.ratePerGram, 15268.000);
+      expect(rateEntity.change24h, -16.000);
       expect(rateEntity.purityFraction, 0.999);
       expect(rateEntity.updatedAt.isUtc, isTrue);
 
@@ -117,8 +117,8 @@ void main() {
       final receiptEntity = ReceiptMapper.toEntity(receiptDto);
       expect(receiptEntity.receiptId, 'rec_10821');
       expect(receiptEntity.amount, 5000);
-      expect(receiptEntity.goldRateAtPayment, 7122.500);
-      expect(receiptEntity.goldWeightCreditedGrams, 0.702);
+      expect(receiptEntity.goldRateAtPayment, 15268.000);
+      expect(receiptEntity.goldWeightCreditedGrams, 0.327);
 
       final profileDto = ProfileDto.fromJson(
         MockFixtures.userProfileJson['data'] as Map<String, dynamic>,

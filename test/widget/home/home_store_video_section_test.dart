@@ -22,10 +22,8 @@ void main() {
       await tester.pump();
 
       // Verify title & badges
-      expect(find.text('OUR FLAGSHIP STORE'), findsOneWidget);
-      expect(find.text('Experience Swastik'), findsOneWidget);
+      expect(find.text('EXPERIENCE SWASTIK'), findsOneWidget);
       expect(find.text('4K ULTRA HD • STORE TOUR'), findsOneWidget);
-      expect(find.text('Upload'), findsOneWidget);
 
       // Verify play button exists and tap it
       final Finder playBtn = find.byIcon(Icons.play_arrow_rounded);

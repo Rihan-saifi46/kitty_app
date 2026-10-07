@@ -73,8 +73,8 @@ void main() {
 
     expect(find.textContaining('Welcome Back'), findsOneWidget);
     expect(find.text('Tier 1 Verified Member'), findsOneWidget);
-    expect(find.text('Accessing your Kitty schemes and bullion vault...'), findsOneWidget);
-    expect(find.text('Enter Kitty Vault'), findsOneWidget);
+    expect(find.text('Accessing your gold schemes and bullion vault...'), findsOneWidget);
+    expect(find.text('Enter Gold Vault'), findsOneWidget);
   });
 
   testWidgets('LoginScreen renders cleanly without overflow on small screen (320x568)', (WidgetTester tester) async {

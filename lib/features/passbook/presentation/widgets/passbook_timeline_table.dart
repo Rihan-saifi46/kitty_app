@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/enums/app_enums.dart';
@@ -38,13 +39,7 @@ class PassbookTimelineTable extends StatelessWidget {
           color: AppColors.surfaceCardBorder,
           width: 1,
         ),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 20,
-            offset: Offset(0, 4),
-          ),
-        ],
+        boxShadow: AppShadows.cardSubtle,
       ),
       clipBehavior: Clip.antiAlias,
       child: SingleChildScrollView(

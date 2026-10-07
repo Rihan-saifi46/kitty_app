@@ -27,8 +27,8 @@ void main() {
       // Verify authentic Swastik brand logo SVG
       expect(find.byKey(const Key('swastik_header_logo')), findsOneWidget);
 
-      // Verify live gold ticker pill
-      expect(find.text('24K: ₹7550/g'), findsOneWidget);
+      // Verify gold rate ticker badge is removed from header
+      expect(find.textContaining('24K:'), findsNothing);
 
       // Verify notification bell is present on the right
       expect(find.byIcon(Icons.notifications_none_rounded), findsOneWidget);

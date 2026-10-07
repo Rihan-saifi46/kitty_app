@@ -96,7 +96,7 @@ class _KittyNumberPickerSheetState
         maxHeight: MediaQuery.of(context).size.height * 0.90,
       ),
       decoration: const BoxDecoration(
-        color: AppColors.surfaceCardBg,
+        color: Color(0xFFFAF8F3),
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: SafeArea(
@@ -105,7 +105,7 @@ class _KittyNumberPickerSheetState
           children: <Widget>[
             // 1. Drag Handle & Header
             _buildHeader(context),
-            const Divider(height: 1, color: AppColors.warmLinenInset),
+            const Divider(height: 1, color: Color(0xFFEFE5D8)),
 
             // 2. Main Content
             Expanded(
@@ -114,7 +114,7 @@ class _KittyNumberPickerSheetState
                 KittyNumberPickerStatus.loading =>
                   const Center(
                     child: CircularProgressIndicator(
-                      color: AppColors.goldPrimary,
+                      color: Color(0xFF09362C),
                     ),
                   ),
                 KittyNumberPickerStatus.error => Center(
@@ -156,14 +156,14 @@ class _KittyNumberPickerSheetState
               Container(
                 width: 36,
                 height: 36,
-                decoration: const BoxDecoration(
-                  color: AppColors.champagneFoil,
-                  borderRadius: AppRadius.border8,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFBE9CE),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 alignment: Alignment.center,
                 child: const Icon(
                   Icons.grid_view_rounded,
-                  color: AppColors.deepUmberBronze,
+                  color: Color(0xFF8F5824),
                   size: 20,
                 ),
               ),
@@ -174,20 +174,19 @@ class _KittyNumberPickerSheetState
                   Text(
                     'CHOOSE LUCKY KITTY NUMBER',
                     style: AppTypography.caption(
-                      color: AppColors.goldPrimary,
+                      color: const Color(0xFF8F5824),
                     ).copyWith(
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.0,
                     ),
                   ),
-                  Text(
-                    widget.scheme.name,
-                    style: AppTypography.cardTitle(
-                      color: AppColors.espressoCharcoal,
-                    ).copyWith(
-                      fontFamily: 'Cinzel',
-                      fontSize: 16,
+                  const Text(
+                    'Select Your Numbers',
+                    style: TextStyle(
+                      fontFamily: 'Playfair Display',
+                      fontSize: 18,
                       fontWeight: FontWeight.w700,
+                      color: Color(0xFF1E1E1E),
                     ),
                   ),
                 ],
@@ -197,7 +196,7 @@ class _KittyNumberPickerSheetState
           IconButton(
             icon: const Icon(
               Icons.close_rounded,
-              color: AppColors.warmTaupeBrown,
+              color: Color(0xFF6B665E),
               size: 22,
             ),
             onPressed: () => Navigator.of(context).pop(),
@@ -220,6 +219,71 @@ class _KittyNumberPickerSheetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                // Draw Info & Price Pill Box from book.html
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFEFE5D8)),
+                    boxShadow: const <BoxShadow>[
+                      BoxShadow(
+                        color: Color(0x05000000),
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFBE9CE),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: const Text(
+                          'Draw #25',
+                          style: TextStyle(
+                            fontFamily: 'Playfair Display',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1E1E1E),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 20,
+                        color: const Color(0xFFE5DDCF),
+                      ),
+                      RichText(
+                        text: const TextSpan(
+                          text: '₹1,000 ',
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1E1E1E),
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: 'per number',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF6B665E),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
                 // Search Field
                 KittySearchField(
                   controller: _searchController,
@@ -236,7 +300,7 @@ class _KittyNumberPickerSheetState
                       const Text(
                         'Auspicious: ',
                         style: TextStyle(
-                          color: AppColors.warmTaupeBrown,
+                          color: Color(0xFF8F5824),
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
@@ -306,14 +370,14 @@ class _KittyNumberPickerSheetState
       child: ActionChip(
         label: Text(label),
         labelStyle: const TextStyle(
-          color: AppColors.deepUmberBronze,
+          color: Color(0xFF8F5824),
           fontSize: 11,
           fontWeight: FontWeight.w700,
         ),
-        backgroundColor: AppColors.champagneFoil.withValues(alpha: 0.5),
+        backgroundColor: const Color(0xFFFBE9CE),
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        side: const BorderSide(color: AppColors.warmLinenInset),
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.border8),
+        side: const BorderSide(color: Color(0xFFEFE5D8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         onPressed: () {
           _searchController.text = number.toString();
           controller.search(number.toString());
@@ -325,11 +389,11 @@ class _KittyNumberPickerSheetState
 
   Widget _buildLegendBar(KittyNumberPickerState state) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.surfacePageBg,
-        borderRadius: AppRadius.border8,
-        border: Border.all(color: AppColors.warmLinenInset),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFEFE5D8)),
       ),
       child: Wrap(
         alignment: WrapAlignment.spaceAround,
@@ -338,20 +402,20 @@ class _KittyNumberPickerSheetState
         runSpacing: 4,
         children: <Widget>[
           _buildLegendDot(
-            color: AppColors.primaryEmerald,
+            color: const Color(0xFFE5DDCF),
             label: 'Available (${state.availableCount})',
           ),
           _buildLegendDot(
-            color: AppColors.goldPrimary,
-            label: 'Selected',
+            color: const Color(0xFF09362C),
+            label: 'Your Selection',
           ),
           _buildLegendDot(
-            color: const Color(0xFF9E9E9E),
+            color: const Color(0xFFBFBAB0),
             label: 'Booked (${state.bookedCount})',
           ),
           if (state.lockedCount > 0)
             _buildLegendDot(
-              color: AppColors.honeyGoldAccent,
+              color: const Color(0xFF8F5824),
               label: 'Held (${state.lockedCount})',
             ),
         ],
@@ -364,19 +428,20 @@ class _KittyNumberPickerSheetState
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-          width: 8,
-          height: 8,
+          width: 9,
+          height: 9,
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
+            border: Border.all(color: const Color(0x33000000), width: 0.5),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 5),
         Text(
           label,
           style: const TextStyle(
-            color: AppColors.warmTaupeBrown,
-            fontSize: 10.5,
+            color: Color(0xFF6B665E),
+            fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -399,37 +464,37 @@ class _KittyNumberPickerSheetState
     Widget? iconBadge;
 
     if (isSelected) {
-      bgColor = AppColors.primaryEmerald;
-      borderColor = AppColors.honeyGoldAccent;
+      bgColor = const Color(0xFF09362C);
+      borderColor = const Color(0xFF062820);
       textColor = Colors.white;
       iconBadge = const Icon(
         Icons.check_circle_rounded,
         size: 13,
-        color: AppColors.honeyGoldAccent,
+        color: Color(0xFFD4B886),
       );
     } else if (slot.isBooked) {
-      bgColor = const Color(0xFFE2E8F0);
-      borderColor = const Color(0xFFCBD5E1);
-      textColor = const Color(0xFF94A3B8);
+      bgColor = const Color(0xFFBFBAB0);
+      borderColor = const Color(0xFFAFA99E);
+      textColor = const Color(0xFF6B665E);
       iconBadge = const Icon(
         Icons.lock_outline_rounded,
         size: 11,
-        color: Color(0xFF94A3B8),
+        color: Color(0xFF6B665E),
       );
     } else if (slot.isLocked) {
-      bgColor = AppColors.champagneFoil.withValues(alpha: 0.6);
-      borderColor = AppColors.honeyGoldAccent;
-      textColor = AppColors.deepUmberBronze;
+      bgColor = const Color(0xFFFBE9CE);
+      borderColor = const Color(0xFFD4B886);
+      textColor = const Color(0xFF8F5824);
       iconBadge = const Icon(
         Icons.hourglass_top_rounded,
         size: 11,
-        color: AppColors.deepUmberBronze,
+        color: Color(0xFF8F5824),
       );
     } else {
       // Available
-      bgColor = Colors.white;
-      borderColor = AppColors.primaryEmerald.withValues(alpha: 0.35);
-      textColor = AppColors.espressoCharcoal;
+      bgColor = const Color(0xFFF6F1E8);
+      borderColor = const Color(0xFFE5DDD0);
+      textColor = const Color(0xFF1E1E1E);
     }
 
     return Semantics(

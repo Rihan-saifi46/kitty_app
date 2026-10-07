@@ -25,8 +25,8 @@ void main() {
       expect(receipt.pdfUrl, contains('rec_10821.pdf'));
       expect(receipt.pdfUrl, startsWith('https://'));
       expect(receipt.amount, equals(5000));
-      expect(receipt.goldWeightCreditedGrams, equals(0.702));
-      expect(receipt.goldRateAtPayment, equals(7122.500));
+      expect(receipt.goldWeightCreditedGrams, equals(0.327));
+      expect(receipt.goldRateAtPayment, equals(15268.000));
     });
 
     test('2. Receipt Generating: returns null pdfUrl when generating', () async {

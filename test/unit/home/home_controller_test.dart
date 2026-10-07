@@ -52,7 +52,7 @@ void main() {
       expect(state.status, HomeStatus.loaded);
       expect(state.data, isNotNull);
       expect(state.data!.goldRate, isNotNull);
-      expect(state.data!.goldRate!.ratePerGram, 7120.500);
+      expect(state.data!.goldRate!.ratePerGram, 15268.000);
       expect(state.data!.curatedProducts, isNotEmpty);
       expect(state.data!.schemes, isNotEmpty);
       expect(state.data!.activeKitty, isNotNull);

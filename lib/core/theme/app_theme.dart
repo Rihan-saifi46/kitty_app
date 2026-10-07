@@ -26,12 +26,12 @@ abstract final class AppTheme {
 
   static ThemeData _buildDarkTheme() {
     const ColorScheme colorScheme = ColorScheme.dark(
-      primary: AppColors.goldPrimary,
-      onPrimary: AppColors.emeraldCard,
+      primary: AppColors.primaryEmerald,
+      onPrimary: Colors.white,
       primaryContainer: AppColors.emeraldPrimary,
       onPrimaryContainer: AppColors.goldLight,
-      secondary: AppColors.goldLight,
-      onSecondary: AppColors.deepEmeraldBase,
+      secondary: AppColors.richAntiqueGold,
+      onSecondary: Colors.white,
       surface: AppColors.emeraldCard,
       onSurface: AppColors.textPrimaryLight,
       error: AppColors.statusErrorText,
@@ -41,6 +41,7 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      fontFamily: 'Plus Jakarta Sans',
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.homeCanvasBg,
       canvasColor: AppColors.homeCanvasBg,
@@ -53,11 +54,11 @@ abstract final class AppTheme {
 
       // App Bar Theme
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.deepEmeraldBase,
+        backgroundColor: AppColors.primaryEmerald,
         foregroundColor: AppColors.textPrimaryLight,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.cinzel(
+        titleTextStyle: GoogleFonts.plusJakartaSans(
           fontSize: 18,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimaryLight,
@@ -76,21 +77,21 @@ abstract final class AppTheme {
         margin: EdgeInsets.zero,
       ),
 
-      // Elevated Button Theme (Primary Gold CTA)
+      // Elevated Button Theme (Primary Deep Emerald CTA)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.goldPrimary,
-          foregroundColor: AppColors.emeraldCard,
+          backgroundColor: AppColors.primaryEmerald,
+          foregroundColor: Colors.white,
           elevation: 0,
           minimumSize: const Size.fromHeight(AppDimensions.primaryButtonHeight),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space20, vertical: AppSpacing.space12),
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border14,
           ),
-          textStyle: GoogleFonts.montserrat(
+          textStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w800,
-            letterSpacing: 1.2,
+            letterSpacing: 0.8,
           ),
         ),
       ),
@@ -104,7 +105,7 @@ abstract final class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border14,
           ),
-          textStyle: GoogleFonts.montserrat(
+          textStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,
@@ -116,7 +117,7 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.goldLight,
-          textStyle: GoogleFonts.montserrat(
+          textStyle: GoogleFonts.plusJakartaSans(
             fontSize: 13.5,
             fontWeight: FontWeight.w600,
           ),
@@ -177,14 +178,16 @@ abstract final class AppTheme {
   /// Crisp off-white theme for financial ledgers, passbook tables, and settings.
   static ThemeData _buildLightTheme() {
     const ColorScheme colorScheme = ColorScheme.light(
-      primary: AppColors.goldPrimary,
+      primary: AppColors.primaryEmerald,
       onPrimary: Colors.white,
-      primaryContainer: AppColors.goldSubtle,
-      onPrimaryContainer: AppColors.goldPrimary,
-      secondary: AppColors.emeraldPrimary,
+      primaryContainer: Color(0xFFE7F3EE),
+      onPrimaryContainer: AppColors.primaryEmerald,
+      secondary: AppColors.richAntiqueGold,
       onSecondary: Colors.white,
-      surface: AppColors.surfaceCardBg,
-      onSurface: AppColors.textPrimaryDark,
+      tertiary: AppColors.vibrantEmerald,
+      onTertiary: Colors.white,
+      surface: AppColors.pureWhite,
+      onSurface: AppColors.deepForestCharcoal,
       error: AppColors.statusErrorText,
       onError: Colors.white,
     );
@@ -192,34 +195,35 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
+      fontFamily: 'Plus Jakarta Sans',
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: AppColors.surfacePageBg,
-      canvasColor: AppColors.surfacePageBg,
+      scaffoldBackgroundColor: AppColors.warmPearl,
+      canvasColor: AppColors.warmPearl,
 
       // Typography
       textTheme: _buildTextTheme(
-        primaryColor: AppColors.textPrimaryDark,
-        secondaryColor: AppColors.textSecondaryMuted,
+        primaryColor: AppColors.deepForestCharcoal,
+        secondaryColor: AppColors.mutedSlateGray,
       ),
 
       // App Bar Theme
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.surfaceCardBg,
-        foregroundColor: AppColors.textPrimaryDark,
+        backgroundColor: AppColors.pureWhite,
+        foregroundColor: AppColors.deepForestCharcoal,
         elevation: 0,
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
-        titleTextStyle: GoogleFonts.cinzel(
+        titleTextStyle: GoogleFonts.plusJakartaSans(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimaryDark,
+          color: AppColors.deepForestCharcoal,
           letterSpacing: 0.3,
         ),
       ),
 
       // Card Theme
       cardTheme: const CardThemeData(
-        color: AppColors.surfaceCardBg,
+        color: AppColors.pureWhite,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: AppRadius.border18,
@@ -228,21 +232,21 @@ abstract final class AppTheme {
         margin: EdgeInsets.zero,
       ),
 
-      // Elevated Button Theme (Primary Gold Action)
+      // Elevated Button Theme (Primary Deep Emerald CTA)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.goldPrimary,
-          foregroundColor: AppColors.emeraldCard,
+          backgroundColor: AppColors.primaryEmerald,
+          foregroundColor: Colors.white,
           elevation: 0,
           minimumSize: const Size.fromHeight(AppDimensions.primaryButtonHeight),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space20, vertical: AppSpacing.space12),
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border14,
           ),
-          textStyle: GoogleFonts.montserrat(
+          textStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w800,
-            letterSpacing: 1.2,
+            letterSpacing: 0.8,
           ),
         ),
       ),
@@ -256,7 +260,7 @@ abstract final class AppTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border10,
           ),
-          textStyle: GoogleFonts.montserrat(
+          textStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),
@@ -267,7 +271,7 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.emeraldPrimary,
-          textStyle: GoogleFonts.montserrat(
+          textStyle: GoogleFonts.plusJakartaSans(
             fontSize: 13.5,
             fontWeight: FontWeight.w600,
           ),
@@ -330,80 +334,80 @@ abstract final class AppTheme {
     required Color secondaryColor,
   }) {
     return TextTheme(
-      displayLarge: GoogleFonts.cinzel(
+      displayLarge: GoogleFonts.plusJakartaSans(
         fontSize: 32,
         fontWeight: FontWeight.w700,
         color: primaryColor,
       ),
-      displayMedium: GoogleFonts.cinzel(
+      displayMedium: GoogleFonts.plusJakartaSans(
         fontSize: 26,
         fontWeight: FontWeight.w700,
         color: primaryColor,
         letterSpacing: -0.2,
       ),
-      displaySmall: GoogleFonts.cinzel(
+      displaySmall: GoogleFonts.plusJakartaSans(
         fontSize: 22,
         fontWeight: FontWeight.w700,
         color: primaryColor,
-        letterSpacing: 0.4,
+        letterSpacing: -0.2,
       ),
-      headlineMedium: GoogleFonts.montserrat(
+      headlineMedium: GoogleFonts.plusJakartaSans(
         fontSize: 18,
         fontWeight: FontWeight.w700,
         color: primaryColor,
       ),
-      headlineSmall: GoogleFonts.montserrat(
+      headlineSmall: GoogleFonts.plusJakartaSans(
         fontSize: 17,
         fontWeight: FontWeight.w700,
         color: primaryColor,
       ),
-      titleLarge: GoogleFonts.montserrat(
+      titleLarge: GoogleFonts.plusJakartaSans(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: primaryColor,
       ),
-      titleMedium: GoogleFonts.montserrat(
+      titleMedium: GoogleFonts.plusJakartaSans(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: primaryColor,
       ),
-      titleSmall: GoogleFonts.montserrat(
+      titleSmall: GoogleFonts.plusJakartaSans(
         fontSize: 13,
         fontWeight: FontWeight.w600,
         color: secondaryColor,
       ),
-      bodyLarge: GoogleFonts.montserrat(
+      bodyLarge: GoogleFonts.plusJakartaSans(
         fontSize: 14,
         fontWeight: FontWeight.w700,
         color: primaryColor,
       ),
-      bodyMedium: GoogleFonts.montserrat(
+      bodyMedium: GoogleFonts.plusJakartaSans(
         fontSize: 13.5,
         fontWeight: FontWeight.w500,
         color: secondaryColor,
       ),
-      bodySmall: GoogleFonts.montserrat(
+      bodySmall: GoogleFonts.plusJakartaSans(
         fontSize: 12,
         fontWeight: FontWeight.w400,
         color: secondaryColor,
       ),
-      labelLarge: GoogleFonts.montserrat(
+      labelLarge: GoogleFonts.plusJakartaSans(
         fontSize: 14,
         fontWeight: FontWeight.w800,
         color: primaryColor,
-        letterSpacing: 1.0,
+        letterSpacing: 0.8,
       ),
-      labelMedium: GoogleFonts.montserrat(
+      labelMedium: GoogleFonts.plusJakartaSans(
         fontSize: 11.5,
         fontWeight: FontWeight.w600,
         color: secondaryColor,
-        letterSpacing: 0.6,
+        letterSpacing: 0.5,
       ),
-      labelSmall: GoogleFonts.montserrat(
+      labelSmall: GoogleFonts.plusJakartaSans(
         fontSize: 10,
         fontWeight: FontWeight.w800,
         color: AppColors.goldPrimary,
-        letterSpacing: 1.8,
+        letterSpacing: 1.5,
       ),
     );
   }

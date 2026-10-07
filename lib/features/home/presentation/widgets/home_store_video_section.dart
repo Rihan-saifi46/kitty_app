@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/constants/app_typography.dart';
+import 'home_section_heading.dart';
 
 /// Store Video Section for Home Screen where showroom and craftsmanship videos
-/// can be previewed, played, and uploaded by store administrators.
+/// can be previewed and played.
 class HomeStoreVideoSection extends StatefulWidget {
   const HomeStoreVideoSection({super.key});
 
@@ -20,7 +20,6 @@ class _HomeStoreVideoSectionState extends State<HomeStoreVideoSection>
   bool _isPlaying = false;
   bool _isMuted = false;
   double _playbackProgress = 0.32; // 32% played initially
-  String? _uploadedVideoName;
   Timer? _playbackTimer;
 
   late final AnimationController _pulseController;
@@ -69,46 +68,6 @@ class _HomeStoreVideoSectionState extends State<HomeStoreVideoSection>
     });
   }
 
-  Future<void> _handleUploadVideo() async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? video = await picker.pickVideo(
-        source: ImageSource.gallery,
-        maxDuration: const Duration(minutes: 5),
-      );
-
-      if (video != null) {
-        setState(() {
-          _uploadedVideoName = video.name;
-          _isPlaying = false;
-          _playbackProgress = 0.0;
-        });
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: AppColors.espressoCharcoal,
-              content: Text(
-                'Store Video "${video.name}" successfully uploaded and linked!',
-                style: const TextStyle(color: Colors.white),
-              ),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: AppColors.statusErrorText,
-            content: Text('Video upload cancelled or unsupported: $e'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
-  }
 
   void _openFullScreenVideo() {
     showDialog<void>(
@@ -181,85 +140,22 @@ class _HomeStoreVideoSectionState extends State<HomeStoreVideoSection>
     final String currentMinutesStr = '${currentSeconds ~/ 60}:${(currentSeconds % 60).toString().padLeft(2, '0')}';
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: AppSpacing.all16,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.fromLTRB(10, 14, 10, 12),
       decoration: BoxDecoration(
         color: AppColors.creamIvoryCard,
         borderRadius: AppRadius.border20,
         border: Border.all(color: AppColors.warmLinenInset, width: 1),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            color: Color(0x082B2521),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
+        boxShadow: AppShadows.cardSubtle,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          // Section Title & Upload Action
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.champagneFoil,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.honeyGoldAccent.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.video_library_rounded,
-                      color: AppColors.honeyGoldAccent,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'OUR FLAGSHIP STORE',
-                        style: AppTypography.kickerCaps(
-                          color: AppColors.warmTaupeBrown,
-                        ).copyWith(fontSize: 10, letterSpacing: 0.8),
-                      ),
-                      Text(
-                        'Experience Swastik',
-                        style: AppTypography.cardTitle(
-                          color: AppColors.espressoCharcoal,
-                        ).copyWith(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              // Upload Video Button
-              OutlinedButton.icon(
-                onPressed: _handleUploadVideo,
-                icon: const Icon(Icons.cloud_upload_outlined, size: 16),
-                label: const Text(
-                  'Upload',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.espressoCharcoal,
-                  side: const BorderSide(color: AppColors.honeyGoldAccent, width: 1),
-                  shape: const RoundedRectangleBorder(borderRadius: AppRadius.border12),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  minimumSize: const Size(60, 32),
-                ),
-              ),
-            ],
+          // Section Title
+          const HomeSectionHeading(
+            title: 'Experience Swastik',
+            padding: EdgeInsets.only(bottom: 12),
           ),
-
-          const SizedBox(height: 12),
 
           // Main Video Player Container
           ClipRRect(
@@ -268,7 +164,7 @@ class _HomeStoreVideoSectionState extends State<HomeStoreVideoSection>
               children: <Widget>[
                 // Video Poster / Backdrop
                 AspectRatio(
-                  aspectRatio: 16 / 9,
+                  aspectRatio: 16 / 9.5,
                   child: Image.asset(
                     'assets/images/hero_carousel_1.jpg',
                     fit: BoxFit.cover,
@@ -431,27 +327,6 @@ class _HomeStoreVideoSectionState extends State<HomeStoreVideoSection>
             ),
           ),
 
-          const SizedBox(height: 10),
-
-          // Subtitle / Description
-          Row(
-            children: <Widget>[
-              const Icon(Icons.store_rounded, size: 16, color: AppColors.honeyGoldAccent),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  _uploadedVideoName != null
-                      ? 'Current Video: $_uploadedVideoName'
-                      : 'Swastik Flagship Showroom & Heritage Vault Walkthrough',
-                  style: AppTypography.caption(
-                    color: AppColors.warmTaupeBrown,
-                  ).copyWith(fontSize: 11.5, fontWeight: FontWeight.w500),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );

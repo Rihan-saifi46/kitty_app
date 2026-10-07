@@ -12,7 +12,7 @@ class OffersPlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RoutePlaceholderScreen(
-      title: 'Kitty Offers & Plans',
+      title: 'Gold Offers & Schemes',
       phase: 'Phase 10: Offers',
       routePath: RoutePaths.offers,
       subtitle: 'Curated 11+1 gold savings schemes (Suvarna Varsha, Dhanvriddhi), late-joiner dynamic EMI calculators, and instant enrollment.',

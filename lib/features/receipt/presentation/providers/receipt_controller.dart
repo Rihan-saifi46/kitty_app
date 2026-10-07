@@ -4,6 +4,7 @@ import '../../../../core/errors/app_exception.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/providers/repository_providers.dart';
 import '../../../../core/services/pdf_launcher_service.dart';
+import '../../../home/presentation/providers/home_controller.dart';
 import '../../../passbook/domain/entities/passbook_entry_entity.dart';
 import '../../domain/entities/receipt_entity.dart';
 import '../../domain/repositories/i_receipt_repository.dart';
@@ -53,8 +54,9 @@ class ReceiptController extends Notifier<ReceiptState> {
 
   void _initWithPassbookEntry(PassbookEntryEntity entry) {
     final double goldGrams = entry.goldGrams ?? 0.702;
-    final double goldRate =
-        goldGrams > 0 ? (entry.amount / goldGrams) : 7122.50;
+    final double goldRate = goldGrams > 0
+        ? (entry.amount / goldGrams)
+        : (ref.read(homeControllerProvider).data?.goldRate?.ratePerGram ?? 15268.00);
 
     final AppAuthState authState = ref.read(appAuthStateProvider);
     final String customerName = authState.userName.isNotEmpty

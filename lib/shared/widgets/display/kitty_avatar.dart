@@ -112,11 +112,11 @@ class KittyAvatar extends StatelessWidget {
 
     return Text(
       text,
-      style: GoogleFonts.cinzel(
+      style: GoogleFonts.plusJakartaSans(
         fontSize: size * 0.38,
         fontWeight: FontWeight.w700,
         color: effectiveText,
-        letterSpacing: 1.0,
+        letterSpacing: 0.5,
       ),
     );
   }

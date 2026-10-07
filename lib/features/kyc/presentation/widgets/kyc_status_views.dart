@@ -122,7 +122,7 @@ class KycSuccessView extends StatelessWidget {
 
         // Success Paragraph
         Text(
-          'Your statutory identity documents have been securely encrypted and submitted. Your Royal Kitty Vault scheme enrollment is authorized.',
+          'Your statutory identity documents have been securely encrypted and submitted. Your Royal Gold Vault scheme enrollment is authorized.',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 13.5,
             height: 1.6,
@@ -135,7 +135,7 @@ class KycSuccessView extends StatelessWidget {
 
         // Button: Enter Kitty Vault Dashboard
         KittyPrimaryButton(
-          label: 'Enter Kitty Vault Dashboard',
+          label: 'Enter Gold Scheme Dashboard',
           icon: const Icon(Icons.arrow_forward_rounded, size: 16),
           onPressed: onProceed,
         ),
@@ -357,7 +357,7 @@ class KycApprovedView extends StatelessWidget {
         const SizedBox(height: 24),
 
         KittyPrimaryButton(
-          label: 'Enter Kitty Dashboard',
+          label: 'Enter Gold Scheme Dashboard',
           icon: const Icon(Icons.arrow_forward_rounded, size: 16),
           onPressed: onProceed,
         ),

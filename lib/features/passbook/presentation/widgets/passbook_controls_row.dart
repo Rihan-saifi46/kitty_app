@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../providers/passbook_state.dart';
@@ -36,13 +37,7 @@ class PassbookControlsRow extends StatelessWidget {
                 color: AppColors.surfaceCardBorder,
                 width: 1,
               ),
-              boxShadow: const <BoxShadow>[
-                BoxShadow(
-                  color: Color(0x0A000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 1),
-                ),
-              ],
+              boxShadow: AppShadows.cardSubtle,
             ),
             child: Text(
               chitToken,
@@ -123,15 +118,7 @@ class _ViewToggleButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? AppColors.deepEmeraldBase : Colors.transparent,
           borderRadius: AppRadius.border20,
-          boxShadow: isSelected
-              ? const <BoxShadow>[
-                  BoxShadow(
-                    color: Color(0x40064E3B),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ]
-              : null,
+          boxShadow: isSelected ? AppShadows.ctaEmerald : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

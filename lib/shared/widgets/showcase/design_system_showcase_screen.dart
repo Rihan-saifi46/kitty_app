@@ -224,7 +224,7 @@ class _DesignSystemShowcaseScreenState
                       const SizedBox(height: AppSpacing.space16),
                       Text(
                         'Swastik Suvarna Varsha',
-                        style: GoogleFonts.cinzel(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: AppColors.textPrimaryLight,
@@ -527,7 +527,7 @@ class _DesignSystemShowcaseScreenState
       children: <Widget>[
         Text(
           title,
-          style: GoogleFonts.cinzel(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: AppColors.goldPrimary,

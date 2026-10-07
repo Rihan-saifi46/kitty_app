@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_typography.dart';
 import '../../../../core/utils/currency_formatter.dart';
@@ -83,7 +84,7 @@ class DashboardNextEmiCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Your gold kitty is mature and ready for fine jewellery delivery.',
+                    'Your gold scheme is mature and ready for fine jewellery delivery.',
                     style: AppTypography.bodySmall(
                       color: const Color(0xFF8EAA9E),
                     ),
@@ -215,20 +216,9 @@ class DashboardNextEmiCard extends StatelessWidget {
                   horizontal: AppSpacing.space16,
                 ),
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: <Color>[
-                      Color(0xFFE6C275),
-                      Color(0xFFCCA043),
-                    ],
-                  ),
+                  color: AppColors.primaryEmerald,
                   borderRadius: AppRadius.border14,
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: Color(0x59CCA043),
-                      blurRadius: 16,
-                      offset: Offset(0, 6),
-                    ),
-                  ],
+                  boxShadow: AppShadows.ctaEmerald,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -236,7 +226,7 @@ class DashboardNextEmiCard extends StatelessWidget {
                     Text(
                       'PAY NEXT EMI (${CurrencyFormatter.formatRupees(amount)})',
                       style: AppTypography.bodyBold(
-                        color: const Color(0xFF0C2B24),
+                        color: Colors.white,
                       ).copyWith(
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.6,
@@ -246,7 +236,7 @@ class DashboardNextEmiCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     const Icon(
                       Icons.arrow_forward_rounded,
-                      color: Color(0xFF0C2B24),
+                      color: Colors.white,
                       size: 18,
                     ),
                   ],

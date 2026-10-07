@@ -36,7 +36,30 @@ void main() {
 
       expect(find.text('CURRENT'), findsOneWidget);
       expect(find.text('100% BONUS'), findsOneWidget);
-      expect(find.text('ACTIVE SCHEME'), findsOneWidget);
+      expect(find.text('ACTIVE KITTY'), findsOneWidget);
+    });
+
+    testWidgets('renders semantic slot statuses: AVAILABLE, SELECTED, BOOKED, RESERVED',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: <Widget>[
+                KittyStatusBadge(status: KittyInstallmentStatus.available),
+                KittyStatusBadge(status: KittyInstallmentStatus.selected),
+                KittyStatusBadge(status: KittyInstallmentStatus.booked),
+                KittyStatusBadge(status: KittyInstallmentStatus.reserved),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('AVAILABLE'), findsOneWidget);
+      expect(find.text('SELECTED'), findsOneWidget);
+      expect(find.text('BOOKED'), findsOneWidget);
+      expect(find.text('RESERVED'), findsOneWidget);
     });
 
     testWidgets('renders custom status badge with custom label and icon',

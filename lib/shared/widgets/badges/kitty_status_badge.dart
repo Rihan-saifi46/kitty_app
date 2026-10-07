@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 
-/// Semantic status types for Kitty App badges.
+/// Semantic status types for Kitty App badges and chips.
 enum KittyInstallmentStatus {
   paid,
   current,
@@ -12,6 +12,11 @@ enum KittyInstallmentStatus {
   preJoin,
   active,
   due,
+  pending,
+  available,
+  selected,
+  booked,
+  reserved,
   completed,
   failed,
   custom,
@@ -20,7 +25,7 @@ enum KittyInstallmentStatus {
 /// Standardized status badge / pill component for Kitty App.
 ///
 /// Implements the approved badge styles for passbook installments,
-/// active scheme indicators, and state tags.
+/// active kitty indicators, slot matrix numbers, and lifecycle tags.
 class KittyStatusBadge extends StatelessWidget {
   const KittyStatusBadge({
     super.key,
@@ -109,14 +114,14 @@ class KittyStatusBadge extends StatelessWidget {
         textColor = const Color(0xFF2563EB);
         borderColor = const Color(0xFFBFDBFE);
         dotColor = const Color(0xFF3B82F6);
-        defaultLabel = 'PRE-JOIN';
+        defaultLabel = 'READY TO START';
         break;
       case KittyInstallmentStatus.active:
         bgColor = AppColors.statusSuccessBg;
         textColor = AppColors.statusSuccessText;
         borderColor = AppColors.statusSuccessBorder;
         dotColor = const Color(0xFF10B981);
-        defaultLabel = 'ACTIVE SCHEME';
+        defaultLabel = 'ACTIVE KITTY';
         break;
       case KittyInstallmentStatus.due:
         bgColor = AppColors.statusWarningBg;
@@ -124,6 +129,41 @@ class KittyStatusBadge extends StatelessWidget {
         borderColor = AppColors.statusWarningBorder;
         dotColor = AppColors.statusWarningTextAlt;
         defaultLabel = 'PAYMENT DUE';
+        break;
+      case KittyInstallmentStatus.pending:
+        bgColor = AppColors.statusWarningBg;
+        textColor = AppColors.statusWarningText;
+        borderColor = AppColors.statusWarningBorder;
+        dotColor = AppColors.statusWarningText;
+        defaultLabel = 'PENDING';
+        break;
+      case KittyInstallmentStatus.available:
+        bgColor = AppColors.statusSuccessBg;
+        textColor = AppColors.statusSuccessText;
+        borderColor = AppColors.statusSuccessBorder;
+        dotColor = AppColors.statusSuccessText;
+        defaultLabel = 'AVAILABLE';
+        break;
+      case KittyInstallmentStatus.selected:
+        bgColor = AppColors.goldPrimary;
+        textColor = AppColors.primaryEmerald;
+        borderColor = AppColors.goldPrimary;
+        dotColor = AppColors.primaryEmerald;
+        defaultLabel = 'SELECTED';
+        break;
+      case KittyInstallmentStatus.booked:
+        bgColor = const Color(0xFFF1F5F9);
+        textColor = const Color(0xFF94A3B8);
+        borderColor = const Color(0xFFE2E8F0);
+        dotColor = const Color(0xFFCBD5E1);
+        defaultLabel = 'BOOKED';
+        break;
+      case KittyInstallmentStatus.reserved:
+        bgColor = const Color(0xFFEFF6FF);
+        textColor = const Color(0xFF2563EB);
+        borderColor = const Color(0xFFBFDBFE);
+        dotColor = const Color(0xFF3B82F6);
+        defaultLabel = 'RESERVED';
         break;
       case KittyInstallmentStatus.completed:
         bgColor = AppColors.statusSuccessBg;

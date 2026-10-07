@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/routing/route_paths.dart';
+import '../../../features/menu/presentation/widgets/kitty_menu_sheet.dart';
 import '../../../features/notifications/presentation/providers/notifications_controller.dart';
 
 /// Sticky luxury top application header matching the approved Swastik prototype.
@@ -61,7 +62,7 @@ class HeaderNavBar extends StatelessWidget implements PreferredSizeWidget {
               // Extreme Left: Authentic Swastik Jewellers Brand Logo
               GestureDetector(
                 key: const Key('swastik_header_logo'),
-                onTap: () => context.go(RoutePaths.home),
+                onTap: () => context.go(RoutePaths.offers),
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2.0),
@@ -125,7 +126,7 @@ class HeaderNavBar extends StatelessWidget implements PreferredSizeWidget {
                   Tooltip(
                     message: 'Open Menu',
                     child: InkWell(
-                      onTap: onMenuPressed,
+                      onTap: onMenuPressed ?? () => openKittyMenu(context),
                       borderRadius: AppRadius.border20,
                       child: Container(
                         width: 38,
