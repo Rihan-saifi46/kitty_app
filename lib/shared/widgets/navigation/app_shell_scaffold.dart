@@ -36,6 +36,7 @@ class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
   }
 
   void _onBottomNavTapped(int index) {
+    debugPrint('>>> APP_SHELL_SCAFFOLD: tapped tab index=$index, currentIndex=${widget.navigationShell.currentIndex} <<<');
     widget.navigationShell.goBranch(
       index,
       initialLocation: index == widget.navigationShell.currentIndex,
@@ -74,7 +75,7 @@ class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
         key: _scaffoldKey,
         backgroundColor: const Color(0xFFFAF7F2),
         endDrawer: const Drawer(
-          backgroundColor: Color(0xFF07392F),
+          backgroundColor: Color(0xFF063B2C),
           child: SafeArea(
             bottom: false,
             child: KittyMenuSheet(),

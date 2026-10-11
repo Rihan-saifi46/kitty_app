@@ -31,7 +31,7 @@ abstract final class AppColors {
   static const Color htmlGoldSoft = Color(0xFFF9F2E4);
   static const Color htmlDotGold = Color(0xFFC88A35);
 
-  static const Color htmlBgCanvas = Color(0xFF121514);
+  static const Color htmlBgCanvas = Color(0xFFFAF7F2);
   static const Color htmlBgMobile = Color(0xFFFAF7F2);
   static const Color htmlCardWhite = Color(0xFFFFFFFF);
   static const Color htmlBorderSubtle = Color(0xFFEFEAE0);
@@ -45,33 +45,33 @@ abstract final class AppColors {
   static const Color htmlTextBullets = Color(0xFF374841);
   static const Color htmlTextMuted = Color(0xFF68726E);
 
-  /// Primary Accent: Deep Emerald Green (#063D2E).
-  /// Sidebar background, main buttons ("Book", "Enrol"), active state borders.
-  static const Color primaryEmerald = Color(0xFF063D2E);
+  /// Primary Accent: Deep Emerald Green (#063B2C) matching Gold Plans CTA buttons.
+  /// Main buttons ("Select a Plan", "Book"), active toggle state pills.
+  static const Color primaryEmerald = Color(0xFF063B2C);
 
   /// Secondary Accent: Vibrant Emerald (#0A6B4F).
   /// Live indicators, status tags ("Active", "Verified"), icons.
   static const Color vibrantEmerald = Color(0xFF0A6B4F);
 
-  /// Luxury Accent: Rich Antique Gold (#D4A34A).
-  /// Header logo, gold rates tag, premium badges, focus highlights.
-  static const Color richAntiqueGold = Color(0xFFD4A34A);
+  /// Luxury Accent: Rich Warm Gold (#C88A35 / #D4A34A).
+  /// Gold bullets, header logo, gold rates tag, premium badges.
+  static const Color richAntiqueGold = Color(0xFFC88A35);
 
-  /// Base / Canvas: Warm Pearl / Off-White (#F9F7F2).
-  /// App main background (fresh & clean off-white canvas, replaces beige).
-  static const Color warmPearl = Color(0xFFF9F7F2);
+  /// Base / Canvas: Warm Pearl / Light Parchment (#FAF7F2).
+  /// App main background canvas across entire Kitty App (Source of truth: Gold Plans page).
+  static const Color warmPearl = Color(0xFFFAF7F2);
 
   /// Card Surface: Pure White (#FFFFFF).
-  /// All product cards, list items, and input boxes.
+  /// All plan cards, product cards, list items, and input boxes.
   static const Color pureWhite = Color(0xFFFFFFFF);
 
-  /// Text Primary: Deep Forest / Charcoal (#18231E).
-  /// Headings, amounts, and main titles (softer & more premium than pure black).
-  static const Color deepForestCharcoal = Color(0xFF18231E);
+  /// Text Primary: Deep Forest / Charcoal (#0A221C).
+  /// Headings, amounts, and main titles (Source of truth: Gold Plans page).
+  static const Color deepForestCharcoal = Color(0xFF0A221C);
 
-  /// Text Secondary: Muted Slate Gray (#6E7A75).
+  /// Text Secondary: Muted Slate Gray (#68726E).
   /// Subtitles, labels, timestamps, transaction IDs.
-  static const Color mutedSlateGray = Color(0xFF6E7A75);
+  static const Color mutedSlateGray = Color(0xFF68726E);
 
   /// Inactive Tab / Neutral Muted Gray (#8C9691).
   /// Inactive bottom bar tabs, neutral icons.
@@ -81,31 +81,31 @@ abstract final class AppColors {
   // Canonical Semantic Tokens (Phase 2 Design System Foundation)
   // ---------------------------------------------------------------------------
 
-  /// Semantic primary brand token (Deep Emerald Green #063D2E).
+  /// Semantic primary brand token (Deep Emerald Green #063B2C).
   static const Color primary = primaryEmerald;
 
-  /// Semantic primary container token (Vibrant/Dark Emerald #064E3B).
+  /// Semantic primary container token (Dark Emerald CTA #063B2C).
   static const Color primaryContainer = emeraldPrimary;
 
   /// Semantic surface token (Crisp Pure White #FFFFFF).
   static const Color surface = pureWhite;
 
-  /// Semantic surface variant token (Soft Warm Linen Inset #F0EBE1).
-  static const Color surfaceVariant = warmLinenInset;
+  /// Semantic surface variant token (Soft Warm Linen Inset #F3EDE4).
+  static const Color surfaceVariant = Color(0xFFF3EDE4);
 
-  /// Semantic page background canvas token (Warm Pearl #F9F7F2).
+  /// Semantic page background canvas token (Warm Pearl #FAF7F2).
   static const Color background = warmPearl;
 
-  /// Semantic primary high-contrast text token (#18231E).
+  /// Semantic primary high-contrast text token (#0A221C).
   static const Color textPrimary = deepForestCharcoal;
 
-  /// Semantic secondary muted text token (#6E7A75).
+  /// Semantic secondary muted text token (#68726E).
   static const Color textSecondary = mutedSlateGray;
 
   /// Semantic tertiary muted/disabled token (#8C9691).
   static const Color textMuted = mutedNavGray;
 
-  /// Semantic border token for cards and inputs (#ECE7DE).
+  /// Semantic border token for cards and inputs (#EFE6DB).
   static const Color border = surfaceCardBorder;
 
   /// Semantic success state token (#0A6B4F).
@@ -120,39 +120,40 @@ abstract final class AppColors {
   /// Semantic info / identity verification state token (#2563EB).
   static const Color info = Color(0xFF2563EB);
 
-  /// Semantic luxury gold token (#D4A34A).
+  /// Semantic luxury gold token (#C88A35).
   static const Color gold = richAntiqueGold;
 
   /// Semantic precious silver token (#94A3B8).
   static const Color silver = Color(0xFF94A3B8);
 
   // ---------------------------------------------------------------------------
-  // Brand Emerald & Royal Green Palette (Mapped to Primary & Vibrant Emerald)
+  // Brand Emerald & Royal Green Palette (Migrated to Gold Plans Luxury System)
   // ---------------------------------------------------------------------------
 
-  /// Canvas background for Splash, Login, and high-impact hero screens (#063D2E).
-  static const Color deepEmeraldBase = primaryEmerald;
+  /// Canvas background for Splash, Login, and all screens (#FAF7F2).
+  /// Migrated globally to Gold Plans canvas background.
+  static const Color deepEmeraldBase = warmPearl;
 
-  /// Luxury dark emerald card and container background (#08382B).
-  static const Color emeraldCard = Color(0xFF08382B);
+  /// Luxury white card and container surface (#FFFFFF).
+  static const Color emeraldCard = pureWhite;
 
-  /// Alternate deep emerald card surface (#0A4435).
-  static const Color emeraldCardAlt = Color(0xFF0A4435);
+  /// Alternate subtle card surface (#FAF8F5).
+  static const Color emeraldCardAlt = Color(0xFFFAF8F5);
 
-  /// Brand primary dark green used for headers and active filter buttons (#063D2E).
+  /// Brand primary dark green used for CTAs and active filter buttons (#063B2C).
   static const Color emeraldPrimary = primaryEmerald;
 
-  /// Deep emerald container surface (#063D2E).
-  static const Color emeraldContainer = primaryEmerald;
+  /// Deep container surface matching warm parchment (#FAF7F2).
+  static const Color emeraldContainer = warmPearl;
 
-  /// Secondary muted text and labels on dark emerald surfaces (#9FB8AE).
-  static const Color emeraldTextSubtle = Color(0xFF9FB8AE);
+  /// Secondary muted text and labels (#68726E).
+  static const Color emeraldTextSubtle = mutedSlateGray;
 
-  /// Muted labels on dark cards (#A3BCB2).
-  static const Color emeraldTextMuted = Color(0xFFA3BCB2);
+  /// Muted labels (#8E9591).
+  static const Color emeraldTextMuted = Color(0xFF8E9591);
 
-  /// Emerald accent border (#0A6B4F with 25% opacity).
-  static const Color emeraldBorder = Color(0x400A6B4F);
+  /// Accent border (#EFE6DB).
+  static const Color emeraldBorder = Color(0xFFEFE6DB);
 
   // ---------------------------------------------------------------------------
   // Brand Rich Antique Gold Palette
@@ -291,14 +292,14 @@ abstract final class AppColors {
   /// Crisp Pure White container card background (#FFFFFF).
   static const Color surfaceCardBg = pureWhite;
 
-  /// Subtle modern warm border for cards and inputs (#ECE7DE).
-  static const Color surfaceCardBorder = Color(0xFFECE7DE);
+  /// Subtle modern warm border for cards and inputs (#EFE6DB matching Gold Plans).
+  static const Color surfaceCardBorder = Color(0xFFEFE6DB);
 
-  /// Secondary modern border (#ECE7DE).
-  static const Color surfaceCardBorderAlt = Color(0xFFECE7DE);
+  /// Secondary modern border (#EFE6DB).
+  static const Color surfaceCardBorderAlt = Color(0xFFEFE6DB);
 
-  /// Table row separator and section divider (#ECE7DE).
-  static const Color surfaceDivider = Color(0xFFECE7DE);
+  /// Table row separator and section divider (#EFEAE0).
+  static const Color surfaceDivider = Color(0xFFEFEAE0);
 
   // ---------------------------------------------------------------------------
   // Neutral Text Palette

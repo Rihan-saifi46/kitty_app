@@ -6,7 +6,6 @@ import 'package:kitty_app/core/mock/mock_engine_config.dart';
 import 'package:kitty_app/core/providers/repository_providers.dart';
 import 'package:kitty_app/features/dashboard/data/repositories/mock_dashboard_repository.dart';
 import 'package:kitty_app/features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'package:kitty_app/features/dashboard/presentation/widgets/dashboard_hero_card.dart';
 import 'package:kitty_app/features/dashboard/presentation/widgets/dashboard_next_emi_card.dart';
 import 'package:kitty_app/features/dashboard/presentation/widgets/dashboard_prejoin_banner.dart';
 import 'package:kitty_app/features/dashboard/presentation/widgets/dashboard_skeleton_loader.dart';
@@ -45,34 +44,17 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify sections
-      expect(find.byType(DashboardHeroCard), findsOneWidget);
       expect(find.byType(DashboardStatsGrid), findsNothing);
       expect(find.byType(DashboardNextEmiCard), findsNothing);
       expect(find.byType(DashboardTrustBar), findsNothing);
 
       // Verify text content
+      expect(find.text('Your Active Plan'), findsOneWidget);
       expect(find.text('Swastik Swarna Varsha'), findsOneWidget);
-      expect(find.text('#SW-042'), findsOneWidget);
-      expect(find.text('ACTIVE SCHEME'), findsOneWidget);
-      expect(find.text('8 / 12'), findsOneWidget);
-      expect(find.text('8 EMIs Completed'), findsOneWidget);
-      expect(find.text('3 EMIs to Pay'), findsOneWidget);
-      expect(find.text('✧ 1 Bonus Month Free'), findsOneWidget);
-
-      // Verify Metrics Grid items (in hero card only, 4 stats cards above passbook removed)
-      expect(find.text('SCHEME TARGET'), findsOneWidget);
-      expect(find.text('₹60,000'), findsOneWidget);
-      expect(find.text('PAID SO FAR'), findsOneWidget);
-      expect(find.text('₹40,000'), findsOneWidget);
-      expect(find.text('MONTHLY INSTALLMENT'), findsOneWidget);
-      expect(find.text('UPCOMING INSTALLMENT'), findsOneWidget);
-      expect(find.text('Month 9 Due'), findsOneWidget);
-      expect(find.text('₹41,036'), findsNothing);
-      expect(find.text('+2.59%'), findsNothing);
-      expect(find.text('Passbook & Statements'), findsOneWidget);
-
-      // Verify Trust Bar items are removed
-      expect(find.text('Zero\nconvenience fee'), findsNothing);
+      expect(find.textContaining('mem_994411'), findsOneWidget);
+      expect(find.text('Your Plan Details'), findsOneWidget);
+      expect(find.text('Your Progress'), findsOneWidget);
+      expect(find.text('Upcoming Payment'), findsOneWidget);
     });
 
     testWidgets('2. Displays Empty State when no active scheme exists', (WidgetTester tester) async {
@@ -83,8 +65,7 @@ void main() {
 
       expect(find.byType(KittyEmptyState), findsOneWidget);
       expect(find.text('No Active Gold Scheme'), findsOneWidget);
-      expect(find.text('EXPLORE SCHEMES'), findsOneWidget);
-      expect(find.byType(DashboardHeroCard), findsNothing);
+      expect(find.text('EXPLORE GOLD PLANS'), findsOneWidget);
     });
 
     testWidgets('3. Displays PRE_JOIN banner for pre-join users', (WidgetTester tester) async {
@@ -111,8 +92,8 @@ void main() {
       await tester.tap(find.text('TRY AGAIN'));
       await tester.pumpAndSettle();
 
-      expect(find.byType(DashboardHeroCard), findsOneWidget);
-      expect(find.text('ACTIVE SCHEME'), findsOneWidget);
+      expect(find.text('Swastik Swarna Varsha'), findsOneWidget);
+      expect(find.text('Your Active Plan'), findsOneWidget);
     });
 
     testWidgets('5. Displays Skeleton Loader during loading state', (WidgetTester tester) async {
@@ -128,7 +109,7 @@ void main() {
       expect(find.byType(DashboardSkeletonLoader), findsOneWidget);
 
       await tester.pumpAndSettle(); // Settle async load
-      expect(find.byType(DashboardHeroCard), findsOneWidget);
+      expect(find.text('Swastik Swarna Varsha'), findsOneWidget);
     });
   });
 }

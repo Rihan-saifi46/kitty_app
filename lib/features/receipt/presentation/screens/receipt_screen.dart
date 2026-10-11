@@ -101,12 +101,12 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         constraints: const BoxConstraints(maxWidth: 440),
         padding: const EdgeInsets.all(AppSpacing.space24),
         decoration: BoxDecoration(
-          color: const Color(0xFF05241C),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.goldBorder.withValues(alpha: 0.3)),
+          border: Border.all(color: AppColors.surfaceCardBorder),
         ),
         child: const KittyShimmer(
-          isDarkSurface: true,
+          isDarkSurface: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -114,21 +114,21 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                 width: 180,
                 height: 24,
                 borderRadius: AppRadius.border10,
-                isDarkSurface: true,
+                isDarkSurface: false,
               ),
               SizedBox(height: 16),
               KittySkeletonBox(
                 width: double.infinity,
                 height: 280,
                 borderRadius: AppRadius.border14,
-                isDarkSurface: true,
+                isDarkSurface: false,
               ),
               SizedBox(height: 16),
               KittySkeletonBox(
                 width: double.infinity,
                 height: 48,
                 borderRadius: AppRadius.border10,
-                isDarkSurface: true,
+                isDarkSurface: false,
               ),
             ],
           ),
@@ -141,9 +141,9 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         constraints: const BoxConstraints(maxWidth: 440),
         padding: const EdgeInsets.all(AppSpacing.space24),
         decoration: BoxDecoration(
-          color: const Color(0xFF05241C),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.goldBorder.withValues(alpha: 0.3)),
+          border: Border.all(color: AppColors.surfaceCardBorder),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -153,13 +153,14 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
               message: state.errorMessage ?? 'Unable to load payment receipt.',
               onRetry: () => controller.loadReceipt(widget.receiptId),
               retryLabel: 'Retry Load',
+              isDarkSurface: false,
             ),
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: onClose,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.goldPrimary,
-                side: const BorderSide(color: AppColors.goldBorder),
+                foregroundColor: AppColors.primaryEmerald,
+                side: const BorderSide(color: AppColors.surfaceCardBorder),
               ),
               child: const Text('Close'),
             ),
@@ -174,19 +175,24 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         constraints: const BoxConstraints(maxWidth: 440),
         padding: const EdgeInsets.all(AppSpacing.space24),
         decoration: BoxDecoration(
-          color: const Color(0xFF05241C),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.surfaceCardBorder),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const Text(
               'No Receipt Record Found',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(color: AppColors.deepForestCharcoal, fontSize: 16),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: onClose,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryEmerald,
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Back to Passbook'),
             ),
           ],

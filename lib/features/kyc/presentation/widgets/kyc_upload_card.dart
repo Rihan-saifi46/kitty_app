@@ -23,17 +23,16 @@ class KycUploadCard extends StatelessWidget {
   final VoidCallback onRemoveFile;
   final bool enabled;
 
-  static const Color _goldLight = Color(0xFFF4E2AA);
-  static const Color _goldPrimary = Color(0xFFCCA243);
-  static const Color _goldMuted = Color(0x47CCA243); // rgba(204, 162, 65, 0.28)
-  static const Color _emeraldBorder = Color(0x38CCA243); // rgba(204, 162, 65, 0.22)
-  static const Color _choiceBtnBg = Color(0x730D4A3A); // rgba(13, 74, 58, 0.45)
-  static const Color _dropzoneBg = Color(0xA6041913); // rgba(4, 25, 19, 0.65)
-  static const Color _previewBg = Color(0xE6041913); // rgba(4, 25, 19, 0.90)
-  static const Color _textMuted = Color(0xFF8FA499);
-  static const Color _textDim = Color(0xFF5C7469);
+  static const Color _textPrimary = Color(0xFF0A221C);
+  static const Color _emeraldBorder = Color(0xFFEFE6DB);
+  static const Color _choiceBtnBg = Color(0xFFFAF8F5);
+  static const Color _dropzoneBg = Color(0xFFFAF8F5);
+  static const Color _previewBg = Colors.white;
+  static const Color _textMuted = Color(0xFF68726E);
+  static const Color _textDim = Color(0xFF68726E);
   static const Color _success = Color(0xFF10B981);
   static const Color _danger = Color(0xFFEF4444);
+  static const Color _goldPrimary = Color(0xFFC88A35);
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +44,9 @@ class KycUploadCard extends StatelessWidget {
           'UPLOAD DOCUMENT PHOTO / SCAN',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: _goldLight,
-            letterSpacing: 0.04 * 12,
+            fontWeight: FontWeight.w600,
+            color: _textPrimary,
+            letterSpacing: 0.5,
           ),
         ),
         const SizedBox(height: 8),
@@ -111,7 +110,7 @@ class KycUploadCard extends StatelessWidget {
               Icon(
                 icon,
                 size: 16,
-                color: _goldLight,
+                color: _textPrimary,
               ),
               const SizedBox(width: 8),
               Flexible(
@@ -119,8 +118,8 @@ class KycUploadCard extends StatelessWidget {
                   label,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12.5,
-                    fontWeight: FontWeight.w500,
-                    color: _goldLight,
+                    fontWeight: FontWeight.w600,
+                    color: _textPrimary,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -140,7 +139,7 @@ class KycUploadCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         child: CustomPaint(
           painter: const _DashedRRectPainter(
-            color: Color(0x59CCA243), // rgba(204, 162, 65, 0.35)
+            color: Color(0xFFD6CBC0),
             strokeWidth: 1.5,
             radius: 14,
             dashPattern: <double>[6, 4],
@@ -164,9 +163,9 @@ class KycUploadCard extends StatelessWidget {
                   height: 44,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0x1FCCA243), // rgba(204, 162, 65, 0.12)
+                    color: const Color(0xFFF3EDE4),
                     border: Border.all(
-                      color: _goldMuted,
+                      color: _emeraldBorder,
                       width: 1,
                     ),
                   ),
@@ -174,7 +173,7 @@ class KycUploadCard extends StatelessWidget {
                     child: Icon(
                       Icons.image_outlined,
                       size: 22,
-                      color: _goldLight,
+                      color: Color(0xFF063B2C),
                     ),
                   ),
                 ),
@@ -203,12 +202,12 @@ class KycUploadCard extends StatelessWidget {
         color: _previewBg,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: const Color(0x59CCA243), // rgba(204, 162, 65, 0.35)
+          color: _emeraldBorder,
           width: 1,
         ),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x14000000),
+            color: Color(0x0C000000),
             blurRadius: 10,
             offset: Offset(0, 3),
           ),
@@ -223,10 +222,10 @@ class KycUploadCard extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: const Color(0xFF031711),
+                color: const Color(0xFFFAF8F5),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: _goldMuted,
+                  color: _emeraldBorder,
                   width: 1,
                 ),
               ),
@@ -245,8 +244,8 @@ class KycUploadCard extends StatelessWidget {
                   file.name,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    color: _textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -265,7 +264,7 @@ class KycUploadCard extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
-                        color: _goldLight,
+                        color: const Color(0xFF063B2C),
                       ),
                     ),
                   ],

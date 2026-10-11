@@ -31,7 +31,7 @@ class KittyHamburgerButton extends StatelessWidget {
         : Colors.white.withValues(alpha: 0.18);
 
     final Color iconColor = isLightSurface
-        ? const Color(0xFF07392F)
+        ? const Color(0xFF0A221C)
         : Colors.white;
 
     return Tooltip(
@@ -48,8 +48,8 @@ class KittyHamburgerButton extends StatelessWidget {
             }
           },
           borderRadius: BorderRadius.circular(20),
-          splashColor: const Color(0x1F07392F),
-          highlightColor: const Color(0x0D07392F),
+          splashColor: const Color(0x1F063B2C),
+          highlightColor: const Color(0x0D063B2C),
           child: Container(
             width: 40,
             height: 40,

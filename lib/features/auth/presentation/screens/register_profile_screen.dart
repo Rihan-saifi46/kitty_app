@@ -222,10 +222,10 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
                           'Confirm your personal details to begin\nyour gold investment journey.',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13.5,
+                            fontSize: 14.5,
                             fontWeight: FontWeight.w400,
                             color: const Color(0xFF636D69),
-                            height: 1.4,
+                            height: 1.45,
                           ),
                         ),
                       ),
@@ -249,7 +249,7 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
                         },
                       ),
 
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 16),
 
                       // Field 2: Phone Number Card
                       _buildFieldCard(
@@ -269,7 +269,7 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
                         },
                       ),
 
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 16),
 
                       // Field 3: Email Address Card
                       _buildFieldCard(
@@ -288,7 +288,7 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
                         },
                       ),
 
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 16),
 
                       // Field 4: Date of Birth Card
                       _buildFieldCard(
@@ -314,7 +314,7 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
 
                       // NEXT Primary CTA Button
                       SizedBox(
-                        height: 52,
+                        height: 54,
                         child: ElevatedButton(
                           onPressed: _isSubmitting ? null : _handleSubmit,
                           style: ElevatedButton.styleFrom(
@@ -340,7 +340,7 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
                                     Text(
                                       'NEXT',
                                       style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 15,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: 0.8,
                                         color: Colors.white,
@@ -388,18 +388,18 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: 36,
-            height: 36,
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
               color: const Color(0xFFFAF5EB),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: const Color(0xFFC88A35), size: 18),
+            child: Icon(icon, color: const Color(0xFFC88A35), size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -410,11 +410,12 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
                 Text(
                   label,
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w600,
                     color: const Color(0xFF7A8682),
                   ),
                 ),
+                const SizedBox(height: 2),
                 TextFormField(
                   controller: controller,
                   keyboardType: keyboardType,
@@ -422,7 +423,7 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
                   readOnly: readOnly,
                   onTap: onTap,
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14.5,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF101915),
                   ),
@@ -430,7 +431,7 @@ class _RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
                     isDense: true,
                     contentPadding: EdgeInsets.only(top: 2, bottom: 2),
                     border: InputBorder.none,
-                    errorStyle: TextStyle(fontSize: 11, height: 1.1),
+                    errorStyle: TextStyle(fontSize: 12, height: 1.1),
                   ),
                 ),
               ],

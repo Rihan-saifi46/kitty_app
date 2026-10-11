@@ -17,13 +17,13 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Configure system navigation and status bars to seamlessly blend into emerald splash
+  // Configure system navigation and status bars to seamlessly blend into warm gold canvas
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Color(0xFF063D2E),
-      systemNavigationBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Color(0xFFFAF7F2),
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 

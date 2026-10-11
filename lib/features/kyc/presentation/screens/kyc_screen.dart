@@ -1,6 +1,4 @@
 import 'dart:io' as io;
-import 'dart:math' as math;
-import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
@@ -19,18 +18,12 @@ import '../../../../shared/widgets/navigation/kitty_hamburger_button.dart';
 import '../../../auth/presentation/widgets/jewelry_constellation_painter.dart';
 import '../providers/kyc_controller.dart';
 import '../providers/kyc_state.dart';
-import '../widgets/kyc_consent_checkbox.dart';
 import '../widgets/kyc_doc_number_field.dart';
 import '../widgets/kyc_doc_tabs.dart';
 import '../widgets/kyc_status_views.dart';
 import '../widgets/kyc_upload_card.dart';
 
-/// Statutory KYC Identity Verification screen matching Login Screen visual design:
-/// - 3D rotating jewelry constellation (diamonds, solitaire rings, bangles with starburst sparkles)
-/// - Damask wallpaper texture overlay & ambient radial glow orb
-/// - Centered glassmorphic card container with 16px backdrop blur, top specular highlight, and double shadow
-/// - Single authoritative Swastik brand header with gold gradient shader mask
-/// - Exact responsive alignment matching `login_screen.dart`.
+/// Statutory KYC Identity Verification screen matching Gold Plans luxury theme
 class KycScreen extends ConsumerStatefulWidget {
   const KycScreen({super.key});
 
@@ -51,20 +44,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
 
   late final AnimationController _bgConstellationController;
 
-  static const Color _bgPrimary = Color(0xFF05241C);
-  static const Color _cardBg = Color(0xD9062018); // rgba(6, 32, 24, 0.85) luxury emerald glass
-  static const Color _goldBorder = Color(0x47CCA243); // rgba(204, 162, 65, 0.28)
-
-  static const LinearGradient _goldGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: <Color>[
-      Color(0xFFCCA243),
-      Color(0xFFF4E2AA),
-      Color(0xFFCCA243),
-    ],
-    stops: <double>[0.0, 0.5, 1.0],
-  );
+  static const Color _bgPrimary = AppColors.warmPearl; // Canvas #FAF7F2
 
   bool get _isInTest =>
       !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
@@ -181,7 +161,6 @@ class _KycScreenState extends ConsumerState<KycScreen>
             : const EdgeInsets.symmetric(horizontal: 36.0, vertical: 40.0);
 
     final double cardRadius = isSmall ? 20.0 : 26.0;
-    final double orbSize = math.min(600.0, screenWidth * 0.90);
 
     // Keep text controller in sync if documentNumber was reset
     if (state.documentNumber.isEmpty && _docNumberController.text.isNotEmpty) {
@@ -193,15 +172,15 @@ class _KycScreenState extends ConsumerState<KycScreen>
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          // 1. Subtle Damask Wallpaper Pattern Overlay (.wallpaper-overlay)
+          // 1. Subtle Damask Wallpaper Pattern Overlay
           Positioned.fill(
             child: Opacity(
-              opacity: 0.08,
+              opacity: 0.035,
               child: Image.asset(
                 'assets/patterns/damask-pattern.jpg',
                 fit: BoxFit.cover,
                 repeat: ImageRepeat.repeat,
-                color: const Color(0xFFCCA243),
+                color: AppColors.goldPrimary,
                 colorBlendMode: BlendMode.screen,
                 errorBuilder: (BuildContext ctx, Object err, StackTrace? st) {
                   return const SizedBox.shrink();
@@ -210,8 +189,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
             ),
           ),
 
-          // 2. 3D Faceted Jewelry Constellation Canvas (#diamond-bg-canvas)
-          // Renders rotating brilliant diamonds, solitaire rings, and gold bangles with sparkles
+          // 2. 3D Faceted Jewelry Constellation Canvas
           Positioned.fill(
             child: RepaintBoundary(
               child: AnimatedBuilder(
@@ -220,7 +198,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
                   return CustomPaint(
                     painter: JewelryConstellationPainter(
                       progress: _bgConstellationController.value,
-                      opacity: 0.90,
+                      opacity: 0.35,
                     ),
                   );
                 },
@@ -228,31 +206,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
             ),
           ),
 
-          // 3. Ambient Emerald & Gold Radial Glow Orb (.ambient-glow-orb)
-          Center(
-            child: RepaintBoundary(
-              child: ImageFiltered(
-                imageFilter: ui.ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-                child: Container(
-                  width: orbSize,
-                  height: orbSize,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: <Color>[
-                        const Color(0xFFCCA243).withValues(alpha: 0.12),
-                        const Color(0xFF0D4A3A).withValues(alpha: 0.18),
-                        Colors.transparent,
-                      ],
-                      stops: const <double>[0.0, 0.45, 0.70],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // 4. Foreground Content with Floating Back Button and Centered Glass Card
+          // 3. Foreground Content with Floating Back Button and Centered Card
           SafeArea(
             child: Stack(
               children: <Widget>[
@@ -271,18 +225,25 @@ class _KycScreenState extends ConsumerState<KycScreen>
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: const Color(0x33000000),
+                            color: Colors.white,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: const Color(0x47CCA243),
+                              color: AppColors.surfaceCardBorder,
                               width: 1,
                             ),
+                            boxShadow: const <BoxShadow>[
+                              BoxShadow(
+                                color: Color(0x0A000000),
+                                blurRadius: 8,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: const Center(
                             child: Icon(
                               Icons.arrow_back_ios_new_rounded,
                               size: 16,
-                              color: Color(0xFFF4E2AA),
+                              color: AppColors.deepForestCharcoal,
                             ),
                           ),
                         ),
@@ -295,10 +256,10 @@ class _KycScreenState extends ConsumerState<KycScreen>
                 const Positioned(
                   top: 8,
                   right: 12,
-                  child: KittyHamburgerButton(isLightSurface: false),
+                  child: KittyHamburgerButton(isLightSurface: true),
                 ),
 
-                // Centered Glassmorphic Card Container matching Login Screen
+                // Centered Card Container matching Gold Plans theme
                 Center(
                   child: RepaintBoundary(
                     child: SingleChildScrollView(
@@ -315,64 +276,25 @@ class _KycScreenState extends ConsumerState<KycScreen>
                             position: _cardSlideAnimation,
                             child: ScaleTransition(
                               scale: _cardScaleAnimation,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(cardRadius),
-                                child: BackdropFilter(
-                                  filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: _cardBg,
-                                      borderRadius: BorderRadius.circular(cardRadius),
-                                      border: Border.all(
-                                        color: _goldBorder,
-                                        width: 1.0,
-                                      ),
-                                      boxShadow: const <BoxShadow>[
-                                        BoxShadow(
-                                          color: Color(0xA6000000), // rgba(0,0,0,0.65)
-                                          blurRadius: 60,
-                                          spreadRadius: -12,
-                                          offset: Offset(0, 24),
-                                        ),
-                                        BoxShadow(
-                                          color: Color(0x14CCA243), // rgba(204, 162, 65, 0.08)
-                                          blurRadius: 35,
-                                          offset: Offset(0, 0),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Stack(
-                                      children: <Widget>[
-                                        // Top Specular Hairline Highlight (matching Login card)
-                                        Positioned(
-                                          top: 0,
-                                          left: 0,
-                                          right: 0,
-                                          height: 1.2,
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              gradient: LinearGradient(
-                                                colors: <Color>[
-                                                  Colors.transparent,
-                                                  Color(0x33FFFFFF),
-                                                  Color(0x55F4E2AA),
-                                                  Color(0x33FFFFFF),
-                                                  Colors.transparent,
-                                                ],
-                                                stops: <double>[0.0, 0.2, 0.5, 0.8, 1.0],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        // Card Inner Content
-                                        Padding(
-                                          padding: cardPadding,
-                                          child: _buildCardContent(state, controller, isSmall),
-                                        ),
-                                      ],
-                                    ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(cardRadius),
+                                  border: Border.all(
+                                    color: AppColors.surfaceCardBorder,
+                                    width: 1.0,
                                   ),
+                                  boxShadow: const <BoxShadow>[
+                                    BoxShadow(
+                                      color: Color(0x0C000000),
+                                      blurRadius: 24,
+                                      offset: Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: cardPadding,
+                                  child: _buildCardContent(state, controller, isSmall),
                                 ),
                               ),
                             ),
@@ -483,20 +405,14 @@ class _KycScreenState extends ConsumerState<KycScreen>
               ),
 
               // Card Title: "KYC Document Verification" with gold gradient
-              ShaderMask(
-                blendMode: BlendMode.srcIn,
-                shaderCallback: (Rect bounds) =>
-                    _goldGradient.createShader(bounds),
-                child: Text(
-                  'KYC Document Verification',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.cormorantGaramond(
-                    fontSize: 21.0,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.63,
-                    height: 1.25,
-                    color: Colors.white,
-                  ),
+              Text(
+                'KYC Document Verification',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
+                  color: AppColors.deepForestCharcoal,
                 ),
               ),
             ],
@@ -535,14 +451,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
           enabled: !isSubmitting,
         ),
 
-        // 4. Mandatory Statutory Legal Consent Checkbox
-        KycConsentCheckbox(
-          isChecked: state.consentAccepted,
-          onChanged: (bool val) => controller.toggleConsent(val),
-          enabled: !isSubmitting,
-        ),
-
-        // 4.5 Mandatory Terms & Conditions Acceptance Checkbox (Requirement 11 & 12)
+        // 4. Mandatory Terms & Conditions Acceptance Checkbox
         _buildTermsAndConditionsCheckbox(isSubmitting),
 
         // Error Message Banner (if any)
@@ -602,17 +511,17 @@ class _KycScreenState extends ConsumerState<KycScreen>
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF05241C),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
-            side: const BorderSide(color: Color(0x59CCA243)),
+            side: const BorderSide(color: AppColors.surfaceCardBorder),
           ),
           title: Text(
             'Terms & Conditions',
-            style: GoogleFonts.cormorantGaramond(
-              fontSize: 22,
+            style: GoogleFonts.playfairDisplay(
+              fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFFF4E2AA),
+              color: AppColors.deepForestCharcoal,
             ),
           ),
           content: SingleChildScrollView(
@@ -624,7 +533,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
               '4. You agree to adhere to Swastik Jewellers terms of service, gold redemption policies, and digital bullion accumulation guidelines.',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13.0,
-                color: const Color(0xFF8FA499),
+                color: AppColors.mutedSlateGray,
                 height: 1.5,
               ),
             ),
@@ -636,7 +545,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
                 'Close',
                 style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFCCA243),
+                  color: AppColors.primaryEmerald,
                 ),
               ),
             ),
@@ -655,9 +564,11 @@ class _KycScreenState extends ConsumerState<KycScreen>
           onTap: isSubmitting
               ? null
               : () {
+                  final bool nextVal = !_termsAccepted;
                   setState(() {
-                    _termsAccepted = !_termsAccepted;
+                    _termsAccepted = nextVal;
                   });
+                  ref.read(kycControllerProvider.notifier).toggleConsent(nextVal);
                 },
           borderRadius: BorderRadius.circular(8),
           child: Padding(
@@ -665,7 +576,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Custom 20x20 Checkbox matching Kitty App style
+                // Custom 20x20 Checkbox
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   curve: Curves.easeOutCubic,
@@ -673,20 +584,19 @@ class _KycScreenState extends ConsumerState<KycScreen>
                   height: 20,
                   margin: const EdgeInsets.only(top: 2, right: 12),
                   decoration: BoxDecoration(
-                    gradient: _termsAccepted ? _goldGradient : null,
-                    color: _termsAccepted ? null : const Color(0xD9041913),
+                    color: _termsAccepted ? AppColors.primaryEmerald : const Color(0xFFFAF8F5),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                       color: _termsAccepted
-                          ? const Color(0xFFFFE899)
-                          : const Color(0x59CCA243),
+                          ? AppColors.primaryEmerald
+                          : const Color(0xFFD6CBC0),
                       width: 1.5,
                     ),
                     boxShadow: _termsAccepted
                         ? const <BoxShadow>[
                             BoxShadow(
-                              color: Color(0x59CCA243),
-                              blurRadius: 10,
+                              color: Color(0x1F063B2C),
+                              blurRadius: 6,
                               spreadRadius: 1,
                             ),
                           ]
@@ -697,7 +607,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
                           child: Icon(
                             Icons.check_rounded,
                             size: 14,
-                            color: Color(0xFF1A1404),
+                            color: Colors.white,
                           ),
                         )
                       : null,
@@ -710,7 +620,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 12.5,
                         height: 1.5,
-                        color: const Color(0xFF8FA499),
+                        color: AppColors.mutedSlateGray,
                       ),
                       children: <InlineSpan>[
                         const TextSpan(text: 'I agree to the '),
@@ -724,9 +634,9 @@ class _KycScreenState extends ConsumerState<KycScreen>
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFFF4E2AA),
+                                color: AppColors.primaryEmerald,
                                 decoration: TextDecoration.underline,
-                                decorationColor: const Color(0xFFF4E2AA),
+                                decorationColor: AppColors.primaryEmerald,
                               ),
                             ),
                           ),

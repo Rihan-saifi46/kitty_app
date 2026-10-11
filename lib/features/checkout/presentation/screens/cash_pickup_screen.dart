@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/routing/route_paths.dart';
 
@@ -85,7 +86,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Pickup Scheduled! Verification OTP is $_generatedOtp'),
-        backgroundColor: const Color(0xFF06342B),
+        backgroundColor: const Color(0xFF063B2C),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -96,7 +97,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('OTP $_generatedOtp copied to clipboard'),
-        backgroundColor: const Color(0xFF06342B),
+        backgroundColor: const Color(0xFF063B2C),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -105,7 +106,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF7F0),
+      backgroundColor: const Color(0xFFFAF7F2),
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -134,11 +135,10 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
                     child: Center(
                       child: Text(
                         _isScheduled ? 'Cash Pickup Confirmed' : 'Doorstep Cash Pickup',
-                        style: const TextStyle(
-                          fontFamily: 'Playfair',
+                        style: GoogleFonts.playfairDisplay(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF1C1917),
+                          color: const Color(0xFF1C1917),
                           letterSpacing: -0.3,
                         ),
                       ),
@@ -199,7 +199,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
                           width: 44,
                           height: 44,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF06342B),
+                            color: const Color(0xFF063B2C),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Center(
@@ -226,11 +226,10 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
                             const SizedBox(height: 2),
                             Text(
                               widget.planTitle,
-                              style: const TextStyle(
-                                fontFamily: 'Playfair',
+                              style: GoogleFonts.playfairDisplay(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF1C1917),
+                                color: const Color(0xFF1C1917),
                               ),
                             ),
                           ],
@@ -255,7 +254,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
                             fontFamily: 'Plus Jakarta Sans',
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF06342B),
+                            color: Color(0xFF063B2C),
                           ),
                         ),
                       ],
@@ -478,7 +477,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
                           fontFamily: 'Plus Jakarta Sans',
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF06342B),
+                          color: Color(0xFF063B2C),
                         ),
                       ),
                       SizedBox(height: 2),
@@ -507,10 +506,10 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
             child: ElevatedButton(
               onPressed: _handleSubmit,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF06342B),
+                backgroundColor: const Color(0xFF063B2C),
                 foregroundColor: Colors.white,
                 elevation: 3,
-                shadowColor: const Color(0x3306342B),
+                shadowColor: const Color(0x33063B2C),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(26),
                 ),
@@ -545,7 +544,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
             border: Border.all(color: const Color(0x4D187A64), width: 2),
           ),
           child: const Center(
-            child: Icon(Icons.check_rounded, color: Color(0xFF06342B), size: 36),
+            child: Icon(Icons.check_rounded, color: Color(0xFF063B2C), size: 36),
           ),
         ),
         const SizedBox(height: 10),
@@ -561,18 +560,17 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
               fontFamily: 'Plus Jakarta Sans',
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF06342B),
+              color: Color(0xFF063B2C),
             ),
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           'Cash Pickup Requested!',
-          style: TextStyle(
-            fontFamily: 'Playfair',
+          style: GoogleFonts.playfairDisplay(
             fontSize: 22,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF1C1917),
+            color: const Color(0xFF1C1917),
           ),
         ),
         const SizedBox(height: 4),
@@ -594,15 +592,15 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: <Color>[Colors.white, Color(0xFFFAF7F0)],
+              colors: <Color>[Colors.white, Color(0xFFFAF7F2)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFF06342B), width: 2),
+            border: Border.all(color: const Color(0xFF063B2C), width: 2),
             boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: Color(0x1A06342B),
+                color: Color(0x1A063B2C),
                 blurRadius: 16,
                 offset: Offset(0, 4),
               ),
@@ -617,7 +615,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
-                  color: Color(0xFF06342B),
+                  color: Color(0xFF063B2C),
                 ),
               ),
               const SizedBox(height: 12),
@@ -670,7 +668,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
                 label: const Text('Copy OTP'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE6F4F0),
-                  foregroundColor: const Color(0xFF06342B),
+                  foregroundColor: const Color(0xFF063B2C),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -796,7 +794,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
                       fontFamily: 'Plus Jakarta Sans',
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF06342B),
+                      color: Color(0xFF063B2C),
                     ),
                   ),
                 ],
@@ -837,7 +835,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
           child: ElevatedButton(
             onPressed: () => context.go(RoutePaths.offers),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF06342B),
+              backgroundColor: const Color(0xFF063B2C),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
@@ -893,7 +891,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
         border: Border.all(color: const Color(0xFFD4B886)),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x0A06342B),
+            color: Color(0x0A063B2C),
             blurRadius: 4,
             offset: Offset(0, 2),
           ),
@@ -906,7 +904,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
             fontFamily: 'Plus Jakarta Sans',
             fontSize: 22,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF06342B),
+            color: Color(0xFF063B2C),
           ),
         ),
       ),
@@ -984,7 +982,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
             prefixText: prefixText,
             prefixStyle: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF1C1917)),
             filled: true,
-            fillColor: const Color(0xFFFAF7F0).withValues(alpha: 0.6),
+            fillColor: const Color(0xFFFAF7F2).withValues(alpha: 0.6),
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -1013,10 +1011,10 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF06342B) : const Color(0xFFFAF7F0),
+            color: isSelected ? const Color(0xFF063B2C) : const Color(0xFFFAF7F2),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? const Color(0xFF06342B) : const Color(0xFFE7E5E4),
+              color: isSelected ? const Color(0xFF063B2C) : const Color(0xFFE7E5E4),
             ),
           ),
           alignment: Alignment.center,
@@ -1048,7 +1046,7 @@ class _CashPickupScreenState extends State<CashPickupScreen> {
           color: isSelected ? const Color(0xFFF7FAF9) : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF06342B) : const Color(0xFFE7E5E4),
+            color: isSelected ? const Color(0xFF063B2C) : const Color(0xFFE7E5E4),
             width: isSelected ? 2 : 1,
           ),
         ),

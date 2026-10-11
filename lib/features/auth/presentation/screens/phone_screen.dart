@@ -80,7 +80,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? AppColors.goldPrimary : AppColors.textPrimaryLight,
+                    color: isSelected ? AppColors.goldPrimary : AppColors.deepForestCharcoal,
                   ),
                 ),
                 trailing: isSelected
@@ -122,13 +122,13 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
     final bool canSubmit = isPhoneValid && !authState.isSubmitting;
 
     return Scaffold(
-      backgroundColor: AppColors.deepEmeraldBase, // Exact: #05241C
+      backgroundColor: AppColors.warmPearl, // Canvas #FAF7F2
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          // Subtle Damask Wallpaper Pattern
+          // Subtle Wallpaper Pattern
           Opacity(
-            opacity: 0.08,
+            opacity: 0.035,
             child: Image.asset(
               'assets/patterns/damask-pattern.jpg',
               fit: BoxFit.cover,
@@ -138,25 +138,6 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
               errorBuilder: (BuildContext ctx, Object error, StackTrace? st) {
                 return const SizedBox.shrink();
               },
-            ),
-          ),
-
-          // Ambient Radial Glow
-          Center(
-            child: Container(
-              width: 360,
-              height: 360,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: <Color>[
-                    AppColors.goldPrimary.withValues(alpha: 0.12),
-                    const Color(0xFF0D4A3A).withValues(alpha: 0.16),
-                    Colors.transparent,
-                  ],
-                  stops: const <double>[0.0, 0.45, 0.70],
-                ),
-              ),
             ),
           ),
 
@@ -171,17 +152,17 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                   constraints: const BoxConstraints(maxWidth: 440),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xD8041913),
+                      color: Colors.white,
                       borderRadius: const BorderRadius.all(Radius.circular(24.0)),
                       border: Border.all(
-                        color: AppColors.goldBorder,
+                        color: AppColors.surfaceCardBorder,
                         width: 1.2,
                       ),
                       boxShadow: const <BoxShadow>[
                         BoxShadow(
-                          color: Color(0x73000000),
-                          blurRadius: 36,
-                          offset: Offset(0, 16),
+                          color: Color(0x0C000000),
+                          blurRadius: 24,
+                          offset: Offset(0, 8),
                         ),
                       ],
                     ),
@@ -216,7 +197,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                                   const Icon(
                                     Icons.arrow_back_rounded,
                                     size: 17,
-                                    color: AppColors.goldPrimary,
+                                    color: AppColors.deepForestCharcoal,
                                   ),
                                   const SizedBox(width: AppSpacing.space6),
                                   Text(
@@ -224,7 +205,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13.5,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColors.goldPrimary,
+                                      color: AppColors.deepForestCharcoal,
                                     ),
                                   ),
                                 ],
@@ -237,11 +218,11 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                         // Heading Group
                         Text(
                           'Enter your mobile number',
-                          style: GoogleFonts.cormorantGaramond(
-                            fontSize: 24,
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimaryLight,
-                            letterSpacing: 0.3,
+                            color: AppColors.deepForestCharcoal,
+                            letterSpacing: 0.2,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.space6),
@@ -250,7 +231,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
-                            color: AppColors.emeraldTextSubtle,
+                            color: AppColors.mutedSlateGray,
                             height: 1.4,
                           ),
                         ),
@@ -263,7 +244,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                           countryFlag: authState.countryFlag,
                           errorText: authState.phoneError,
                           autofocus: true,
-                          isDarkSurface: true,
+                          isDarkSurface: false,
                           onCountryCodeTap: () => _showCountryCodePicker(context),
                           onChanged: (String value) {
                             setState(() {});
@@ -282,13 +263,19 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                         Container(
                           height: AppDimensions.primaryButtonHeight,
                           decoration: BoxDecoration(
-                            gradient: canSubmit
-                                ? AppColors.goldPrimaryGradient
-                                : const LinearGradient(
-                                    colors: <Color>[Color(0xFF2A3D36), Color(0xFF20322C)],
-                                  ),
+                            color: canSubmit
+                                ? AppColors.primaryEmerald
+                                : const Color(0xFFE5DDD0),
                             borderRadius: AppRadius.border12,
-                            boxShadow: canSubmit ? AppShadows.ctaGold : null,
+                            boxShadow: canSubmit
+                                ? const <BoxShadow>[
+                                    BoxShadow(
+                                      color: Color(0x1F063B2C),
+                                      blurRadius: 6,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
                           ),
                           child: Material(
                             color: Colors.transparent,
@@ -306,7 +293,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2.2,
                                               valueColor: AlwaysStoppedAnimation<Color>(
-                                                AppColors.deepEmeraldBase,
+                                                Colors.white,
                                               ),
                                             ),
                                           ),
@@ -316,7 +303,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                                             style: GoogleFonts.plusJakartaSans(
                                               fontSize: 14.5,
                                               fontWeight: FontWeight.w700,
-                                              color: AppColors.deepEmeraldBase,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ],
@@ -330,8 +317,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                                               fontSize: 14.5,
                                               fontWeight: FontWeight.w700,
                                               color: canSubmit
-                                                  ? AppColors.deepEmeraldBase
-                                                  : AppColors.textTertiary,
+                                                  ? Colors.white
+                                                  : AppColors.mutedSlateGray,
                                               letterSpacing: 0.3,
                                             ),
                                           ),
@@ -340,8 +327,8 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                                             Icons.arrow_forward_rounded,
                                             size: 17,
                                             color: canSubmit
-                                                ? AppColors.deepEmeraldBase
-                                                : AppColors.textTertiary,
+                                                ? Colors.white
+                                                : AppColors.mutedSlateGray,
                                           ),
                                         ],
                                       ),
@@ -359,7 +346,7 @@ class _PhoneScreenState extends ConsumerState<PhoneScreen> {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
-                            color: AppColors.emeraldTextSubtle,
+                            color: AppColors.mutedSlateGray,
                           ),
                         ),
                       ],

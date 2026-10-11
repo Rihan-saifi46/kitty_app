@@ -6,33 +6,33 @@ import '../../domain/entities/kyc_entity.dart';
 
 /// Gold and emerald visual constants matching `kyc.html` / `kyc.css`.
 class _KycStatusTokens {
-  static const Color goldLight = Color(0xFFF4E2AA);
-  static const Color goldBright = Color(0xFFFFE899);
-  static const Color goldPrimary = Color(0xFFCCA243);
-  static const Color goldMuted = Color(0x47CCA243); // rgba(204, 162, 65, 0.28)
-  static const Color textMuted = Color(0xFF8FA499);
+  static const Color textPrimary = Color(0xFF0A221C);
+  static const Color textMuted = Color(0xFF68726E);
+  static const Color emerald = Color(0xFF063B2C);
+  static const Color border = Color(0xFFEFE6DB);
+  static const Color chipBg = Color(0xFFF3EDE4);
   static const Color danger = Color(0xFFEF4444);
   static const Color dangerBg = Color(0x1AEF4444);
   static const Color dangerBorder = Color(0x40EF4444);
 
   static const RadialGradient successOrbGradient = RadialGradient(
     colors: <Color>[
-      Color(0x40CCA243), // rgba(204, 162, 65, 0.25)
-      Color(0x660D4A3A), // rgba(13, 74, 58, 0.40)
+      Color(0x26063B2C),
+      Color(0x0D063B2C),
     ],
     stops: <double>[0.0, 1.0],
   );
 
   static const RadialGradient rejectedOrbGradient = RadialGradient(
     colors: <Color>[
-      Color(0x40EF4444),
-      Color(0x662A0D0D),
+      Color(0x33EF4444),
+      Color(0x14EF4444),
     ],
     stops: <double>[0.0, 1.0],
   );
 }
 
-/// KYC Submitted Successfully view matching `kyc.html`.
+/// KYC Submitted Successfully view matching Gold Plans theme.
 class KycSuccessView extends StatelessWidget {
   const KycSuccessView({
     super.key,
@@ -53,7 +53,7 @@ class KycSuccessView extends StatelessWidget {
       children: <Widget>[
         const SizedBox(height: 16),
 
-        // Success Badge Orb (72x72) matching kyc.css `.success-badge-orb`
+        // Success Badge Orb (72x72)
         Container(
           width: 72,
           height: 72,
@@ -61,13 +61,13 @@ class KycSuccessView extends StatelessWidget {
             shape: BoxShape.circle,
             gradient: _KycStatusTokens.successOrbGradient,
             border: Border.all(
-              color: _KycStatusTokens.goldPrimary,
+              color: _KycStatusTokens.emerald,
               width: 1.5,
             ),
             boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: Color(0x59CCA243), // rgba(204, 162, 65, 0.35)
-                blurRadius: 30,
+                color: Color(0x14063B2C),
+                blurRadius: 20,
               ),
             ],
           ),
@@ -75,35 +75,35 @@ class KycSuccessView extends StatelessWidget {
             child: Icon(
               Icons.check_rounded,
               size: 34,
-              color: _KycStatusTokens.goldBright,
+              color: _KycStatusTokens.emerald,
             ),
           ),
         ),
 
         const SizedBox(height: 20),
 
-        // Success Heading: Cormorant Garamond 26px
+        // Success Heading: Playfair Display
         Text(
           'KYC Submitted Successfully',
-          style: GoogleFonts.cormorantGaramond(
-            fontSize: 26,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 22,
             fontWeight: FontWeight.w700,
-            color: _KycStatusTokens.goldLight,
-            letterSpacing: 0.5,
+            color: _KycStatusTokens.textPrimary,
+            letterSpacing: 0.3,
           ),
           textAlign: TextAlign.center,
         ),
 
         const SizedBox(height: 8),
 
-        // Reference Code Chip: .success-ref-chip
+        // Reference Code Chip
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0x26CCA243), // rgba(204, 162, 65, 0.15)
+            color: _KycStatusTokens.chipBg,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: _KycStatusTokens.goldMuted,
+              color: _KycStatusTokens.border,
               width: 1,
             ),
           ),
@@ -111,9 +111,9 @@ class KycSuccessView extends StatelessWidget {
             'Ref: #$refCode',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: _KycStatusTokens.goldBright,
-              letterSpacing: 0.5,
+              fontWeight: FontWeight.w600,
+              color: _KycStatusTokens.emerald,
+              letterSpacing: 0.3,
             ),
           ),
         ),
@@ -176,13 +176,13 @@ class KycPendingView extends StatelessWidget {
             shape: BoxShape.circle,
             gradient: _KycStatusTokens.successOrbGradient,
             border: Border.all(
-              color: _KycStatusTokens.goldPrimary,
+              color: _KycStatusTokens.emerald,
               width: 1.5,
             ),
             boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: Color(0x59CCA243),
-                blurRadius: 30,
+                color: Color(0x14063B2C),
+                blurRadius: 20,
               ),
             ],
           ),
@@ -190,7 +190,7 @@ class KycPendingView extends StatelessWidget {
             child: Icon(
               Icons.hourglass_top_rounded,
               size: 34,
-              color: _KycStatusTokens.goldBright,
+              color: _KycStatusTokens.emerald,
             ),
           ),
         ),
@@ -199,11 +199,11 @@ class KycPendingView extends StatelessWidget {
 
         Text(
           'KYC Under Verification',
-          style: GoogleFonts.cormorantGaramond(
-            fontSize: 26,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 22,
             fontWeight: FontWeight.w700,
-            color: _KycStatusTokens.goldLight,
-            letterSpacing: 0.5,
+            color: _KycStatusTokens.textPrimary,
+            letterSpacing: 0.3,
           ),
           textAlign: TextAlign.center,
         ),
@@ -213,10 +213,10 @@ class KycPendingView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0x26CCA243),
+            color: _KycStatusTokens.chipBg,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: _KycStatusTokens.goldMuted,
+              color: _KycStatusTokens.border,
               width: 1,
             ),
           ),
@@ -224,9 +224,9 @@ class KycPendingView extends StatelessWidget {
             'Ref: #$refCode',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: _KycStatusTokens.goldBright,
-              letterSpacing: 0.5,
+              fontWeight: FontWeight.w600,
+              color: _KycStatusTokens.emerald,
+              letterSpacing: 0.3,
             ),
           ),
         ),
@@ -287,13 +287,13 @@ class KycApprovedView extends StatelessWidget {
             shape: BoxShape.circle,
             gradient: _KycStatusTokens.successOrbGradient,
             border: Border.all(
-              color: _KycStatusTokens.goldPrimary,
+              color: _KycStatusTokens.emerald,
               width: 1.5,
             ),
             boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: Color(0x59CCA243),
-                blurRadius: 30,
+                color: Color(0x14063B2C),
+                blurRadius: 20,
               ),
             ],
           ),
@@ -301,7 +301,7 @@ class KycApprovedView extends StatelessWidget {
             child: Icon(
               Icons.verified_user_rounded,
               size: 34,
-              color: _KycStatusTokens.goldBright,
+              color: _KycStatusTokens.emerald,
             ),
           ),
         ),
@@ -310,11 +310,11 @@ class KycApprovedView extends StatelessWidget {
 
         Text(
           'KYC Verified & Approved',
-          style: GoogleFonts.cormorantGaramond(
-            fontSize: 26,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 22,
             fontWeight: FontWeight.w700,
-            color: _KycStatusTokens.goldLight,
-            letterSpacing: 0.5,
+            color: _KycStatusTokens.textPrimary,
+            letterSpacing: 0.3,
           ),
           textAlign: TextAlign.center,
         ),
@@ -324,10 +324,10 @@ class KycApprovedView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0x26CCA243),
+            color: _KycStatusTokens.chipBg,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: _KycStatusTokens.goldMuted,
+              color: _KycStatusTokens.border,
               width: 1,
             ),
           ),
@@ -335,9 +335,9 @@ class KycApprovedView extends StatelessWidget {
             'Ref: #$refCode • $masked',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: _KycStatusTokens.goldBright,
-              letterSpacing: 0.5,
+              fontWeight: FontWeight.w600,
+              color: _KycStatusTokens.emerald,
+              letterSpacing: 0.3,
             ),
           ),
         ),
@@ -402,8 +402,8 @@ class KycRejectedView extends StatelessWidget {
             ),
             boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: Color(0x4DEF4444),
-                blurRadius: 30,
+                color: Color(0x26EF4444),
+                blurRadius: 20,
               ),
             ],
           ),
@@ -420,11 +420,11 @@ class KycRejectedView extends StatelessWidget {
 
         Text(
           'KYC Verification Rejected',
-          style: GoogleFonts.cormorantGaramond(
-            fontSize: 26,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 22,
             fontWeight: FontWeight.w700,
             color: _KycStatusTokens.danger,
-            letterSpacing: 0.5,
+            letterSpacing: 0.3,
           ),
           textAlign: TextAlign.center,
         ),

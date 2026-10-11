@@ -8,7 +8,7 @@ class MenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xFF07392F),
+      backgroundColor: Color(0xFF063B2C),
       body: SafeArea(
         bottom: false,
         child: KittyMenuSheet(),

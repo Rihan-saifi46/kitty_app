@@ -153,7 +153,7 @@ abstract final class NotificationDetailSheet {
                 Navigator.of(context).pop();
                 context.push(notification.actionUrl!);
               },
-              icon: const Icon(Icons.arrow_forward_rounded, size: 16, color: Color(0xFF092B22)),
+              icon: const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
             ),
             const SizedBox(height: AppSpacing.space10),
           ],

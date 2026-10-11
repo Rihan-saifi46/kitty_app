@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,11 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/routing/route_paths.dart';
+import '../../../../shared/widgets/feedback/kitty_empty_state.dart';
+import '../../../../shared/widgets/feedback/kitty_error_state.dart';
 import '../../../../shared/widgets/navigation/kitty_hamburger_button.dart';
 import '../../../checkout/presentation/screens/checkout_screen.dart';
 import '../../domain/entities/dashboard_summary_entity.dart';
 import '../providers/dashboard_controller.dart';
 import '../providers/dashboard_state.dart';
+import '../widgets/dashboard_prejoin_banner.dart';
+import '../widgets/dashboard_skeleton_loader.dart';
 
 /// Recreated 100% identically from `dddd/scheme.html`.
 ///
@@ -20,9 +23,9 @@ import '../providers/dashboard_state.dart';
 /// - Card 1: Top Main Plan Card (#FFFFFF, rounded 24px, border #EFEAE2)
 ///   * 3D Stack of Gold Coins Vector Graphic in rounded 16px gradient box
 ///   * Plan Title ("11 Month Gold Plan") & Plan ID ("SJ360123")
-///   * Circular 45% Progress Wheel (70x70) with dark pine progress ring (#073B30)
+///   * Circular 45% Progress Wheel (70x70) with dark pine progress ring (#063B2C)
 ///   * Financial Split: Paid ("₹55,000") vs Total Plan ("₹1,20,000")
-///   * Lower Inner Panel: Next Instalment Due ("₹5,000" on 5 Oct 2026) & "Pay Now" CTA (#073B30)
+///   * Lower Inner Panel: Next Instalment Due ("₹5,000" on 5 Oct 2026) & "Pay Now" CTA (#063B2C)
 /// - Card 2: Your Plan Details Card (#FFFFFF, rounded 22px, border #EFEAE2)
 ///   * Golden Icon Rows: Start Date, End Date, Monthly Instalment, Total Plan Amount
 /// - Card 3: Your Progress Card (#FFFFFF, rounded 22px, border #EFEAE2)
@@ -41,15 +44,14 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  static const Color _appBg = Color(0xFFF8F6F0);
+  static const Color _appBg = Color(0xFFFAF7F2);
   static const Color _cardBg = Color(0xFFFFFFFF);
-  static const Color _cardBorder = Color(0xFFEFEAE2);
-  static const Color _darkPine = Color(0xFF073B30);
-  static const Color _goldAccent = Color(0xFFC99542);
-  static const Color _textMain = Color(0xFF1A2024);
-  static const Color _textMuted = Color(0xFF67717A);
+  static const Color _cardBorder = Color(0xFFEFE6DB);
+  static const Color _darkPine = Color(0xFF063B2C);
+  static const Color _goldAccent = Color(0xFFC88A35);
+  static const Color _textMain = Color(0xFF0A221C);
+  static const Color _textMuted = Color(0xFF68726E);
   static const Color _textSub = Color(0xFF8D969F);
-  static const Color _mintBg = Color(0xFFECF6F1);
   static const Color _amberBg = Color(0xFFFBF5EB);
 
   // 11 Months data matching scheme.html
@@ -106,8 +108,102 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('=============================================');
+    debugPrint('>>> DASHBOARD_SCREEN: BUILD METHOD STARTED <<<');
+    debugPrint('=============================================');
     final DashboardState state = ref.watch(dashboardControllerProvider);
     final DashboardController controller = ref.read(dashboardControllerProvider.notifier);
+    debugPrint('>>> DASHBOARD_SCREEN: state status = ${state.status} <<<');
+
+    // 1. Loading State (Initial fetch)
+    if (state.status == DashboardStatus.loading && state.data == null && state.schemes.isEmpty) {
+      return const Scaffold(
+        backgroundColor: _appBg,
+        body: SafeArea(
+          child: DashboardSkeletonLoader(),
+        ),
+      );
+    }
+
+    // 2. Error State (Failed with no cached data)
+    if (state.status == DashboardStatus.error && state.data == null && state.schemes.isEmpty) {
+      return Scaffold(
+        backgroundColor: _appBg,
+        body: SafeArea(
+          child: Center(
+            child: KittyErrorState(
+              title: 'Unable to Load Scheme Details',
+              message: state.errorMessage ??
+                  'Unable to load your kitty details. Please check your connection and try again.',
+              onRetry: () => controller.loadDashboard(refresh: true),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 3. Empty State (Patron has no active enrolled scheme)
+    if (state.status == DashboardStatus.empty ||
+        (state.status != DashboardStatus.loading &&
+            state.data == null &&
+            state.schemes.isEmpty &&
+            state.selectedScheme == null)) {
+      return Scaffold(
+        backgroundColor: _appBg,
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              // Header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    IconButton(
+                      onPressed: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go(RoutePaths.offers);
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: _textMain,
+                        size: 22,
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    ),
+                    Text(
+                      'Your Active Plan',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: _textMain,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const KittyHamburgerButton(isLightSurface: true),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: KittyEmptyState(
+                    title: 'No Active Gold Scheme',
+                    description:
+                        'You do not have any active gold savings schemes. Explore our curated 6, 9, and 11-month plans to start saving today.',
+                    actionLabel: 'Explore Gold Plans',
+                    onAction: () => context.go(RoutePaths.offers),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     final DashboardSummaryEntity? scheme = state.selectedScheme ??
         (state.schemes.isNotEmpty
@@ -145,14 +241,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Scaffold(
       backgroundColor: _appBg,
       body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            // -----------------------------------------------------------------
-            // SCREEN HEADER (scheme.html line 106)
-            // -----------------------------------------------------------------
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
+        child: RefreshIndicator(
+          onRefresh: () => controller.loadDashboard(refresh: true),
+          color: _darkPine,
+          backgroundColor: Colors.white,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
+            children: <Widget>[
+              // -------------------------------------------------------------
+              // SCREEN HEADER (scheme.html line 106)
+              // -------------------------------------------------------------
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   IconButton(
@@ -173,7 +275,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                   Text(
                     'Your Active Plan',
-                    style: GoogleFonts.playfairDisplay(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: _textMain,
@@ -183,68 +285,55 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const KittyHamburgerButton(isLightSurface: true),
                 ],
               ),
-            ),
 
-            // -----------------------------------------------------------------
-            // SCROLLABLE SCREEN CONTENT AREA (scheme.html line 120)
-            // -----------------------------------------------------------------
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => controller.loadDashboard(refresh: true),
-                color: _darkPine,
-                backgroundColor: Colors.white,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
-                  child: Column(
-                    children: <Widget>[
-                      // 1. TOP MAIN PLAN CARD (scheme.html line 123)
-                      _buildTopPlanCard(
-                        planTitle: planTitle,
-                        planId: planId,
-                        progressPercent: progressPercent,
-                        paidAmount: paidAmount,
-                        targetAmount: targetAmount,
-                        monthlyAmountStr: monthlyAmountStr,
-                        nextDueDate: nextDueDate,
-                        onPayNow: () => _openPaymentModal(emiAmount, planTitle),
-                      ),
+              const SizedBox(height: 16),
 
-                      const SizedBox(height: 16),
+              if (scheme?.isPreJoin == true) ...<Widget>[
+                const DashboardPrejoinBanner(),
+                const SizedBox(height: 16),
+              ],
 
-                      // 2. YOUR PLAN DETAILS CARD (scheme.html line 253)
-                      _buildPlanDetailsCard(
-                        startDate: startDate,
-                        endDate: endDate,
-                        monthlyAmountStr: monthlyAmountStr,
-                        targetAmount: targetAmount,
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // 3. YOUR PROGRESS CARD (scheme.html line 334)
-                      _buildProgressCard(
-                        paidCount: paidCount,
-                        totalCount: totalCount,
-                        onViewAll: _openHistoryDrawer,
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // 4. UPCOMING PAYMENT CARD (scheme.html line 372)
-                      _buildUpcomingPaymentCard(
-                        monthlyAmountStr: monthlyAmountStr,
-                        nextDueDate: nextDueDate,
-                        onPayNow: () => _openPaymentModal(emiAmount, planTitle),
-                      ),
-                    ],
-                  ),
-                ),
+              // 1. TOP MAIN PLAN CARD (scheme.html line 123)
+              _buildTopPlanCard(
+                planTitle: planTitle,
+                planId: planId,
+                progressPercent: progressPercent,
+                paidAmount: paidAmount,
+                targetAmount: targetAmount,
+                monthlyAmountStr: monthlyAmountStr,
+                nextDueDate: nextDueDate,
+                onPayNow: () => _openPaymentModal(emiAmount, planTitle),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 16),
+
+              // 2. YOUR PLAN DETAILS CARD (scheme.html line 253)
+              _buildPlanDetailsCard(
+                startDate: startDate,
+                endDate: endDate,
+                monthlyAmountStr: monthlyAmountStr,
+                targetAmount: targetAmount,
+              ),
+
+              const SizedBox(height: 16),
+
+              // 3. YOUR PROGRESS CARD (scheme.html line 334)
+              _buildProgressCard(
+                paidCount: paidCount,
+                totalCount: totalCount,
+                onViewAll: _openHistoryDrawer,
+              ),
+
+              const SizedBox(height: 16),
+
+              // 4. UPCOMING PAYMENT CARD (scheme.html line 372)
+              _buildUpcomingPaymentCard(
+                monthlyAmountStr: monthlyAmountStr,
+                nextDueDate: nextDueDate,
+                onPayNow: () => _openPaymentModal(emiAmount, planTitle),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -309,8 +398,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         ],
                       ),
                       padding: const EdgeInsets.all(6),
-                      child: CustomPaint(
-                        painter: _GoldCoinStackPainter(),
+                      child: Image.asset(
+                        'assets/images/swastik/kitty_coins_exact.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) => const Icon(
+                          Icons.monetization_on_rounded,
+                          size: 36,
+                          color: Color(0xFFC88A35),
+                        ),
                       ),
                     ),
 
@@ -323,7 +418,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         children: <Widget>[
                           Text(
                             planTitle,
-                            style: GoogleFonts.playfairDisplay(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
                               color: _textMain,
@@ -350,18 +445,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: <Widget>[
-                          CustomPaint(
-                            size: const Size(70, 70),
-                            painter: _CircularProgressPainter(
-                              progress: progressPercent / 100.0,
+                          SizedBox(
+                            width: 70,
+                            height: 70,
+                            child: CircularProgressIndicator(
+                              value: (progressPercent / 100.0).clamp(0.0, 1.0),
                               backgroundColor: const Color(0xFFEFE5D5),
-                              progressColor: _darkPine,
+                              valueColor: const AlwaysStoppedAnimation<Color>(_darkPine),
                               strokeWidth: 7,
+                              strokeCap: StrokeCap.round,
                             ),
                           ),
                           Text(
                             '${progressPercent.toInt()}%',
-                            style: GoogleFonts.playfairDisplay(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: _textMain,
@@ -395,7 +492,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             const SizedBox(height: 2),
                             Text(
                               paidAmount,
-                              style: GoogleFonts.playfairDisplay(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                                 color: _textMain,
@@ -426,7 +523,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             const SizedBox(height: 2),
                             Text(
                               targetAmount,
-                              style: GoogleFonts.playfairDisplay(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                                 color: _textMain,
@@ -468,12 +565,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                     const SizedBox(height: 2),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text(
                           monthlyAmountStr,
-                          style: GoogleFonts.playfairDisplay(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: _textMain,
@@ -549,7 +645,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         children: <Widget>[
           Text(
             'Your Plan Details',
-            style: GoogleFonts.playfairDisplay(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: _textMain,
@@ -664,7 +760,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             children: <Widget>[
               Text(
                 'Your Progress',
-                style: GoogleFonts.playfairDisplay(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: _textMain,
@@ -689,91 +785,100 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
           // 11-Month Horizontal Stepper Tracker
           SizedBox(
-            height: 48,
+            height: 56,
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                final double totalWidth = constraints.maxWidth;
-                final double nodeWidth = totalWidth / totalCount;
-                final double progressWidth = ((paidCount - 1) / (totalCount - 1)).clamp(0.0, 1.0) * (totalWidth - nodeWidth);
+                final double totalWidth = constraints.maxWidth.isFinite ? constraints.maxWidth : 340.0;
+                final double nodeWidth = totalCount > 0 ? (totalWidth / totalCount) : totalWidth;
+                final double progressRatio = totalCount > 1 ? ((paidCount - 1) / (totalCount - 1)).clamp(0.0, 1.0) : 0.0;
+                final double progressWidth = progressRatio * (totalWidth - nodeWidth);
 
-                return Stack(
-                  children: <Widget>[
-                    // Inactive Background Line
-                    Positioned(
-                      top: 9,
-                      left: nodeWidth / 2,
-                      right: nodeWidth / 2,
-                      height: 2,
-                      child: Container(
-                        color: const Color(0xFFE9E1D5),
+                return SizedBox(
+                  width: totalWidth,
+                  height: 56,
+                  child: Stack(
+                    children: <Widget>[
+                      // Inactive Background Line
+                      Positioned(
+                        top: 9,
+                        left: nodeWidth / 2,
+                        right: nodeWidth / 2,
+                        height: 2,
+                        child: Container(
+                          color: const Color(0xFFE9E1D5),
+                        ),
                       ),
-                    ),
 
-                    // Active Green Segment Line
-                    Positioned(
-                      top: 9,
-                      left: nodeWidth / 2,
-                      width: progressWidth,
-                      height: 2,
-                      child: Container(
-                        color: _darkPine,
+                      // Active Green Segment Line
+                      Positioned(
+                        top: 9,
+                        left: nodeWidth / 2,
+                        width: progressWidth,
+                        height: 2,
+                        child: Container(
+                          color: _darkPine,
+                        ),
                       ),
-                    ),
 
-                    // Month Nodes (Jan to Nov = 11 months)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: _months.map((_MonthInstallment m) {
-                        return SizedBox(
-                          width: nodeWidth,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              if (m.isPaid)
-                                Container(
-                                  width: 18,
-                                  height: 18,
-                                  decoration: const BoxDecoration(
-                                    color: _darkPine,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.check_rounded,
-                                      size: 11,
-                                      color: Colors.white,
+                      // Month Nodes (Jan to Nov = 11 months)
+                      SizedBox(
+                        width: totalWidth,
+                        child: Row(
+                          children: _months.map((_MonthInstallment m) {
+                            return Expanded(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  if (m.isPaid)
+                                    Container(
+                                      width: 18,
+                                      height: 18,
+                                      decoration: const BoxDecoration(
+                                        color: _darkPine,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.check_rounded,
+                                          size: 11,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    Container(
+                                      width: 18,
+                                      height: 18,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: const Color(0xFFD8CEBF),
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                  const SizedBox(height: 4),
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      m.name,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        color: m.isPaid ? _textMain : _textSub,
+                                      ),
                                     ),
                                   ),
-                                )
-                              else
-                                Container(
-                                  width: 18,
-                                  height: 18,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: const Color(0xFFD8CEBF),
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(height: 5),
-                              Text(
-                                m.name,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: m.isPaid ? _textMain : _textSub,
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -789,7 +894,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _mintBg.withValues(alpha: 0.8),
+                    color: const Color(0xCCECF6F1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: const Color(0xFFDCEDE3)),
                   ),
@@ -798,7 +903,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     children: <Widget>[
                       Text(
                         '$paidCount / $totalCount',
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
                           color: _darkPine,
@@ -834,7 +939,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     children: <Widget>[
                       Text(
                         '${totalCount - paidCount}',
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF9E641B),
@@ -887,7 +992,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         children: <Widget>[
           Text(
             'Upcoming Payment',
-            style: GoogleFonts.playfairDisplay(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: _textMain,
@@ -940,7 +1045,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ),
                             Text(
                               monthlyAmountStr,
-                              style: GoogleFonts.playfairDisplay(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: _textMain,
@@ -1009,143 +1114,7 @@ class _MonthInstallment {
   final String? txnId;
 }
 
-// -----------------------------------------------------------------------------
-// CIRCULAR PROGRESS PAINTER (scheme.html Progress Ring)
-// -----------------------------------------------------------------------------
-class _CircularProgressPainter extends CustomPainter {
-  const _CircularProgressPainter({
-    required this.progress,
-    required this.backgroundColor,
-    required this.progressColor,
-    required this.strokeWidth,
-  });
 
-  final double progress;
-  final Color backgroundColor;
-  final Color progressColor;
-  final double strokeWidth;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Offset center = Offset(size.width / 2, size.height / 2);
-    final double radius = (size.width - strokeWidth) / 2;
-
-    // Track circle
-    final Paint trackPaint = Paint()
-      ..color = backgroundColor
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-    canvas.drawCircle(center, radius, trackPaint);
-
-    // Active progress arc
-    final Paint progressPaint = Paint()
-      ..color = progressColor
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    const double startAngle = -math.pi / 2;
-    final double sweepAngle = 2 * math.pi * progress;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      startAngle,
-      sweepAngle,
-      false,
-      progressPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _CircularProgressPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.backgroundColor != backgroundColor ||
-        oldDelegate.progressColor != progressColor;
-  }
-}
-
-// -----------------------------------------------------------------------------
-// 3D GOLD COIN STACK PAINTER (scheme.html SVG reproduction)
-// -----------------------------------------------------------------------------
-class _GoldCoinStackPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double w = size.width;
-    final double h = size.height;
-
-    // Base scale and translations from 100x100 SVG
-    final double s = math.min(w, h) / 100.0;
-
-    void drawCoin(double x, double y, double rx, double ry, double thickness) {
-      final Rect sideRect = Rect.fromLTWH(x * s, y * s, rx * 2 * s, thickness * s);
-      final Paint sidePaint = Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: <Color>[
-            Color(0xFF9C6B13),
-            Color(0xFFF2C558),
-            Color(0xFF805407),
-          ],
-        ).createShader(sideRect);
-
-      final Path sidePath = Path()
-        ..moveTo(x * s, (y + ry) * s)
-        ..arcToPoint(
-          Offset((x + rx * 2) * s, (y + ry) * s),
-          radius: Radius.elliptical(rx * s, ry * s),
-          clockwise: false,
-        )
-        ..lineTo((x + rx * 2) * s, (y + ry + thickness) * s)
-        ..arcToPoint(
-          Offset(x * s, (y + ry + thickness) * s),
-          radius: Radius.elliptical(rx * s, ry * s),
-          clockwise: true,
-        )
-        ..close();
-      canvas.drawPath(sidePath, sidePaint);
-
-      // Top ellipse
-      final Rect topRect = Rect.fromLTWH(x * s, y * s, rx * 2 * s, ry * 2 * s);
-      final Paint topPaint = Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: <Color>[
-            Color(0xFFFFE89E),
-            Color(0xFFE5AF39),
-            Color(0xFFBE851C),
-          ],
-        ).createShader(topRect);
-      canvas.drawOval(topRect, topPaint);
-
-      // Inner rim detail
-      final Rect rimRect = Rect.fromLTWH(
-        (x + rx * 0.2) * s,
-        (y + ry * 0.2) * s,
-        rx * 1.6 * s,
-        ry * 1.6 * s,
-      );
-      final Paint rimPaint = Paint()
-        ..color = const Color(0xFFFFF2B8).withValues(alpha: 0.6)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.8 * s;
-      canvas.drawOval(rimRect, rimPaint);
-    }
-
-    // Left bottom coin
-    drawCoin(14, 50, 13, 5.5, 6);
-    // Right bottom coin
-    drawCoin(44, 46, 14, 6, 6);
-    // Center tall stack (4 tiers)
-    drawCoin(28, 58, 16, 7, 6);
-    drawCoin(28, 50, 16, 7, 6);
-    drawCoin(28, 42, 16, 7, 6);
-    drawCoin(28, 34, 16, 7, 6);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
 
 // -----------------------------------------------------------------------------
 // PAYMENT CONFIRMATION MODAL BOTTOM SHEET (scheme.html line 413)
@@ -1182,7 +1151,7 @@ class _PaymentModalSheet extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Confirm Payment',
-                  style: GoogleFonts.playfairDisplay(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF1A2024),
@@ -1212,8 +1181,8 @@ class _PaymentModalSheet extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               '₹$formattedAmount',
-              style: GoogleFonts.playfairDisplay(
-                fontSize: 30,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 28,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF1A2024),
               ),
@@ -1265,7 +1234,7 @@ class _PaymentModalSheet extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onAuthorizePay,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF073B30),
+                  backgroundColor: const Color(0xFF063B2C),
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -1345,7 +1314,7 @@ class _HistoryModalSheet extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         'All 11 Instalments',
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF1A2024),
@@ -1405,7 +1374,7 @@ class _HistoryModalSheet extends StatelessWidget {
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
                                     color: m.isPaid
-                                        ? const Color(0xFF073B30)
+                                        ? const Color(0xFF063B2C)
                                         : const Color(0xFF8D969F),
                                   ),
                                 ),

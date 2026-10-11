@@ -80,7 +80,7 @@ class KittyToast extends StatelessWidget {
 
     switch (type) {
       case KittyToastType.success:
-        bgColor = const Color(0xFF092B22);
+        bgColor = AppColors.primaryEmerald;
         borderColor = AppColors.statusSuccessText;
         textColor = AppColors.textPrimaryLight;
         defaultIcon = Icons.check_circle_outline;

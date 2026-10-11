@@ -50,17 +50,17 @@ class PaymentResultView extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 440),
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
       decoration: BoxDecoration(
-        color: const Color(0xFF05241C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: AppColors.goldBorder.withValues(alpha: 0.4),
+          color: AppColors.surfaceCardBorder,
           width: 1.2,
         ),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x66000000),
-            blurRadius: 48,
-            offset: Offset(0, 20),
+            color: Color(0x0C000000),
+            blurRadius: 24,
+            offset: Offset(0, 8),
           ),
         ],
       ),
@@ -86,7 +86,7 @@ class PaymentResultView extends StatelessWidget {
                 child: Icon(
                   Icons.check_circle_rounded,
                   key: Key('payment_success_check_icon'),
-                  color: Color(0xFF34D399),
+                  color: Color(0xFF10B981),
                   size: 44,
                 ),
               ),
@@ -100,16 +100,16 @@ class PaymentResultView extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                color: const Color(0x1F10B981),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: const Color(0xFF34D399).withValues(alpha: 0.4),
+                  color: const Color(0x4D10B981),
                 ),
               ),
               child: Text(
                 'PAYMENT CONFIRMED',
                 style: AppTypography.labelMeta(
-                  color: const Color(0xFF6EE7B7),
+                  color: const Color(0xFF047857),
                 ).copyWith(fontWeight: FontWeight.w800, letterSpacing: 1.0),
               ),
             ),
@@ -121,7 +121,7 @@ class PaymentResultView extends StatelessWidget {
             'Installment Paid Successfully',
             key: const Key('payment_success_title'),
             style: AppTypography.cardTitle(
-              color: Colors.white,
+              color: AppColors.deepForestCharcoal,
             ).copyWith(fontSize: 20, fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,
           ),
@@ -132,7 +132,7 @@ class PaymentResultView extends StatelessWidget {
             formattedAmount,
             key: const Key('payment_success_amount_text'),
             style: AppTypography.amountDisplay(
-              color: const Color(0xFFFFE28A),
+              color: AppColors.primaryEmerald,
             ).copyWith(fontSize: 32),
             textAlign: TextAlign.center,
           ),
@@ -143,9 +143,9 @@ class PaymentResultView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppSpacing.space14),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: const Color(0xFFFAF8F5),
               borderRadius: AppRadius.border14,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              border: Border.all(color: AppColors.surfaceCardBorder),
             ),
             child: Column(
               children: <Widget>[
@@ -167,18 +167,18 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_view_passbook'),
             onPressed: onViewPassbook,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFECC97D),
-              foregroundColor: const Color(0xFF05241C),
+              backgroundColor: AppColors.primaryEmerald,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
               ),
-              elevation: 4,
+              elevation: 0,
             ),
             child: Text(
               'View Official Passbook',
               style: AppTypography.bodyBold(
-                color: const Color(0xFF05241C),
+                color: Colors.white,
               ).copyWith(fontWeight: FontWeight.w800),
             ),
           ),
@@ -190,8 +190,8 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_back_dashboard'),
             onPressed: onReturnToDashboard,
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFFECC97D),
-              side: const BorderSide(color: Color(0xFFECC97D), width: 1.2),
+              foregroundColor: AppColors.deepForestCharcoal,
+              side: const BorderSide(color: AppColors.surfaceCardBorder, width: 1.2),
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space12),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
@@ -200,7 +200,7 @@ class PaymentResultView extends StatelessWidget {
             child: Text(
               'Back to Kitty Dashboard',
               style: AppTypography.bodyBold(
-                color: const Color(0xFFECC97D),
+                color: AppColors.deepForestCharcoal,
               ).copyWith(fontWeight: FontWeight.w700),
             ),
           ),
@@ -215,12 +215,19 @@ class PaymentResultView extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 440),
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
       decoration: BoxDecoration(
-        color: const Color(0xFF05241C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: const Color(0xFFEF4444).withValues(alpha: 0.4),
           width: 1.2,
         ),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x0C000000),
+            blurRadius: 24,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(AppSpacing.space24),
       child: Column(
@@ -243,7 +250,7 @@ class PaymentResultView extends StatelessWidget {
                 child: Icon(
                   Icons.error_outline_rounded,
                   key: Key('payment_failed_icon'),
-                  color: Color(0xFFF87171),
+                  color: Color(0xFFEF4444),
                   size: 40,
                 ),
               ),
@@ -256,7 +263,7 @@ class PaymentResultView extends StatelessWidget {
             'Payment Could Not Be Completed',
             key: const Key('payment_failed_title'),
             style: AppTypography.cardTitle(
-              color: Colors.white,
+              color: AppColors.deepForestCharcoal,
             ).copyWith(fontSize: 19, fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,
           ),
@@ -268,7 +275,7 @@ class PaymentResultView extends StatelessWidget {
                 'Your bank was unable to authorize the transaction. No amount was deducted.',
             key: const Key('payment_failed_message'),
             style: AppTypography.bodySmall(
-              color: const Color(0xFF9EC0B4),
+              color: AppColors.mutedSlateGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -280,17 +287,18 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_retry'),
             onPressed: onRetry,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFECC97D),
-              foregroundColor: const Color(0xFF05241C),
+              backgroundColor: AppColors.primaryEmerald,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
               ),
+              elevation: 0,
             ),
             child: Text(
               'Try Again',
               style: AppTypography.bodyBold(
-                color: const Color(0xFF05241C),
+                color: Colors.white,
               ).copyWith(fontWeight: FontWeight.w800),
             ),
           ),
@@ -302,8 +310,8 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_dismiss'),
             onPressed: onClose,
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white70,
-              side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+              foregroundColor: AppColors.deepForestCharcoal,
+              side: const BorderSide(color: AppColors.surfaceCardBorder),
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space12),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
@@ -322,12 +330,19 @@ class PaymentResultView extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 440),
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
       decoration: BoxDecoration(
-        color: const Color(0xFF05241C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: AppColors.surfaceCardBorder,
           width: 1.2,
         ),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x0C000000),
+            blurRadius: 24,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(AppSpacing.space24),
       child: Column(
@@ -338,15 +353,15 @@ class PaymentResultView extends StatelessWidget {
             child: Container(
               width: 64,
               height: 64,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.08),
+                color: Color(0xFFF3EDE4),
               ),
               child: const Center(
                 child: Icon(
                   Icons.cancel_outlined,
                   key: Key('payment_cancelled_icon'),
-                  color: Color(0xFFCBD5E1),
+                  color: AppColors.mutedSlateGray,
                   size: 36,
                 ),
               ),
@@ -359,7 +374,7 @@ class PaymentResultView extends StatelessWidget {
             'Payment Cancelled',
             key: const Key('payment_cancelled_title'),
             style: AppTypography.cardTitle(
-              color: Colors.white,
+              color: AppColors.deepForestCharcoal,
             ).copyWith(fontSize: 19, fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,
           ),
@@ -369,7 +384,7 @@ class PaymentResultView extends StatelessWidget {
           Text(
             'The payment was cancelled before completion. You can retry at any time.',
             style: AppTypography.bodySmall(
-              color: const Color(0xFF9EC0B4),
+              color: AppColors.mutedSlateGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -380,12 +395,13 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_cancelled_retry'),
             onPressed: onRetry,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFECC97D),
-              foregroundColor: const Color(0xFF05241C),
+              backgroundColor: AppColors.primaryEmerald,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
               ),
+              elevation: 0,
             ),
             child: const Text('Try Again'),
           ),
@@ -396,8 +412,8 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_cancelled_close'),
             onPressed: onClose,
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white70,
-              side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+              foregroundColor: AppColors.deepForestCharcoal,
+              side: const BorderSide(color: AppColors.surfaceCardBorder),
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space12),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
@@ -416,12 +432,19 @@ class PaymentResultView extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 440),
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
       decoration: BoxDecoration(
-        color: const Color(0xFF05241C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
           width: 1.2,
         ),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x0C000000),
+            blurRadius: 24,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(AppSpacing.space24),
       child: Column(
@@ -444,7 +467,7 @@ class PaymentResultView extends StatelessWidget {
                 child: Icon(
                   Icons.access_time_rounded,
                   key: Key('payment_timeout_icon'),
-                  color: Color(0xFFFBBF24),
+                  color: Color(0xFFD97706),
                   size: 40,
                 ),
               ),
@@ -457,7 +480,7 @@ class PaymentResultView extends StatelessWidget {
             'Payment Under Bank Verification',
             key: const Key('payment_timeout_title'),
             style: AppTypography.cardTitle(
-              color: Colors.white,
+              color: AppColors.deepForestCharcoal,
             ).copyWith(fontSize: 19, fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,
           ),
@@ -468,7 +491,7 @@ class PaymentResultView extends StatelessWidget {
             'Verification is taking longer than expected with your bank. If the amount was deducted, your gold kitty passbook will update once confirmed.',
             key: const Key('payment_timeout_message'),
             style: AppTypography.bodySmall(
-              color: const Color(0xFF9EC0B4),
+              color: AppColors.mutedSlateGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -480,12 +503,13 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_check_status'),
             onPressed: onRetry,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFECC97D),
-              foregroundColor: const Color(0xFF05241C),
+              backgroundColor: AppColors.primaryEmerald,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
               ),
+              elevation: 0,
             ),
             child: const Text('Check Status Again'),
           ),
@@ -497,8 +521,8 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_timeout_passbook'),
             onPressed: onViewPassbook,
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFFECC97D),
-              side: const BorderSide(color: Color(0xFFECC97D)),
+              foregroundColor: AppColors.deepForestCharcoal,
+              side: const BorderSide(color: AppColors.surfaceCardBorder),
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space12),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
@@ -517,12 +541,19 @@ class PaymentResultView extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 440),
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
       decoration: BoxDecoration(
-        color: const Color(0xFF05241C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: const Color(0xFFEF4444).withValues(alpha: 0.4),
           width: 1.2,
         ),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: Color(0x0C000000),
+            blurRadius: 24,
+            offset: Offset(0, 8),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(AppSpacing.space24),
       child: Column(
@@ -533,7 +564,7 @@ class PaymentResultView extends StatelessWidget {
             child: Icon(
               Icons.wifi_off_rounded,
               key: Key('payment_error_icon'),
-              color: Color(0xFFF87171),
+              color: Color(0xFFEF4444),
               size: 48,
             ),
           ),
@@ -542,14 +573,14 @@ class PaymentResultView extends StatelessWidget {
             'Connection Error',
             key: const Key('payment_error_title'),
             style: AppTypography.cardTitle(
-              color: Colors.white,
+              color: AppColors.deepForestCharcoal,
             ).copyWith(fontSize: 19, fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.space8),
           Text(
             state.errorMessage ?? 'Unable to complete payment request. Please check your connection.',
-            style: AppTypography.bodySmall(color: const Color(0xFF9EC0B4)),
+            style: AppTypography.bodySmall(color: AppColors.mutedSlateGray),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.space24),
@@ -557,12 +588,13 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_error_retry'),
             onPressed: onRetry,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFECC97D),
-              foregroundColor: const Color(0xFF05241C),
+              backgroundColor: AppColors.primaryEmerald,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
               ),
+              elevation: 0,
             ),
             child: const Text('Try Again'),
           ),
@@ -571,8 +603,8 @@ class PaymentResultView extends StatelessWidget {
             key: const Key('btn_payment_error_dismiss'),
             onPressed: onClose,
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white70,
-              side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+              foregroundColor: AppColors.deepForestCharcoal,
+              side: const BorderSide(color: AppColors.surfaceCardBorder),
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.space12),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.border12,
@@ -591,11 +623,11 @@ class PaymentResultView extends StatelessWidget {
       children: <Widget>[
         Text(
           label,
-          style: AppTypography.labelMeta(color: const Color(0xFF8EAA9E)),
+          style: AppTypography.labelMeta(color: AppColors.mutedSlateGray),
         ),
         Text(
           value,
-          style: AppTypography.labelMeta(color: Colors.white).copyWith(
+          style: AppTypography.labelMeta(color: AppColors.deepForestCharcoal).copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),

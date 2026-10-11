@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/routing/route_paths.dart';
@@ -81,13 +82,12 @@ class SettingsScreen extends ConsumerWidget {
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
               ),
-              const Text(
+              Text(
                 'Settings & Security',
-                style: TextStyle(
-                  fontFamily: 'Playfair',
+                style: GoogleFonts.playfairDisplay(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1E1B18),
+                  color: const Color(0xFF1E1B18),
                 ),
               ),
               const KittyHamburgerButton(isLightSurface: true),

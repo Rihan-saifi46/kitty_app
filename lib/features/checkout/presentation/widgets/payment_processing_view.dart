@@ -23,17 +23,17 @@ class PaymentProcessingView extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 440),
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
       decoration: BoxDecoration(
-        color: const Color(0xFF05241C),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: AppColors.goldBorder.withValues(alpha: 0.35),
+          color: AppColors.surfaceCardBorder,
           width: 1.2,
         ),
         boxShadow: const <BoxShadow>[
           BoxShadow(
-            color: Color(0x66000000),
-            blurRadius: 48,
-            offset: Offset(0, 20),
+            color: Color(0x0C000000),
+            blurRadius: 24,
+            offset: Offset(0, 8),
           ),
         ],
       ),
@@ -47,9 +47,9 @@ class PaymentProcessingView extends StatelessWidget {
             height: 72,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.goldPrimary.withValues(alpha: 0.12),
+              color: AppColors.primaryEmerald.withValues(alpha: 0.08),
               border: Border.all(
-                color: AppColors.goldBorder.withValues(alpha: 0.4),
+                color: AppColors.surfaceCardBorder,
                 width: 1.5,
               ),
             ),
@@ -59,7 +59,7 @@ class PaymentProcessingView extends StatelessWidget {
                 height: 36,
                 child: CircularProgressIndicator(
                   strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.goldPrimary),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryEmerald),
                 ),
               ),
             ),
@@ -71,13 +71,13 @@ class PaymentProcessingView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: const Color(0xFFF3EDE4),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               'RECONCILIATION STEP ${state.pollCount}/5',
               style: AppTypography.labelMeta(
-                color: AppColors.goldLight,
+                color: AppColors.primaryEmerald,
               ).copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.8),
             ),
           ),
@@ -89,7 +89,7 @@ class PaymentProcessingView extends StatelessWidget {
             state.pollingMessage,
             key: const Key('payment_polling_message_text'),
             style: AppTypography.cardTitle(
-              color: Colors.white,
+              color: AppColors.deepForestCharcoal,
             ).copyWith(fontSize: 17, fontWeight: FontWeight.w700),
             textAlign: TextAlign.center,
           ),
@@ -99,7 +99,7 @@ class PaymentProcessingView extends StatelessWidget {
           Text(
             'Securely confirming bank settlement with Swastik Gold Vault.',
             style: AppTypography.bodySmall(
-              color: const Color(0xFF8EAA9E),
+              color: AppColors.mutedSlateGray,
             ),
             textAlign: TextAlign.center,
           ),
@@ -113,9 +113,9 @@ class PaymentProcessingView extends StatelessWidget {
               vertical: AppSpacing.space12,
             ),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
+              color: const Color(0xFFFAF8F5),
               borderRadius: AppRadius.border12,
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              border: Border.all(color: AppColors.surfaceCardBorder),
             ),
             child: Column(
               children: <Widget>[
@@ -124,11 +124,11 @@ class PaymentProcessingView extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       'Amount',
-                      style: AppTypography.labelMeta(color: const Color(0xFF8EAA9E)),
+                      style: AppTypography.labelMeta(color: AppColors.mutedSlateGray),
                     ),
                     Text(
                       formattedAmount,
-                      style: AppTypography.labelMeta(color: const Color(0xFFFFE28A)).copyWith(
+                      style: AppTypography.labelMeta(color: AppColors.primaryEmerald).copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -140,11 +140,11 @@ class PaymentProcessingView extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       'Order Ref',
-                      style: AppTypography.labelMeta(color: const Color(0xFF8EAA9E)),
+                      style: AppTypography.labelMeta(color: AppColors.mutedSlateGray),
                     ),
                     Text(
                       orderId,
-                      style: AppTypography.labelMeta(color: Colors.white70).copyWith(
+                      style: AppTypography.labelMeta(color: AppColors.deepForestCharcoal).copyWith(
                         fontFamily: 'monospace',
                       ),
                     ),
@@ -162,14 +162,14 @@ class PaymentProcessingView extends StatelessWidget {
             children: <Widget>[
               const Icon(
                 Icons.lock_outline_rounded,
-                color: Color(0xFF8EAA9E),
+                color: AppColors.mutedSlateGray,
                 size: 14,
               ),
               const SizedBox(width: 6),
               Text(
                 'Please do not close this window',
                 style: AppTypography.labelMeta(
-                  color: const Color(0xFF8EAA9E),
+                  color: AppColors.mutedSlateGray,
                 ).copyWith(fontSize: 11),
               ),
             ],

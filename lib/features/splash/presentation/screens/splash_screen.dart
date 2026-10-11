@@ -2,33 +2,34 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_typography.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../widgets/diamond_3d_painter.dart';
 import 'web_loader_stub.dart' if (dart.library.js_interop) 'web_loader_web.dart';
 
-/// Luxury Splash & Loading Screen reproducing the Swastik Jewel 3D sequence
-/// from `index.html` + `loader.js` + `styles.css`.
+/// Luxury Splash & Launch Sequence Screen.
 ///
-/// Exact Timeline:
-/// - 0.0s – 2.3s: 3D Faceted Brilliant-Cut Diamond rotates 360° and zooms toward camera
-///   (passing through and beyond viewport edges with smooth opacity envelope).
-/// - 2.3s: Diamond exits outside viewport.
-/// - 2.32s – 3.32s: Royal Damask Wallpaper Pattern (opacity 0 -> 0.16) + Swastik Jewel Logo
-///   fade & scale in with luxury cubic-bezier easing (`Cubic(0.16, 1.0, 0.3, 1.0)`).
-/// - ~3.32s: Sequence completes smoothly; resolves session check and navigates
-///   to `/home` (if authenticated) or `/auth/login`.
+/// Implements the exact launch flow:
+/// Stage 1: Clean Gold Plans background (#FAF7F2).
+/// Stage 2: 3D Diamond appears from center.
+/// Stage 3: Diamond rotates a full 360° (2π).
+/// Stage 4: Diamond moves/flies smoothly outside the frame.
+/// Stage 5: Minimal Brand Screen containing ONLY "Swastik Jewels" centered in Playfair Display.
+/// Stage 6: Transitions to Destination Screen (for authenticated patrons) or Login (unauthenticated).
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({
     super.key,
-    this.totalDuration = const Duration(milliseconds: 3200),
+    this.diamondDuration = const Duration(milliseconds: 2300),
+    this.brandDuration = const Duration(milliseconds: 1100),
+    Duration? totalDuration,
     this.autoNavigate = true,
-  });
+  }) : totalDuration = totalDuration ?? const Duration(milliseconds: 3400);
 
+  final Duration diamondDuration;
+  final Duration brandDuration;
   final Duration totalDuration;
   final bool autoNavigate;
 
@@ -37,297 +38,271 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _animController;
-  bool _isAnimationCompleted = false;
+    with TickerProviderStateMixin {
+  late final AnimationController _diamondController;
+  late final AnimationController _brandController;
+
+  // Diamond lifecycle animations
+  late final Animation<double> _appearanceScale;
+  late final Animation<double> _appearanceOpacity;
+  late final Animation<double> _rotationY;
+  late final Animation<double> _exitTranslate;
+
+  // Brand screen animations
+  late final Animation<double> _brandFade;
+  late final Animation<double> _brandScale;
+
+  bool _isDiamondFinished = false;
   bool _isNavigated = false;
-
-  static const double _diamondStartFraction = 0.0;
-  static const double _diamondEndFraction = 2000.0 / 3200.0;
-  static const double _logoRevealStartFraction = 1600.0 / 3200.0;
-  static const double _logoRevealEndFraction = 2200.0 / 3200.0;
-
-  static const Curve _luxuryCurve = Cubic(0.16, 1.0, 0.3, 1.0);
 
   @override
   void initState() {
     super.initState();
 
-    _animController = AnimationController(
-      vsync: this,
-      duration: widget.totalDuration,
-    );
-
-    int webElapsedOffsetMs = 0;
     if (kIsWeb) {
-      final double? webElapsed = getWebLoaderElapsedSeconds();
-      if (webElapsed != null && widget.totalDuration.inMilliseconds > 0) {
-        webElapsedOffsetMs = (webElapsed * 1000).toInt();
-        dismissWebLoader();
-      }
+      dismissWebLoader();
     }
 
-    final int totalMs = widget.totalDuration.inMilliseconds;
-    final double initialProgress = totalMs > 0
-        ? (webElapsedOffsetMs / totalMs).clamp(0.0, 1.0)
-        : 0.0;
+    final Duration dDuration = widget.totalDuration != const Duration(milliseconds: 3400)
+        ? Duration(milliseconds: (widget.totalDuration.inMilliseconds * 0.68).round())
+        : widget.diamondDuration;
+    final Duration bDuration = widget.totalDuration != const Duration(milliseconds: 3400)
+        ? Duration(milliseconds: (widget.totalDuration.inMilliseconds * 0.32).round())
+        : widget.brandDuration;
 
-    _animController.addStatusListener((AnimationStatus status) {
+    // 1. Diamond Animation Controller
+    _diamondController = AnimationController(
+      vsync: this,
+      duration: dDuration,
+    );
+
+    // Stage 1 (0.00 to 0.08): Blank gold screen (scale = 0, opacity = 0)
+    // Stage 2 (0.08 to 0.28): Diamond appears from center
+    _appearanceScale = Tween<double>(begin: 0.0, end: 1.35).animate(
+      CurvedAnimation(
+        parent: _diamondController,
+        curve: const Interval(0.08, 0.28, curve: Curves.easeOutBack),
+      ),
+    );
+    _appearanceOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _diamondController,
+        curve: const Interval(0.08, 0.24, curve: Curves.easeIn),
+      ),
+    );
+
+    // Stage 3 (0.24 to 0.72): Diamond rotates full 360° (2π)
+    _rotationY = Tween<double>(begin: 0.0, end: 2.0 * math.pi).animate(
+      CurvedAnimation(
+        parent: _diamondController,
+        curve: const Interval(0.24, 0.72, curve: Curves.easeInOutCubic),
+      ),
+    );
+
+    // Stage 4 (0.72 to 1.00): Diamond moves/flies smoothly outside the top of the frame
+    _exitTranslate = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _diamondController,
+        curve: const Interval(0.72, 1.00, curve: Curves.easeInOutCubic),
+      ),
+    );
+
+    // 2. Minimal Brand Screen Controller ("Swastik Jewels" ONLY)
+    _brandController = AnimationController(
+      vsync: this,
+      duration: bDuration,
+    );
+    _brandFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _brandController,
+        curve: const Interval(0.0, 0.50, curve: Curves.easeOut),
+      ),
+    );
+    _brandScale = Tween<double>(begin: 0.95, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _brandController,
+        curve: const Interval(0.0, 0.60, curve: Curves.easeOut),
+      ),
+    );
+
+    _diamondController.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {
-        _isAnimationCompleted = true;
+        if (!mounted) return;
+        setState(() {
+          _isDiamondFinished = true;
+        });
+        _brandController.forward();
+      }
+    });
+
+    _brandController.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
         if (widget.autoNavigate) {
-          _checkAndNavigate();
+          _resolveAuthAndNavigate();
         }
       }
     });
 
-    _animController.forward(from: initialProgress);
+    _diamondController.forward();
   }
 
   @override
   void dispose() {
-    _animController.dispose();
+    _diamondController.dispose();
+    _brandController.dispose();
     super.dispose();
   }
 
-  /// Synchronized navigation handoff: Triggers immediately when the branded animation
-  /// finishes AND auth status is determined. Navigation is executed strictly once.
-  void _checkAndNavigate() {
+  /// Evaluates authentication state with guaranteed safety timeout:
+  /// - Authenticated + KYC Verified -> Destination Screen (/onboarding/choice)
+  /// - Authenticated + KYC Pending -> /kyc
+  /// - Unauthenticated -> /auth/login
+  Future<void> _resolveAuthAndNavigate() async {
     if (_isNavigated || !mounted) return;
 
-    final AppAuthState auth = ref.read(appAuthStateProvider);
+    AppAuthState auth = ref.read(appAuthStateProvider);
 
-    // Only navigate once the branded animation has fully completed
-    // and the auth state is resolved (not initial/pending)
-    if (_isAnimationCompleted && !auth.isInitial) {
-      _isNavigated = true;
-      if (auth.isAuthenticated) {
-        if (!auth.isKycVerified) {
-          context.go(RoutePaths.kyc);
-        } else {
-          context.go(RoutePaths.offers);
-        }
+    // If still in booting/initial state, give checkAuthStatus a quick moment to resolve
+    if (auth.isInitial) {
+      try {
+        await ref
+            .read(appAuthStateProvider.notifier)
+            .checkAuthStatus()
+            .timeout(const Duration(milliseconds: 1000), onTimeout: () {});
+      } catch (_) {}
+      auth = ref.read(appAuthStateProvider);
+    }
+
+    if (_isNavigated || !mounted) return;
+    _isNavigated = true;
+
+    if (auth.isAuthenticated) {
+      if (!auth.isKycVerified) {
+        context.go(RoutePaths.kyc);
       } else {
-        context.go(RoutePaths.login);
+        context.go(RoutePaths.postKycChoice);
       }
+    } else {
+      context.go(RoutePaths.login);
     }
   }
 
-  /// Instant handoff: If a patron taps the splash screen, fast-forward to completion
-  /// and perform the immediate authenticated navigation handoff.
-  void _completeAndNavigateNow() {
-    if (_isAnimationCompleted || _isNavigated || !mounted) return;
-    _animController.stop();
-    _animController.value = 1.0;
-    _isAnimationCompleted = true;
-    if (widget.autoNavigate) {
-      _checkAndNavigate();
+  /// Instant user skip handler on tap.
+  void _skipOrComplete() {
+    if (_isNavigated || !mounted) return;
+
+    if (!_isDiamondFinished) {
+      _diamondController.stop();
+      _diamondController.value = 1.0;
+      setState(() {
+        _isDiamondFinished = true;
+      });
+      _brandController.forward();
+    } else {
+      _brandController.stop();
+      _brandController.value = 1.0;
+      _resolveAuthAndNavigate();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     ref.listen<AppAuthState>(appAuthStateProvider, (previous, next) {
-      if (!next.isInitial && mounted) {
-        _checkAndNavigate();
+      if (!next.isInitial && _brandController.isCompleted && mounted) {
+        _resolveAuthAndNavigate();
       }
     });
 
+    final Size screenSize = MediaQuery.sizeOf(context);
+
     return Scaffold(
-      backgroundColor: AppColors.deepEmeraldBase, // Exact #05241C
+      backgroundColor: const Color(0xFFFAF7F2), // Exact Gold Plans Background
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: _completeAndNavigateNow,
+        onTap: _skipOrComplete,
         child: Stack(
           fit: StackFit.expand,
-        children: <Widget>[
-          // 1. Ambient radial lighting glow (static, zero-cost)
-          Center(
-            child: Container(
-              width: 360,
-              height: 360,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: <Color>[
-                    AppColors.goldPrimary.withValues(alpha: 0.14),
-                    AppColors.emeraldCard.withValues(alpha: 0.08),
-                    Colors.transparent,
-                  ],
-                  stops: const <double>[0.0, 0.45, 1.0],
+          children: <Widget>[
+            // 1. Subtle warm ambient radial illumination
+            Center(
+              child: Container(
+                width: 380,
+                height: 380,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: <Color>[
+                      Color(0x1FC88A35),
+                      Color(0x08F3EDE4),
+                      Colors.transparent,
+                    ],
+                    stops: <double>[0.0, 0.50, 1.0],
+                  ),
                 ),
               ),
             ),
-          ),
 
-          // 2. Animated layers driven by AnimationController
-          AnimatedBuilder(
-            animation: _animController,
-            builder: (BuildContext context, Widget? child) {
-              final double animValue = _animController.value;
+            // 2. Stage A: 3D Diamond Animation Layer
+            if (!_isDiamondFinished)
+              AnimatedBuilder(
+                animation: _diamondController,
+                builder: (BuildContext context, Widget? child) {
+                  final double scale = _appearanceScale.value;
+                  final double opacity = _appearanceOpacity.value;
+                  final double rotY = _rotationY.value;
+                  final double exitProgress = _exitTranslate.value;
 
-              // --- PHASE 1: 3D DIAMOND ---
-              double diamondOpacity = 0.0;
-              double diamondRotationY = 0.0;
-              double diamondModelScale = 1.45;
-              double diamondZoomScale = 1.0;
-              bool showDiamond = false;
+                  // Moves upward completely outside the viewport
+                  final double translateY =
+                      -exitProgress * (screenSize.height * 0.70 + 200.0);
 
-              if (animValue >= _diamondStartFraction && animValue <= _diamondEndFraction) {
-                showDiamond = true;
-                final double p = (animValue - _diamondStartFraction) /
-                    (_diamondEndFraction - _diamondStartFraction);
-
-                // Smooth ease-in-out 360-degree rotation (2 * PI)
-                final double rotProgress = p < 0.5
-                    ? 4.0 * p * p * p
-                    : 1.0 - math.pow(-2.0 * p + 2.0, 3) / 2.0;
-                diamondRotationY = rotProgress * math.pi * 2.0;
-
-                // Prominent luxury scale progression
-                diamondModelScale = 1.45 + (p * 0.45);
-                diamondZoomScale = 1.0 + (p * 0.20);
-
-                // Smooth progressive opacity envelope (instant frame-1 presence)
-                if (p < 0.08) {
-                  diamondOpacity = (p / 0.08).clamp(0.20, 1.0);
-                } else if (p > 0.80) {
-                  diamondOpacity = math.max(0.0, (1.0 - p) / 0.20);
-                } else {
-                  diamondOpacity = 1.0;
-                }
-              }
-
-              // --- PHASE 2 & 3: LOGO BRANDING & LOADING PROGRESS ---
-              double rawBrandingProgress = 0.0;
-              if (animValue >= _logoRevealStartFraction) {
-                if (animValue >= _logoRevealEndFraction) {
-                  rawBrandingProgress = 1.0;
-                } else {
-                  rawBrandingProgress = ((animValue - _logoRevealStartFraction) /
-                      (_logoRevealEndFraction - _logoRevealStartFraction)).clamp(0.0, 1.0);
-                }
-              }
-              final double curvedBranding = _luxuryCurve.transform(rawBrandingProgress);
-
-              final Size screenSize = MediaQuery.sizeOf(context);
-              final double logoWidth = (screenSize.width * 0.74).clamp(260.0, 360.0);
-              final double logoHeight = logoWidth * (47.0 / 181.0);
-
-              final double progressFraction = ((animValue - _logoRevealStartFraction) /
-                      (1.0 - _logoRevealStartFraction))
-                  .clamp(0.0, 1.0);
-
-              return Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  // A. Phase 1: Full-Viewport 3D Faceted Crystal Diamond
-                  if (showDiamond && diamondOpacity > 0.001)
-                    Positioned.fill(
-                      child: Center(
-                        child: Transform.scale(
-                          scale: diamondZoomScale,
-                          alignment: Alignment.center,
-                          child: RepaintBoundary(
-                            child: CustomPaint(
-                              size: Size(screenSize.width, screenSize.height),
-                              painter: Diamond3DPainter(
-                                rotationY: diamondRotationY,
-                                scaleFactor: diamondModelScale,
-                                opacity: diamondOpacity,
-                              ),
+                  return Positioned.fill(
+                    child: Center(
+                      child: Transform.translate(
+                        offset: Offset(0, translateY),
+                        child: RepaintBoundary(
+                          child: CustomPaint(
+                            size: Size(screenSize.width, screenSize.height),
+                            painter: Diamond3DPainter(
+                              rotationY: rotY,
+                              scaleFactor: scale,
+                              opacity: opacity,
                             ),
                           ),
                         ),
                       ),
                     ),
+                  );
+                },
+              ),
 
-                  // B. Phase 2: Authentic Swastik Brand Logo & Loading Progress
-                  if (curvedBranding > 0.001)
-                    Center(
-                      child: Opacity(
-                        opacity: curvedBranding,
-                        child: Transform.translate(
-                          offset: Offset(0, (1.0 - curvedBranding) * 12.0),
-                          child: Transform.scale(
-                            scale: 0.94 + (0.06 * curvedBranding),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Container(
-                                  decoration: const BoxDecoration(
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                        color: Color(0x66000000),
-                                        blurRadius: 32,
-                                        offset: Offset(0, 6),
-                                      ),
-                                    ],
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/icons/swastiklogo.svg',
-                                    width: logoWidth,
-                                    height: logoHeight,
-                                    fit: BoxFit.contain,
-                                    placeholderBuilder: (BuildContext context) {
-                                      return SizedBox(
-                                        width: logoWidth,
-                                        height: logoHeight,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: 28),
-                                // Elegant Golden Loading Progress Line
-                                Container(
-                                  width: 140,
-                                  height: 3,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(1.5),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(1.5),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Container(
-                                        width: 140 * progressFraction,
-                                        height: 3,
-                                        decoration: const BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: <Color>[
-                                              AppColors.honeyGoldAccent,
-                                              Color(0xFFFFE082),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'INITIALIZING SECURE VAULT...',
-                                  style: AppTypography.kickerCaps(
-                                    color: AppColors.honeyGoldAccent,
-                                  ).copyWith(
-                                    fontSize: 9,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
+            // 3. Stage B: Minimal Brand Screen (Swastik Jewels ONLY)
+            if (_isDiamondFinished)
+              AnimatedBuilder(
+                animation: _brandController,
+                builder: (BuildContext context, Widget? child) {
+                  return Center(
+                    child: Opacity(
+                      opacity: _brandFade.value,
+                      child: Transform.scale(
+                        scale: _brandScale.value,
+                        child: Text(
+                          'Swastik Jewels',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 34,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF0A221C),
+                            letterSpacing: 0.6,
                           ),
                         ),
                       ),
                     ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+                  );
+                },
+              ),
+          ],
+        ),
       ),
     );
   }

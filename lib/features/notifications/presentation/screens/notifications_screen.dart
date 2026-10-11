@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/routing/route_paths.dart';
@@ -119,8 +120,7 @@ class NotificationsScreen extends ConsumerWidget {
           // Title
           Text(
             'Notifications',
-            style: TextStyle(
-              fontFamily: 'Cinzel',
+            style: GoogleFonts.playfairDisplay(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: titleColor,

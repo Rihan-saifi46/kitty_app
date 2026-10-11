@@ -169,7 +169,7 @@ class _DashboardMultiSchemeCarouselState
                             boxShadow: isSelected
                                 ? const <BoxShadow>[
                                     BoxShadow(
-                                      color: Color(0x1A05241C),
+                                      color: Color(0x1A063B2C),
                                       blurRadius: 8,
                                       offset: Offset(0, 2),
                                     ),

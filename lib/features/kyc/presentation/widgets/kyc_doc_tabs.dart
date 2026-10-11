@@ -16,22 +16,10 @@ class KycDocTabs extends StatelessWidget {
   final ValueChanged<DocTypeEnum> onDocTypeChanged;
   final bool enabled;
 
-  static const Color _goldLight = Color(0xFFF4E2AA);
-  static const Color _tabGroupBg = Color(0xD9041913); // rgba(4, 25, 19, 0.85)
-  static const Color _tabBorder = Color(0x40CCA243); // rgba(204, 162, 65, 0.25)
-  static const Color _textMuted = Color(0xFF8FA499);
-  static const Color _darkText = Color(0xFF1A1404);
-
-  static const LinearGradient _goldGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: <Color>[
-      Color(0xFFCCA243),
-      Color(0xFFF4E2AA),
-      Color(0xFFCCA243),
-    ],
-    stops: <double>[0.0, 0.5, 1.0],
-  );
+  static const Color _tabGroupBg = Color(0xFFF3EDE4);
+  static const Color _tabBorder = Color(0xFFEFE6DB);
+  static const Color _textMuted = Color(0xFF68726E);
+  static const Color _activeBg = Color(0xFF063B2C);
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +31,9 @@ class KycDocTabs extends StatelessWidget {
           'SELECT DOCUMENT TYPE',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: _goldLight,
-            letterSpacing: 0.04 * 12,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF0A221C),
+            letterSpacing: 0.5,
           ),
         ),
         const SizedBox(height: 8),
@@ -101,15 +89,14 @@ class KycDocTabs extends StatelessWidget {
           curve: Curves.easeOutCubic,
           height: 44,
           decoration: BoxDecoration(
-            gradient: isSelected ? _goldGradient : null,
-            color: isSelected ? null : Colors.transparent,
+            color: isSelected ? _activeBg : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             boxShadow: isSelected
                 ? const <BoxShadow>[
                     BoxShadow(
-                      color: Color(0x4DCCA243), // rgba(204, 162, 65, 0.3)
-                      blurRadius: 14,
-                      offset: Offset(0, 4),
+                      color: Color(0x1F063B2C),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
                     ),
                   ]
                 : null,
@@ -120,7 +107,7 @@ class KycDocTabs extends StatelessWidget {
               Icon(
                 icon,
                 size: 16,
-                color: isSelected ? _darkText : _textMuted,
+                color: isSelected ? Colors.white : _textMuted,
               ),
               const SizedBox(width: 6),
               Flexible(
@@ -128,8 +115,8 @@ class KycDocTabs extends StatelessWidget {
                   label,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? _darkText : _textMuted,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected ? Colors.white : _textMuted,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

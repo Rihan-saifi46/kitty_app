@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../shared/widgets/buttons/kitty_primary_button.dart';
@@ -67,8 +68,7 @@ class TermsAndComplianceModal extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'BIS 24K Compliance & Terms',
-                    style: TextStyle(
-                      fontFamily: 'Cinzel',
+                    style: GoogleFonts.playfairDisplay(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: titleColor,

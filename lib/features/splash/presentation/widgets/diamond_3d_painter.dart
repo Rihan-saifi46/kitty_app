@@ -1,10 +1,11 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 /// 3D Faceted Brilliant-Cut Crystal Diamond Custom Painter.
 ///
-/// Faithfully reproduces the exact 3D geometry, facet indices, lighting calculations,
-/// metallic white-gold specular shading, and sparkling stars from `loader.js`.
+/// High-performance zero-allocation rendering reproducing exact 3D geometry,
+/// lighting calculations, metallic gold specular highlights, and diamond brilliance.
 class Diamond3DPainter extends CustomPainter {
   Diamond3DPainter({
     required this.rotationY,
@@ -30,6 +31,18 @@ class Diamond3DPainter extends CustomPainter {
   static final Paint _sparklePaint = Paint()
     ..style = PaintingStyle.stroke
     ..strokeWidth = 1.1;
+
+  // Zero-allocation scratch buffers to prevent GC stutter on mobile devices
+  static final Float64List _tx = Float64List(_vertices.length);
+  static final Float64List _ty = Float64List(_vertices.length);
+  static final Float64List _tz = Float64List(_vertices.length);
+  static final Float64List _px = Float64List(_vertices.length);
+  static final Float64List _py = Float64List(_vertices.length);
+  static final List<_RenderedFace> _faceBuffers = List<_RenderedFace>.generate(
+    _faces.length,
+    (int index) => _RenderedFace(),
+  );
+  static final Path _facePath = Path();
 
   static List<List<double>> _computeVertices() {
     const double rGirdle = 76.0;
@@ -127,17 +140,9 @@ class Diamond3DPainter extends CustomPainter {
     return <double>[v[0] / len, v[1] / len, v[2] / len];
   }
 
-  static List<double> _cross(List<double> a, List<double> b) {
-    return <double>[
-      a[1] * b[2] - a[2] * b[1],
-      a[2] * b[0] - a[0] * b[2],
-      a[0] * b[1] - a[1] * b[0],
-    ];
-  }
-
   @override
   void paint(Canvas canvas, Size size) {
-    if (opacity <= 0.001) return;
+    if (opacity <= 0.001 || scaleFactor <= 0.001) return;
 
     final double cx = size.width / 2.0;
     final double cy = size.height / 2.0;
@@ -148,9 +153,6 @@ class Diamond3DPainter extends CustomPainter {
     final double sinX = math.sin(_pitchX);
     final double cosZ = math.cos(_rollZ);
     final double sinZ = math.sin(_rollZ);
-
-    final List<List<double>> transformed = <List<double>>[];
-    final List<Offset> projected = <Offset>[];
 
     for (int i = 0; i < _vertices.length; i++) {
       final List<double> v = _vertices[i];
@@ -173,113 +175,121 @@ class Diamond3DPainter extends CustomPainter {
       final double y3 = x2 * sinZ + y2 * cosZ;
       final double z3 = z2;
 
-      transformed.add(<double>[x3, y3, z3]);
+      _tx[i] = x3;
+      _ty[i] = y3;
+      _tz[i] = z3;
 
       final double zDist = math.max(60.0, _fov + z3);
       final double pFactor = _fov / zDist;
-      final double px = cx + x3 * pFactor;
-      final double py = cy - y3 * pFactor;
-      projected.add(Offset(px, py));
+      _px[i] = cx + x3 * pFactor;
+      _py[i] = cy - y3 * pFactor;
     }
 
-    final List<_RenderedFace> renderedFaces = <_RenderedFace>[];
-    final List<_Sparkle> sparkles = <_Sparkle>[];
-
-    for (int i = 0; i < _faces.length; i++) {
+    final int faceCount = _faces.length;
+    for (int i = 0; i < faceCount; i++) {
       final _DiamondFace face = _faces[i];
-      final List<int> idx = face.indices;
-      final List<double> v0 = transformed[idx[0]];
-      final List<double> v1 = transformed[idx[1]];
-      final List<double> v2 = transformed[idx[2]];
+      final int i0 = face.indices[0];
+      final int i1 = face.indices[1];
+      final int i2 = face.indices[2];
 
-      final List<double> e1 = <double>[v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]];
-      final List<double> e2 = <double>[v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]];
-      final List<double> normal = _normalize(_cross(e1, e2));
+      final double e1x = _tx[i1] - _tx[i0];
+      final double e1y = _ty[i1] - _ty[i0];
+      final double e1z = _tz[i1] - _tz[i0];
 
-      final double zAvg = (v0[2] + v1[2] + v2[2]) / 3.0;
-      final bool isFront = normal[2] > -0.15;
+      final double e2x = _tx[i2] - _tx[i0];
+      final double e2y = _ty[i2] - _ty[i0];
+      final double e2z = _tz[i2] - _tz[i0];
+
+      // Cross product
+      double nx = e1y * e2z - e1z * e2y;
+      double ny = e1z * e2x - e1x * e2z;
+      double nz = e1x * e2y - e1y * e2x;
+      final double normLen = math.sqrt(nx * nx + ny * ny + nz * nz);
+      if (normLen > 0.000001) {
+        nx /= normLen;
+        ny /= normLen;
+        nz /= normLen;
+      }
+
+      final double zAvg = (_tz[i0] + _tz[i1] + _tz[i2]) / 3.0;
+      final bool isFront = nz > -0.15;
 
       final double dotL = math.max(
         0.0,
-        normal[0] * _normalizedLight[0] + normal[1] * _normalizedLight[1] + normal[2] * _normalizedLight[2],
+        nx * _normalizedLight[0] + ny * _normalizedLight[1] + nz * _normalizedLight[2],
       );
 
-      final double rz = 2.0 * dotL * normal[2] - _normalizedLight[2];
+      final double rz = 2.0 * dotL * nz - _normalizedLight[2];
       final double specular = math.pow(math.max(0.0, rz), 16).toDouble();
 
-      renderedFaces.add(
-        _RenderedFace(
-          indices: idx,
-          zAvg: zAvg,
-          isFront: isFront,
-          dotL: dotL,
-          specular: specular,
-        ),
-      );
-
-      if (isFront && specular > 0.76 && scaleFactor < 6.0) {
-        final Offset pt = projected[idx[0]];
-        sparkles.add(_Sparkle(x: pt.dx, y: pt.dy, intensity: specular));
-      }
+      final _RenderedFace rf = _faceBuffers[i];
+      rf.i0 = i0;
+      rf.i1 = i1;
+      rf.i2 = i2;
+      rf.zAvg = zAvg;
+      rf.isFront = isFront;
+      rf.dotL = dotL;
+      rf.specular = specular;
     }
 
-    // Painter's algorithm: sort back-to-front by depth (descending: furthest face with largest zAvg painted first)
-    renderedFaces.sort((_RenderedFace a, _RenderedFace b) => b.zAvg.compareTo(a.zAvg));
+    // Painter's algorithm: sort back-to-front by depth (furthest with largest zAvg first)
+    _faceBuffers.sort((_RenderedFace a, _RenderedFace b) => b.zAvg.compareTo(a.zAvg));
 
-    for (int i = 0; i < renderedFaces.length; i++) {
-      final _RenderedFace item = renderedFaces[i];
-      final Offset p0 = projected[item.indices[0]];
-      final Offset p1 = projected[item.indices[1]];
-      final Offset p2 = projected[item.indices[2]];
+    for (int i = 0; i < faceCount; i++) {
+      final _RenderedFace item = _faceBuffers[i];
+      final double p0x = _px[item.i0];
+      final double p0y = _py[item.i0];
+      final double p1x = _px[item.i1];
+      final double p1y = _py[item.i1];
+      final double p2x = _px[item.i2];
+      final double p2y = _py[item.i2];
 
-      final Path path = Path()
-        ..moveTo(p0.dx, p0.dy)
-        ..lineTo(p1.dx, p1.dy)
-        ..lineTo(p2.dx, p2.dy)
-        ..close();
+      _facePath.reset();
+      _facePath.moveTo(p0x, p0y);
+      _facePath.lineTo(p1x, p1y);
+      _facePath.lineTo(p2x, p2y);
+      _facePath.close();
 
       if (!item.isFront) {
-        // Back facet shading (translucent deep emerald)
-        _fillPaint.color = Color.fromRGBO(8, 38, 32, 0.30 * opacity);
-        canvas.drawPath(path, _fillPaint);
+        // Back facet shading (translucent warm champagne gold)
+        _fillPaint.color = Color.fromRGBO(210, 175, 115, 0.22 * opacity);
+        canvas.drawPath(_facePath, _fillPaint);
 
-        _strokePaint.color = Color.fromRGBO(225, 232, 240, 0.16 * opacity);
+        _strokePaint.color = Color.fromRGBO(185, 145, 80, 0.30 * opacity);
         _strokePaint.strokeWidth = math.min(2.5, 0.5 * math.max(1.0, scaleFactor * 0.35));
-        canvas.drawPath(path, _strokePaint);
+        canvas.drawPath(_facePath, _strokePaint);
       } else {
         final double lit = item.dotL;
         final double spec = item.specular;
 
-        // White Gold: Luminous silvery-platinum metallic brilliance
-        final int r = (220 + lit * 28 + spec * 45).clamp(0, 255).toInt();
-        final int g = (226 + lit * 24 + spec * 40).clamp(0, 255).toInt();
-        final int b = (235 + lit * 18 + spec * 35).clamp(0, 255).toInt();
-        final double a = (0.70 + lit * 0.20 + spec * 0.28).clamp(0.0, 0.96) * opacity;
+        // Radiant Crystal & Gold: Luminous brilliant-cut facet shading
+        final int r = (248 + lit * 7).clamp(0, 255).toInt();
+        final int g = (240 + lit * 12 - spec * 10).clamp(0, 255).toInt();
+        final int b = (215 + lit * 20 - spec * 25).clamp(0, 255).toInt();
+        final double a = (0.80 + lit * 0.14 + spec * 0.06).clamp(0.0, 0.98) * opacity;
 
         _fillPaint.color = Color.fromRGBO(r, g, b, a);
-        canvas.drawPath(path, _fillPaint);
+        canvas.drawPath(_facePath, _fillPaint);
 
-        // Radiant facet edges
-        final double edgeAlpha = (0.52 + spec * 0.45).clamp(0.0, 0.95) * opacity;
-        _strokePaint.color = Color.fromRGBO(242, 246, 252, edgeAlpha);
-        _strokePaint.strokeWidth = math.min(4.5, math.max(0.7, 0.85 * (scaleFactor * 0.38)));
-        canvas.drawPath(path, _strokePaint);
+        // Radiant gold facet edges
+        final double edgeAlpha = (0.65 + spec * 0.35).clamp(0.0, 1.0) * opacity;
+        _strokePaint.color = Color.fromRGBO(190, 142, 60, edgeAlpha);
+        _strokePaint.strokeWidth = math.min(3.5, math.max(0.8, 0.95 * (scaleFactor * 0.38)));
+        canvas.drawPath(_facePath, _strokePaint);
+
+        // Optional specular star sparkle
+        if (spec > 0.82 && scaleFactor < 5.0) {
+          final double spSize = 5.0 * spec;
+          _sparklePaint.color = Color.fromRGBO(
+            235,
+            180,
+            55,
+            (0.95 * spec * opacity).clamp(0.0, 1.0),
+          );
+          canvas.drawLine(Offset(p0x - spSize, p0y), Offset(p0x + spSize, p0y), _sparklePaint);
+          canvas.drawLine(Offset(p0x, p0y - spSize), Offset(p0x, p0y + spSize), _sparklePaint);
+        }
       }
-    }
-
-    // Render sparkle star glints
-    for (int i = 0; i < sparkles.length; i++) {
-      final _Sparkle sp = sparkles[i];
-      final double size = 5.5 * sp.intensity;
-      _sparklePaint.color = Color.fromRGBO(
-        255,
-        255,
-        255,
-        (0.92 * sp.intensity * opacity).clamp(0.0, 1.0),
-      );
-
-      canvas.drawLine(Offset(sp.x - size, sp.y), Offset(sp.x + size, sp.y), _sparklePaint);
-      canvas.drawLine(Offset(sp.x, sp.y - size), Offset(sp.x, sp.y + size), _sparklePaint);
     }
   }
 
@@ -298,23 +308,11 @@ class _DiamondFace {
 }
 
 class _RenderedFace {
-  const _RenderedFace({
-    required this.indices,
-    required this.zAvg,
-    required this.isFront,
-    required this.dotL,
-    required this.specular,
-  });
-  final List<int> indices;
-  final double zAvg;
-  final bool isFront;
-  final double dotL;
-  final double specular;
-}
-
-class _Sparkle {
-  const _Sparkle({required this.x, required this.y, required this.intensity});
-  final double x;
-  final double y;
-  final double intensity;
+  int i0 = 0;
+  int i1 = 0;
+  int i2 = 0;
+  double zAvg = 0.0;
+  bool isFront = false;
+  double dotL = 0.0;
+  double specular = 0.0;
 }

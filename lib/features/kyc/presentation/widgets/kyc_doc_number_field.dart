@@ -70,14 +70,14 @@ class _KycDocNumberFieldState extends State<KycDocNumberField> {
   final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
 
-  static const Color _goldLight = Color(0xFFF4E2AA);
-  static const Color _goldPrimary = Color(0xFFCCA243);
-  static const Color _textDim = Color(0xFF5C7469);
+  static const Color _textPrimary = Color(0xFF0A221C);
+  static const Color _textDim = Color(0xFF68726E);
   static const Color _danger = Color(0xFFEF4444);
   static const Color _success = Color(0xFF10B981);
-  static const Color _inputBg = Color(0xD9041913); // rgba(4, 25, 19, 0.85)
-  static const Color _inputBgFocus = Color(0xF2062019); // rgba(6, 32, 25, 0.95)
-  static const Color _inputBorder = Color(0x47CCA243); // rgba(204, 162, 65, 0.28)
+  static const Color _inputBg = Color(0xFFFAF8F5);
+  static const Color _inputBgFocus = Colors.white;
+  static const Color _inputBorder = Color(0xFFEFE6DB);
+  static const Color _focusBorder = Color(0xFF063B2C);
 
   @override
   void initState() {
@@ -126,17 +126,17 @@ class _KycDocNumberFieldState extends State<KycDocNumberField> {
       borderColor = _danger;
       boxShadow = const <BoxShadow>[
         BoxShadow(
-          color: Color(0x26EF4444), // rgba(239, 68, 68, 0.15)
+          color: Color(0x26EF4444),
           blurRadius: 6,
           spreadRadius: 2,
         ),
       ];
     } else if (_isFocused) {
-      borderColor = _goldPrimary;
+      borderColor = _focusBorder;
       bgColor = _inputBgFocus;
       boxShadow = const <BoxShadow>[
         BoxShadow(
-          color: Color(0x2ECCB043), // rgba(204, 162, 65, 0.18)
+          color: Color(0x14063B2C),
           blurRadius: 6,
           spreadRadius: 2,
         ),
@@ -165,9 +165,9 @@ class _KycDocNumberFieldState extends State<KycDocNumberField> {
                 label,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: _goldLight,
-                  letterSpacing: 0.04 * 12,
+                  fontWeight: FontWeight.w600,
+                  color: _textPrimary,
+                  letterSpacing: 0.5,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -193,7 +193,7 @@ class _KycDocNumberFieldState extends State<KycDocNumberField> {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: borderColor,
-              width: 1,
+              width: 1.2,
             ),
             boxShadow: boxShadow,
           ),
@@ -223,11 +223,11 @@ class _KycDocNumberFieldState extends State<KycDocNumberField> {
                         ],
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: isAadhaar ? 1.8 : 1.2,
-                    color: Colors.white,
+                    color: _textPrimary,
                   ),
-                  cursorColor: _goldPrimary,
+                  cursorColor: _focusBorder,
                   onChanged: widget.onChanged,
                   decoration: InputDecoration(
                     hintText: placeholder,

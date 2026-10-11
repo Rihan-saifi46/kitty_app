@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/constants/app_colors.dart';
+
 /// Navigation item model for the 4 primary tabs.
 class _DdddNavItem {
   const _DdddNavItem({
@@ -113,7 +115,7 @@ class AppBottomNavBar extends StatelessWidget {
                                     item.icon,
                                     size: 22,
                                     color: isActive
-                                        ? const Color(0xFF053826)
+                                        ? AppColors.primaryEmerald
                                         : const Color(0xFF77726A),
                                   )
                                 : SvgPicture.asset(
@@ -123,7 +125,7 @@ class AppBottomNavBar extends StatelessWidget {
                                     colorFilter: item.tintActive
                                         ? ColorFilter.mode(
                                             isActive
-                                                ? const Color(0xFF053826)
+                                                ? AppColors.primaryEmerald
                                                 : const Color(0xFF77726A),
                                             BlendMode.srcIn,
                                           )
@@ -138,7 +140,7 @@ class AppBottomNavBar extends StatelessWidget {
                             fontSize: 10,
                             fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                             color: isActive
-                                ? const Color(0xFF053826)
+                                ? AppColors.primaryEmerald
                                 : const Color(0xFF77726A),
                           ),
                         ),

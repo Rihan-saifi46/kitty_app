@@ -56,13 +56,13 @@ class _KittyShimmerState extends State<KittyShimmer>
   Widget build(BuildContext context) {
     final Color effectiveBase = widget.baseColor ??
         (widget.isDarkSurface
-            ? const Color(0xFF092B22)
-            : const Color(0xFFE5E7EB));
+            ? const Color(0xFFE2DDD5)
+            : const Color(0xFFEFE9DF));
 
     final Color effectiveHighlight = widget.highlightColor ??
         (widget.isDarkSurface
-            ? const Color(0x33DFC178)
-            : const Color(0xFFF8F9FA));
+            ? const Color(0xFFF3EFE8)
+            : const Color(0xFFFAF7F2));
 
     return AnimatedBuilder(
       animation: _controller,

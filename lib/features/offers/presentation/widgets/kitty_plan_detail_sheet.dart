@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -101,12 +102,10 @@ class KittyPlanDetailSheet extends StatelessWidget {
                           ),
                           Text(
                             scheme.name,
-                            style: AppTypography.cardTitle(
-                              color: AppColors.espressoCharcoal,
-                            ).copyWith(
-                              fontFamily: 'Cinzel',
+                            style: GoogleFonts.playfairDisplay(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
+                              color: AppColors.espressoCharcoal,
                             ),
                           ),
                         ],

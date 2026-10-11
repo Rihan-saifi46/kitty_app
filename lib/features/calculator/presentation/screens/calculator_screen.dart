@@ -164,7 +164,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: BoxDecoration(
                                   color: _calcMetal == 'gold'
-                                      ? const Color(0xFF083E32)
+                                      ? const Color(0xFF063B2C)
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: _calcMetal == 'gold'
@@ -206,7 +206,7 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: BoxDecoration(
                                   color: _calcMetal == 'silver'
-                                      ? const Color(0xFF083E32)
+                                      ? const Color(0xFF063B2C)
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: _calcMetal == 'silver'
@@ -351,13 +351,13 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                                       width: 40,
                                       padding: const EdgeInsets.symmetric(vertical: 9),
                                       decoration: BoxDecoration(
-                                        color: _calcUnit == 'g' ? const Color(0xFF083E32) : Colors.transparent,
+                                        color: _calcUnit == 'g' ? const Color(0xFF063B2C) : Colors.transparent,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
                                         'g',
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(
+                                        style: GoogleFonts.plusJakartaSans(
                                           fontSize: 12.5,
                                           fontWeight: FontWeight.bold,
                                           color: _calcUnit == 'g' ? Colors.white : const Color(0xFF635E54),
@@ -374,13 +374,13 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                                       width: 40,
                                       padding: const EdgeInsets.symmetric(vertical: 9),
                                       decoration: BoxDecoration(
-                                        color: _calcUnit == 'kg' ? const Color(0xFF083E32) : Colors.transparent,
+                                        color: _calcUnit == 'kg' ? const Color(0xFF063B2C) : Colors.transparent,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
                                         'kg',
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(
+                                        style: GoogleFonts.plusJakartaSans(
                                           fontSize: 12.5,
                                           fontWeight: FontWeight.bold,
                                           color: _calcUnit == 'kg' ? Colors.white : const Color(0xFF635E54),
@@ -451,16 +451,16 @@ class _CalculatorScreenState extends ConsumerState<CalculatorScreen> {
                           SnackBar(
                             content: Text(
                               'Calculated Value: ${_inrFormat.format(estimatedTotal.round())}',
-                              style: const TextStyle(fontWeight: FontWeight.w700),
+                              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
                             ),
-                            backgroundColor: const Color(0xFF083E32),
+                            backgroundColor: const Color(0xFF063B2C),
                             duration: const Duration(seconds: 2),
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF083E32),
+                        backgroundColor: const Color(0xFF063B2C),
                         foregroundColor: Colors.white,
                         elevation: 2,
                         padding: const EdgeInsets.symmetric(vertical: 14),

@@ -34,14 +34,14 @@ class GokwikGatewayScreen extends StatelessWidget {
     final String formattedAmount = CurrencyFormatter.formatRupees(activeOrder.amount);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF071E18),
+      backgroundColor: AppColors.warmPearl,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF051813),
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           key: const Key('gokwik_close_btn'),
-          icon: const Icon(Icons.close_rounded, color: Colors.white70),
+          icon: const Icon(Icons.close_rounded, color: AppColors.deepForestCharcoal),
           onPressed: () {
             context.pop(const GatewayResult.cancelled(message: 'Payment dismissed by user.'));
           },
@@ -52,23 +52,23 @@ class GokwikGatewayScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.goldPrimary.withValues(alpha: 0.15),
+                color: const Color(0xFFF3EDE4),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                  color: AppColors.goldPrimary.withValues(alpha: 0.4),
+                  color: AppColors.surfaceCardBorder,
                 ),
               ),
               child: Row(
                 children: <Widget>[
                   const Icon(
                     Icons.verified_user_rounded,
-                    color: AppColors.goldPrimary,
+                    color: AppColors.primaryEmerald,
                     size: 16,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     'GoKwik Sandbox',
-                    style: AppTypography.labelMeta(color: AppColors.goldLight).copyWith(
+                    style: AppTypography.labelMeta(color: AppColors.primaryEmerald).copyWith(
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
                     ),
@@ -89,15 +89,15 @@ class GokwikGatewayScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.space20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0C2B22),
+                  color: Colors.white,
                   borderRadius: AppRadius.border20,
                   border: Border.all(
-                    color: AppColors.goldBorder.withValues(alpha: 0.3),
+                    color: AppColors.surfaceCardBorder,
                     width: 1,
                   ),
                   boxShadow: const <BoxShadow>[
                     BoxShadow(
-                      color: Color(0x33000000),
+                      color: Color(0x0C000000),
                       blurRadius: 16,
                       offset: Offset(0, 6),
                     ),
@@ -108,7 +108,7 @@ class GokwikGatewayScreen extends StatelessWidget {
                     Text(
                       'SWASTIK JEWELLERS CHIT VAULT',
                       style: AppTypography.labelMeta(
-                        color: const Color(0xFF8EAA9E),
+                        color: AppColors.mutedSlateGray,
                       ).copyWith(letterSpacing: 1.2, fontWeight: FontWeight.w700),
                       textAlign: TextAlign.center,
                     ),
@@ -117,12 +117,12 @@ class GokwikGatewayScreen extends StatelessWidget {
                       formattedAmount,
                       key: const Key('gokwik_order_amount_text'),
                       style: AppTypography.amountDisplay(
-                        color: const Color(0xFFFFE28A),
+                        color: AppColors.primaryEmerald,
                       ).copyWith(fontSize: 34),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.space12),
-                    Divider(color: Colors.white.withValues(alpha: 0.1)),
+                    const Divider(color: AppColors.surfaceCardBorder),
                     const SizedBox(height: AppSpacing.space12),
                     _buildDetailRow('Gateway Order ID', activeOrder.orderId),
                     const SizedBox(height: 6),
@@ -141,10 +141,10 @@ class GokwikGatewayScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.space14),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.04),
+                  color: const Color(0xFFFAF8F5),
                   borderRadius: AppRadius.border12,
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: AppColors.surfaceCardBorder,
                   ),
                 ),
                 child: Row(
@@ -152,7 +152,7 @@ class GokwikGatewayScreen extends StatelessWidget {
                   children: <Widget>[
                     const Icon(
                       Icons.info_outline_rounded,
-                      color: Color(0xFF8EAA9E),
+                      color: AppColors.mutedSlateGray,
                       size: 20,
                     ),
                     const SizedBox(width: AppSpacing.space10),
@@ -160,7 +160,7 @@ class GokwikGatewayScreen extends StatelessWidget {
                       child: Text(
                         'Select a simulated customer action below to exercise gateway callbacks and backend reconciliation polling.',
                         style: AppTypography.bodySmall(
-                          color: const Color(0xFFB5C9C1),
+                          color: AppColors.mutedSlateGray,
                         ),
                       ),
                     ),
@@ -179,13 +179,13 @@ class GokwikGatewayScreen extends StatelessWidget {
                   ));
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.goldPrimary,
-                  foregroundColor: const Color(0xFF0C2B22),
+                  backgroundColor: AppColors.primaryEmerald,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.space16),
                   shape: const RoundedRectangleBorder(
                     borderRadius: AppRadius.border12,
                   ),
-                  elevation: 2,
+                  elevation: 0,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -195,7 +195,7 @@ class GokwikGatewayScreen extends StatelessWidget {
                     Text(
                       'Simulate User Payment Complete',
                       style: AppTypography.bodyBold(
-                        color: const Color(0xFF0C2B22),
+                        color: Colors.white,
                       ).copyWith(fontWeight: FontWeight.w800),
                     ),
                   ],
@@ -213,9 +213,9 @@ class GokwikGatewayScreen extends StatelessWidget {
                   ));
                 },
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFFFCA5A5),
-                  side: BorderSide(
-                    color: const Color(0xFFEF4444).withValues(alpha: 0.5),
+                  foregroundColor: const Color(0xFFDC2626),
+                  side: const BorderSide(
+                    color: Color(0xFFEF4444),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
                   shape: const RoundedRectangleBorder(
@@ -230,7 +230,7 @@ class GokwikGatewayScreen extends StatelessWidget {
                     Text(
                       'Simulate Bank Decline (Failed)',
                       style: AppTypography.bodyBold(
-                        color: const Color(0xFFFCA5A5),
+                        color: const Color(0xFFDC2626),
                       ).copyWith(fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -248,9 +248,9 @@ class GokwikGatewayScreen extends StatelessWidget {
                   ));
                 },
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFFCBD5E1),
-                  side: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.2),
+                  foregroundColor: AppColors.deepForestCharcoal,
+                  side: const BorderSide(
+                    color: AppColors.surfaceCardBorder,
                   ),
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.space14),
                   shape: const RoundedRectangleBorder(
@@ -265,7 +265,7 @@ class GokwikGatewayScreen extends StatelessWidget {
                     Text(
                       'Cancel Payment & Dismiss',
                       style: AppTypography.bodyRegular(
-                        color: const Color(0xFFCBD5E1),
+                        color: AppColors.deepForestCharcoal,
                       ),
                     ),
                   ],
@@ -285,7 +285,7 @@ class GokwikGatewayScreen extends StatelessWidget {
                 child: Text(
                   'Return Without Completion (Pending Verification)',
                   style: AppTypography.labelMeta(
-                    color: const Color(0xFF8EAA9E),
+                    color: AppColors.mutedSlateGray,
                   ).copyWith(decoration: TextDecoration.underline),
                   textAlign: TextAlign.center,
                 ),
@@ -303,11 +303,11 @@ class GokwikGatewayScreen extends StatelessWidget {
       children: <Widget>[
         Text(
           label,
-          style: AppTypography.labelMeta(color: const Color(0xFF8EAA9E)),
+          style: AppTypography.labelMeta(color: AppColors.mutedSlateGray),
         ),
         Text(
           value,
-          style: AppTypography.labelMeta(color: Colors.white).copyWith(
+          style: AppTypography.labelMeta(color: AppColors.deepForestCharcoal).copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),

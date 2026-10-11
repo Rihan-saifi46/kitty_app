@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/routing/route_paths.dart';
@@ -133,11 +134,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               const SizedBox(height: 4),
               Text(
                 '₹${NumberFormat('#,##,###').format(amount)}',
-                style: const TextStyle(
-                  fontFamily: 'Playfair',
+                style: GoogleFonts.playfairDisplay(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1C1917),
+                  color: const Color(0xFF1C1917),
                 ),
               ),
               const Text(
@@ -155,9 +155,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                 width: 190,
                 height: 190,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFAF7F0),
+                  color: const Color(0xFFFAF7F2),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0x3306342B), width: 2),
+                  border: Border.all(color: const Color(0x33063B2C), width: 2),
                 ),
                 padding: const EdgeInsets.all(12),
                 child: Center(
@@ -170,7 +170,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     child: const Icon(
                       Icons.qr_code_2_rounded,
                       size: 150,
-                      color: Color(0xFF06342B),
+                      color: Color(0xFF063B2C),
                     ),
                   ),
                 ),
@@ -198,7 +198,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFAF7F0),
+                  color: const Color(0xFFFAF7F2),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: const Color(0xFFE7E5E4)),
                 ),
@@ -220,7 +220,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('UPI ID copied to clipboard'),
-                            backgroundColor: Color(0xFF06342B),
+                            backgroundColor: Color(0xFF063B2C),
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
@@ -253,7 +253,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   icon: const Icon(Icons.check_rounded, size: 18),
                   label: Text('I Have Paid ₹${NumberFormat('#,##,###').format(amount)}'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF06342B),
+                    backgroundColor: const Color(0xFF063B2C),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
@@ -323,7 +323,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final String formattedAmount = '₹${NumberFormat('#,##,###').format(amount)}';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF7F0),
+      backgroundColor: const Color(0xFFFAF7F2),
       body: SafeArea(
         child: Stack(
           children: <Widget>[
@@ -348,15 +348,14 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           size: 24,
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Center(
                           child: Text(
                             'Make Payment',
-                            style: TextStyle(
-                              fontFamily: 'Playfair',
+                            style: GoogleFonts.playfairDisplay(
                               fontSize: 21,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF1C1917),
+                              color: const Color(0xFF1C1917),
                               letterSpacing: -0.3,
                             ),
                           ),
@@ -420,13 +419,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      const Text(
+                                      Text(
                                         '11 Month Gold Plan',
-                                        style: TextStyle(
-                                          fontFamily: 'Playfair',
+                                        style: GoogleFonts.playfairDisplay(
                                           fontSize: 17,
                                           fontWeight: FontWeight.w700,
-                                          color: Color(0xFF1C1917),
+                                          color: const Color(0xFF1C1917),
                                         ),
                                       ),
                                       const SizedBox(height: 2),
@@ -517,13 +515,12 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         const SizedBox(height: 18),
 
                         // Section Title
-                        const Text(
+                        Text(
                           'Choose Payment Method',
-                          style: TextStyle(
-                            fontFamily: 'Playfair',
+                          style: GoogleFonts.playfairDisplay(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1C1917),
+                            color: const Color(0xFF1C1917),
                           ),
                         ),
 
@@ -561,7 +558,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           badgeBg: const Color(0xFFE6F4F0),
                           subtitle: 'Scan with GPay, PhonePe, Paytm or any UPI App',
                           icon: Icons.qr_code_scanner_rounded,
-                          iconColor: const Color(0xFF06342B),
+                          iconColor: const Color(0xFF063B2C),
                         ),
 
                         const SizedBox(height: 10),
@@ -616,7 +613,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           title: 'Net Banking',
                           subtitle: 'All major banks',
                           icon: Icons.account_balance_rounded,
-                          iconColor: const Color(0xFF06342B),
+                          iconColor: const Color(0xFF063B2C),
                         ),
 
                         const SizedBox(height: 10),
@@ -641,7 +638,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           badgeBg: const Color(0xFFE6F4F0),
                           subtitle: 'Store executive collects cash at your home',
                           icon: Icons.payments_outlined,
-                          iconColor: const Color(0xFF06342B),
+                          iconColor: const Color(0xFF063B2C),
                         ),
 
                         const SizedBox(height: 18),
@@ -698,7 +695,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               child: Container(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFAF7F0),
+                  color: Color(0xFFFAF7F2),
                   border: Border(
                     top: BorderSide(color: Color(0x33E7E5E4)),
                   ),
@@ -709,10 +706,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                   child: ElevatedButton(
                     onPressed: () => _handlePayAction(amount),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF06342B),
+                      backgroundColor: const Color(0xFF063B2C),
                       foregroundColor: Colors.white,
                       elevation: 3,
-                      shadowColor: const Color(0x3306342B),
+                      shadowColor: const Color(0x33063B2C),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(26),
                       ),
@@ -747,29 +744,28 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    child: const Column(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        SizedBox(
+                        const SizedBox(
                           width: 48,
                           height: 48,
                           child: CircularProgressIndicator(
                             strokeWidth: 3.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF06342B)),
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF063B2C)),
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Text(
                           'Connecting to Bank',
-                          style: TextStyle(
-                            fontFamily: 'Playfair',
+                          style: GoogleFonts.playfairDisplay(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1C1917),
+                            color: const Color(0xFF1C1917),
                           ),
                         ),
-                        SizedBox(height: 4),
-                        Text(
+                        const SizedBox(height: 4),
+                        const Text(
                           'Authenticating payment securely...',
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -815,7 +811,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFF06342B) : const Color(0xFFEFE8DD),
+            color: isSelected ? const Color(0xFF063B2C) : const Color(0xFFEFE8DD),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: const <BoxShadow>[
@@ -836,7 +832,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFAF7F0),
+                      color: const Color(0xFFFAF7F2),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: const Color(0xFFEBE1D0)),
                     ),
@@ -923,7 +919,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? const Color(0xFF06342B) : const Color(0xFFD6D3D1),
+                  color: isSelected ? const Color(0xFF063B2C) : const Color(0xFFD6D3D1),
                   width: 2,
                 ),
               ),
@@ -934,7 +930,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         height: 10,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Color(0xFF06342B),
+                          color: Color(0xFF063B2C),
                         ),
                       ),
                     )

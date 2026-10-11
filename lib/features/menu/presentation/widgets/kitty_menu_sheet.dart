@@ -27,7 +27,7 @@ Future<void> openKittyMenu(BuildContext context) {
 /// Native Flutter reproduction of `dddd/menu.html` (Profile & Gold Services).
 ///
 /// Features:
-/// 1. Rich Pine Emerald Header (#07392F) with luxury decorative glow effects.
+/// 1. Rich Pine Emerald Header (#063B2C) with luxury decorative glow effects.
 /// 2. Golden Gradient Avatar (135° #ECCF96 -> #D4A95B -> #9E742A) with user initial.
 /// 3. Patron profile info (Name, Mobile, "Edit Profile" link).
 /// 4. Settings & Close buttons.
@@ -53,8 +53,8 @@ class _KittyMenuSheetState extends ConsumerState<KittyMenuSheet>
   late final AnimationController _pulseController;
   late final Animation<double> _pulseAnimation;
 
-  static const Color _pineDark = Color(0xFF07392F);
-  static const Color _pineLight = Color(0xFF0E4D40);
+  static const Color _pineDark = Color(0xFF063B2C);
+  static const Color _pineLight = Color(0xFF0B4D3B);
   static const Color _surfaceBg = Color(0xFFFFFFFF);
   static const Color _dividerColor = Color(0xFFF4EFE6);
   static const Color _textDark = Color(0xFF1A2120);
@@ -757,7 +757,7 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Profile updated successfully'),
-          backgroundColor: Color(0xFF07392F),
+          backgroundColor: Color(0xFF063B2C),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -865,7 +865,7 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
                   child: ElevatedButton(
                     onPressed: _isSaving ? null : _handleSave,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF07392F),
+                      backgroundColor: const Color(0xFF063B2C),
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12),

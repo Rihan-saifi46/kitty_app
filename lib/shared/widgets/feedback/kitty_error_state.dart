@@ -123,7 +123,7 @@ class KittyErrorState extends StatelessWidget {
                 onPressed: onRetry,
                 fullWidth: false,
                 height: AppDimensions.primaryButtonHeight,
-                icon: const Icon(Icons.refresh, size: 16, color: Color(0xFF092B22)),
+                icon: const Icon(Icons.refresh, size: 16, color: Colors.white),
               ),
             ],
             if (secondaryLabel != null && onSecondaryAction != null) ...<Widget>[

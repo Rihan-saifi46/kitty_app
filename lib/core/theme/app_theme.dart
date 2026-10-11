@@ -15,10 +15,10 @@ abstract final class AppTheme {
   // Dark Theme (Deep Emerald & Metallic Gold Luxury)
   // ---------------------------------------------------------------------------
 
-  /// Luxury dark emerald theme for brand-centric and authentication surfaces.
+  /// Luxury unified theme matching the approved Gold Plans visual baseline.
   static ThemeData get darkTheme => _cachedDarkTheme;
 
-  /// Clean light luxury theme for readability-first operational surfaces.
+  /// Clean light luxury theme for all application surfaces.
   static ThemeData get lightTheme => _cachedLightTheme;
 
   static final ThemeData _cachedDarkTheme = _buildDarkTheme();

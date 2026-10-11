@@ -154,7 +154,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
     final double parsedWeight = double.tryParse(_weightController.text.trim()) ?? 0.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F2EB),
+      backgroundColor: const Color(0xFFFAF7F2),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -281,7 +281,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: BoxDecoration(
                                   color: _activeRateView == 'gold'
-                                      ? const Color(0xFF083E32)
+                                      ? const Color(0xFF063B2C)
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: _activeRateView == 'gold'
@@ -317,7 +317,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: BoxDecoration(
                                   color: _activeRateView == 'silver'
-                                      ? const Color(0xFF083E32)
+                                      ? const Color(0xFF063B2C)
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: _activeRateView == 'silver'
@@ -411,7 +411,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
                                   color: _calcMetal == 'gold'
-                                      ? const Color(0xFF083E32)
+                                      ? const Color(0xFF063B2C)
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: _calcMetal == 'gold'
@@ -452,7 +452,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
                                   color: _calcMetal == 'silver'
-                                      ? const Color(0xFF083E32)
+                                      ? const Color(0xFF063B2C)
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: _calcMetal == 'silver'
@@ -594,7 +594,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                                           width: 36,
                                           padding: const EdgeInsets.symmetric(vertical: 8),
                                           decoration: BoxDecoration(
-                                            color: _calcUnit == 'g' ? const Color(0xFF083E32) : Colors.transparent,
+                                            color: _calcUnit == 'g' ? const Color(0xFF063B2C) : Colors.transparent,
                                             borderRadius: BorderRadius.circular(8),
                                           ),
                                           child: Text(
@@ -614,7 +614,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                                           width: 36,
                                           padding: const EdgeInsets.symmetric(vertical: 8),
                                           decoration: BoxDecoration(
-                                            color: _calcUnit == 'kg' ? const Color(0xFF083E32) : Colors.transparent,
+                                            color: _calcUnit == 'kg' ? const Color(0xFF063B2C) : Colors.transparent,
                                             borderRadius: BorderRadius.circular(8),
                                           ),
                                           child: Text(
@@ -694,7 +694,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                               'Calculated: ${_inrFormat.format(estimatedTotal.round())}',
                               style: const TextStyle(fontWeight: FontWeight.w700),
                             ),
-                            backgroundColor: const Color(0xFF083E32),
+                            backgroundColor: const Color(0xFF063B2C),
                             duration: const Duration(seconds: 2),
                             behavior: SnackBarBehavior.floating,
                           ),
@@ -704,11 +704,11 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF083E32),
+                          color: const Color(0xFF063B2C),
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: const <BoxShadow>[
                             BoxShadow(
-                              color: Color(0x1F083E32),
+                              color: Color(0x1F063B2C),
                               blurRadius: 6,
                               offset: Offset(0, 2),
                             ),
@@ -981,7 +981,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: isSel ? const Color(0xFF083E32) : Colors.transparent,
+                      color: isSel ? const Color(0xFF063B2C) : Colors.transparent,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -1170,7 +1170,7 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: isSel ? const Color(0xFF083E32) : Colors.transparent,
+                      color: isSel ? const Color(0xFF063B2C) : Colors.transparent,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(

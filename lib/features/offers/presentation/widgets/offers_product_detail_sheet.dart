@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -152,10 +153,10 @@ class OffersProductDetailSheet extends StatelessWidget {
                   Expanded(
                     child: Text(
                       product.title,
-                      style: AppTypography.cardTitle(color: AppColors.textPrimaryDark).copyWith(
-                        fontFamily: 'Cinzel',
+                      style: GoogleFonts.playfairDisplay(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimaryDark,
                       ),
                     ),
                   ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/routing/route_paths.dart';
 
 /// Recreated 100% identically from dddd/success.html
@@ -11,8 +13,8 @@ import '../../../../core/routing/route_paths.dart';
 /// - Central Celebration Illustration with mint circles and diamond confetti particles
 /// - "Payment Successful!" (Playfair Display 28px bold)
 /// - Payment Breakdown Card with "Paid Successfully" green badge & key-value rows
-/// - "View My Plan" CTA in #073B2C
-/// - "Explore Jewellery" outlined CTA in #073B2C
+/// - "View My Plan" CTA in #063B2C
+/// - "Explore Jewellery" outlined CTA in #063B2C
 class AuthSuccessScreen extends ConsumerWidget {
   const AuthSuccessScreen({
     super.key,
@@ -48,13 +50,12 @@ class AuthSuccessScreen extends ConsumerWidget {
                   ),
                   TextButton(
                     onPressed: () => context.go(RoutePaths.dashboard),
-                    child: const Text(
+                    child: Text(
                       'Done',
-                      style: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF073B2C),
+                        color: AppColors.primaryEmerald,
                       ),
                     ),
                   ),
@@ -136,7 +137,7 @@ class AuthSuccessScreen extends ConsumerWidget {
                                   child: Icon(
                                     Icons.check_rounded,
                                     size: 52,
-                                    color: Color(0xFF073B2C),
+                                    color: AppColors.primaryEmerald,
                                   ),
                                 ),
                               ),
@@ -149,14 +150,13 @@ class AuthSuccessScreen extends ConsumerWidget {
                     const SizedBox(height: 18),
 
                     // Heading & Subtitle
-                    const Text(
+                    Text(
                       'Payment Successful!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'Playfair',
+                      style: GoogleFonts.playfairDisplay(
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF111827),
+                        color: const Color(0xFF111827),
                         letterSpacing: -0.4,
                       ),
                     ),
@@ -164,11 +164,10 @@ class AuthSuccessScreen extends ConsumerWidget {
                     Text(
                       'Your $planTitle has been activated.\nYou’re one step closer to your dream jewellery.',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFF555F6D),
+                        color: const Color(0xFF555F6D),
                         height: 1.4,
                       ),
                     ),
@@ -216,21 +215,19 @@ class AuthSuccessScreen extends ConsumerWidget {
                                 children: <Widget>[
                                   Text(
                                     amount,
-                                    style: const TextStyle(
-                                      fontFamily: 'Plus Jakarta Sans',
+                                    style: GoogleFonts.plusJakartaSans(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w800,
-                                      color: Color(0xFF111827),
+                                      color: const Color(0xFF111827),
                                     ),
                                   ),
                                   const SizedBox(height: 1),
-                                  const Text(
+                                  Text(
                                     'Paid Successfully',
-                                    style: TextStyle(
-                                      fontFamily: 'Plus Jakarta Sans',
+                                    style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
-                                      color: Color(0xFF1EA64E),
+                                      color: const Color(0xFF1EA64E),
                                     ),
                                   ),
                                 ],
@@ -259,18 +256,17 @@ class AuthSuccessScreen extends ConsumerWidget {
                       child: ElevatedButton(
                         onPressed: () => context.go(RoutePaths.dashboard),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF073B2C),
+                          backgroundColor: AppColors.primaryEmerald,
                           foregroundColor: Colors.white,
                           elevation: 3,
-                          shadowColor: const Color(0x33073B2C),
+                          shadowColor: const Color(0x33063B2C),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(26),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'View My Plan',
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 15.5,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.3,
@@ -289,19 +285,18 @@ class AuthSuccessScreen extends ConsumerWidget {
                         onPressed: () => context.go(RoutePaths.jewellery),
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.transparent,
-                          foregroundColor: const Color(0xFF073B2C),
-                          side: const BorderSide(color: Color(0xFF073B2C), width: 1.5),
+                          foregroundColor: AppColors.primaryEmerald,
+                          side: const BorderSide(color: AppColors.primaryEmerald, width: 1.5),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Explore Jewellery',
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF073B2C),
+                            color: AppColors.primaryEmerald,
                             letterSpacing: 0.3,
                           ),
                         ),
@@ -341,20 +336,18 @@ class AuthSuccessScreen extends ConsumerWidget {
         children: <Widget>[
           Text(
             label,
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 13.5,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF636F7E),
+              color: const Color(0xFF636F7E),
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 13.5,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF111827),
+              color: const Color(0xFF111827),
             ),
           ),
         ],

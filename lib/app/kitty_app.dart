@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../core/config/app_constants.dart';
-import '../core/constants/app_colors.dart';
 import '../core/routing/app_router.dart';
 import '../core/theme/app_theme.dart';
 import '../features/settings/presentation/providers/settings_controller.dart';
@@ -28,7 +27,7 @@ class KittyApp extends ConsumerWidget {
       routerConfig: router,
       builder: (BuildContext context, Widget? child) {
         return ColoredBox(
-          color: AppColors.primaryEmerald, // Deep Emerald Base: eliminates cold-launch blank frame
+          color: const Color(0xFFFAF7F2), // Warm Gold Canvas: eliminates cold-launch blank frame
           child: ConnectivityBannerWrapper(
             child: child ?? const SizedBox.shrink(),
           ),

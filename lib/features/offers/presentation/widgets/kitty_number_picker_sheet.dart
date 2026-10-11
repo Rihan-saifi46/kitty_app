@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -180,13 +181,12 @@ class _KittyNumberPickerSheetState
                       letterSpacing: 1.0,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Select Your Numbers',
-                    style: TextStyle(
-                      fontFamily: 'Playfair Display',
+                    style: GoogleFonts.playfairDisplay(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1E1E1E),
+                      color: const Color(0xFF1E1E1E),
                     ),
                   ),
                 ],
@@ -244,13 +244,12 @@ class _KittyNumberPickerSheetState
                           color: const Color(0xFFFBE9CE),
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Draw #25',
-                          style: TextStyle(
-                            fontFamily: 'Playfair Display',
+                          style: GoogleFonts.playfairDisplay(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1E1E1E),
+                            color: const Color(0xFF1E1E1E),
                           ),
                         ),
                       ),
@@ -261,7 +260,7 @@ class _KittyNumberPickerSheetState
                       ),
                       RichText(
                         text: const TextSpan(
-                          text: '₹1,000 ',
+                          text: '₹100 ',
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
                             fontSize: 14,
@@ -270,7 +269,7 @@ class _KittyNumberPickerSheetState
                           ),
                           children: <TextSpan>[
                             TextSpan(
-                              text: 'per number',
+                              text: '/ number',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,

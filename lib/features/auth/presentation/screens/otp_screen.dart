@@ -82,13 +82,13 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     final bool canVerify = _currentOtp.length == 6 && !authState.isVerifying;
 
     return Scaffold(
-      backgroundColor: AppColors.deepEmeraldBase, // Exact: #05241C
+      backgroundColor: AppColors.warmPearl, // Canvas #FAF7F2
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          // Subtle Damask Wallpaper Pattern
+          // Subtle Wallpaper Pattern
           Opacity(
-            opacity: 0.08,
+            opacity: 0.035,
             child: Image.asset(
               'assets/patterns/damask-pattern.jpg',
               fit: BoxFit.cover,
@@ -98,25 +98,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               errorBuilder: (BuildContext ctx, Object error, StackTrace? st) {
                 return const SizedBox.shrink();
               },
-            ),
-          ),
-
-          // Ambient Radial Glow
-          Center(
-            child: Container(
-              width: 360,
-              height: 360,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: <Color>[
-                    AppColors.goldPrimary.withValues(alpha: 0.12),
-                    const Color(0xFF0D4A3A).withValues(alpha: 0.16),
-                    Colors.transparent,
-                  ],
-                  stops: const <double>[0.0, 0.45, 0.70],
-                ),
-              ),
             ),
           ),
 
@@ -131,17 +112,17 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   constraints: const BoxConstraints(maxWidth: 440),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xD8041913),
+                      color: Colors.white,
                       borderRadius: const BorderRadius.all(Radius.circular(24.0)),
                       border: Border.all(
-                        color: AppColors.goldBorder,
+                        color: AppColors.surfaceCardBorder,
                         width: 1.2,
                       ),
                       boxShadow: const <BoxShadow>[
                         BoxShadow(
-                          color: Color(0x73000000),
-                          blurRadius: 36,
-                          offset: Offset(0, 16),
+                          color: Color(0x0C000000),
+                          blurRadius: 24,
+                          offset: Offset(0, 8),
                         ),
                       ],
                     ),
@@ -176,7 +157,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                   const Icon(
                                     Icons.arrow_back_rounded,
                                     size: 17,
-                                    color: AppColors.goldPrimary,
+                                    color: AppColors.deepForestCharcoal,
                                   ),
                                   const SizedBox(width: AppSpacing.space6),
                                   Text(
@@ -184,7 +165,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13.5,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColors.goldPrimary,
+                                      color: AppColors.deepForestCharcoal,
                                     ),
                                   ),
                                 ],
@@ -197,11 +178,11 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                         // Heading Group
                         Text(
                           'Verify your number',
-                          style: GoogleFonts.cormorantGaramond(
-                            fontSize: 24,
+                          style: GoogleFonts.playfairDisplay(
+                            fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimaryLight,
-                            letterSpacing: 0.3,
+                            color: AppColors.deepForestCharcoal,
+                            letterSpacing: 0.2,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.space6),
@@ -213,7 +194,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w400,
-                                    color: AppColors.emeraldTextSubtle,
+                                    color: AppColors.mutedSlateGray,
                                   ),
                                   children: <TextSpan>[
                                     const TextSpan(text: 'Enter the OTP sent to '),
@@ -223,7 +204,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                           : '+91 98765 43210',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w700,
-                                        color: AppColors.goldLight,
+                                        color: AppColors.deepForestCharcoal,
                                       ),
                                     ),
                                   ],
@@ -258,7 +239,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                           hasError: hasError,
                           enabled: !authState.isVerifying,
                           autofocus: true,
-                          isDarkSurface: true,
+                          isDarkSurface: false,
                           onChanged: (String val) {
                             setState(() {
                               _currentOtp = val;
@@ -312,7 +293,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                   const Icon(
                                     Icons.timer_outlined,
                                     size: 14,
-                                    color: AppColors.emeraldTextSubtle,
+                                    color: AppColors.mutedSlateGray,
                                   ),
                                   const SizedBox(width: AppSpacing.space4),
                                   Text(
@@ -320,7 +301,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12.5,
                                       fontWeight: FontWeight.w400,
-                                      color: AppColors.emeraldTextSubtle,
+                                      color: AppColors.mutedSlateGray,
                                     ),
                                   ),
                                   Text(
@@ -328,7 +309,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12.5,
                                       fontWeight: FontWeight.w700,
-                                      color: AppColors.goldLight,
+                                      color: AppColors.goldPrimary,
                                     ),
                                   ),
                                 ],
@@ -339,7 +320,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w400,
-                                  color: AppColors.emeraldTextSubtle,
+                                  color: AppColors.mutedSlateGray,
                                 ),
                               ),
                             TextButton(
@@ -356,7 +337,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                   fontWeight: FontWeight.w700,
                                   color: authState.canResend
                                       ? AppColors.goldPrimary
-                                      : AppColors.textTertiary,
+                                      : AppColors.mutedSlateGray,
                                 ),
                               ),
                             ),
@@ -369,13 +350,19 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                         Container(
                           height: AppDimensions.primaryButtonHeight,
                           decoration: BoxDecoration(
-                            gradient: canVerify
-                                ? AppColors.goldPrimaryGradient
-                                : const LinearGradient(
-                                    colors: <Color>[Color(0xFF2A3D36), Color(0xFF20322C)],
-                                  ),
+                            color: canVerify
+                                ? AppColors.primaryEmerald
+                                : const Color(0xFFE5DDD0),
                             borderRadius: AppRadius.border12,
-                            boxShadow: canVerify ? AppShadows.ctaGold : null,
+                            boxShadow: canVerify
+                                ? const <BoxShadow>[
+                                    BoxShadow(
+                                      color: Color(0x1F063B2C),
+                                      blurRadius: 6,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
                           ),
                           child: Material(
                             color: Colors.transparent,
@@ -393,7 +380,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2.2,
                                               valueColor: AlwaysStoppedAnimation<Color>(
-                                                AppColors.deepEmeraldBase,
+                                                Colors.white,
                                               ),
                                             ),
                                           ),
@@ -403,7 +390,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                             style: GoogleFonts.plusJakartaSans(
                                               fontSize: 14.5,
                                               fontWeight: FontWeight.w700,
-                                              color: AppColors.deepEmeraldBase,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ],
@@ -417,8 +404,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                               fontSize: 14.5,
                                               fontWeight: FontWeight.w700,
                                               color: canVerify
-                                                  ? AppColors.deepEmeraldBase
-                                                  : AppColors.textTertiary,
+                                                  ? Colors.white
+                                                  : AppColors.mutedSlateGray,
                                               letterSpacing: 0.3,
                                             ),
                                           ),
@@ -427,8 +414,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                                             Icons.check_circle_outline_rounded,
                                             size: 17,
                                             color: canVerify
-                                                ? AppColors.deepEmeraldBase
-                                                : AppColors.textTertiary,
+                                                ? Colors.white
+                                                : AppColors.mutedSlateGray,
                                           ),
                                         ],
                                       ),

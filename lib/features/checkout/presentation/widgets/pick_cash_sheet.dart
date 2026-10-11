@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -717,8 +718,7 @@ class _PickCashSheetState extends ConsumerState<PickCashSheet> {
               Text(
                 _generatedOtp,
                 key: const Key('pick_cash_otp_text'),
-                style: const TextStyle(
-                  fontFamily: 'Cinzel',
+                style: GoogleFonts.playfairDisplay(
                   fontSize: 32,
                   fontWeight: FontWeight.w900,
                   color: AppColors.primaryEmerald,

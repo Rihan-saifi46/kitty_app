@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../../../../shared/widgets/navigation/kitty_hamburger_button.dart';
 import '../../../live_rates/presentation/providers/live_rate_controller.dart';
@@ -38,26 +39,6 @@ enum GoldKarat {
 }
 
 /// Gold Coins Screen reproducing `dddd/coins.html` exactly.
-///
-/// Features:
-/// 1. Top Bar Navigation:
-///    - Deep Pine Emerald Header (#07392F)
-///    - Back button
-///    - Centered Title: "Gold Coins" (Playfair Display 21px bold white)
-///    - Top-right Hamburger Menu Button (KittyHamburgerButton)
-/// 2. Section 1: "Available Gold Coins" (Direct 4g and 5g Coins ONLY):
-///    - Card 1: 4g Gold Coin with authentic radial gold coin artwork, 999 purity stamp, dynamic live price, and "Book Now" CTA
-///    - Card 2: 5g Gold Coin with authentic radial gold coin artwork, 999 purity stamp, dynamic live price, and "Book Now" CTA
-/// 3. Section 2: "Custom Gold Coin":
-///    - Karat selection pills: 24K (99.9%), 22K (91.6%), 18K (75.0%)
-///    - Quick weight selector chips: 1g, 2g, 8g, 10g, 20g
-///    - Exact custom input field (grams)
-///    - Live dynamic pricing strip with instant rate calculation
-///    - "Book Custom Coin" CTA button
-/// 4. Interactive Booking Confirmation Modal:
-///    - Clean card with Product, Purity, Weight, Total Amount
-///    - "Confirm" action records the booking in `ordersControllerProvider`
-///    - Instant feedback toast
 class CoinRatesScreen extends ConsumerStatefulWidget {
   const CoinRatesScreen({
     this.initialMetal = CoinMetal.gold,
@@ -71,12 +52,12 @@ class CoinRatesScreen extends ConsumerStatefulWidget {
 }
 
 class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
-  static const Color _pineDark = Color(0xFF07392F);
-  static const Color _canvasBg = Color(0xFFFAF8F4);
+  static const Color _pineDark = AppColors.primaryEmerald; // #063B2C
+  static const Color _canvasBg = AppColors.warmPearl; // #FAF7F2
   static const Color _surfaceBg = Color(0xFFFFFFFF);
-  static const Color _softBorder = Color(0xFFEBE5D8);
-  static const Color _textDark = Color(0xFF1A2120);
-  static const Color _textMuted = Color(0xFF6E7876);
+  static const Color _softBorder = AppColors.surfaceCardBorder; // #EFE6DB
+  static const Color _textDark = AppColors.deepForestCharcoal; // #0A221C
+  static const Color _textMuted = AppColors.mutedSlateGray; // #68726E
 
   int _selectedKarat = 24; // 24 | 22 | 18
   double _selectedWeight = 10.0;
@@ -197,14 +178,14 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
         child: Column(
           children: <Widget>[
             // =================================================================
-            // TOP HEADER (Deep Pine Emerald Header matching coins.html line 92)
+            // TOP HEADER (Gold Plans Light Luxury Header)
             // =================================================================
             Container(
-              color: _pineDark,
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 18),
+              color: AppColors.warmPearl,
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
               child: Row(
                 children: <Widget>[
-                  // Back Button (circle white/10)
+                  // Back Button (White circular card with subtle border)
                   Material(
                     color: Colors.transparent,
                     child: InkWell(
@@ -221,13 +202,24 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.12),
+                          color: Colors.white,
                           shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.surfaceCardBorder,
+                            width: 1,
+                          ),
+                          boxShadow: const <BoxShadow>[
+                            BoxShadow(
+                              color: Color(0x0A000000),
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: const Center(
                           child: Icon(
                             Icons.arrow_back_rounded,
-                            color: Colors.white,
+                            color: AppColors.deepForestCharcoal,
                             size: 20,
                           ),
                         ),
@@ -235,23 +227,23 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
                     ),
                   ),
 
-                  // Title (Playfair Display 21px bold white)
+                  // Title
                   Expanded(
                     child: Center(
                       child: Text(
                         'Gold Coins',
-                        style: GoogleFonts.playfairDisplay(
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.deepForestCharcoal,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ),
                   ),
 
                   // Top-Right Hamburger Menu Button
-                  const KittyHamburgerButton(isLightSurface: false),
+                  const KittyHamburgerButton(isLightSurface: true),
                 ],
               ),
             ),
@@ -271,7 +263,7 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
                     // ---------------------------------------------------------
                     Text(
                       'Available Gold Coins',
-                      style: GoogleFonts.playfairDisplay(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         color: _textDark,
@@ -333,7 +325,7 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
                         children: <Widget>[
                           Text(
                             'Custom Gold Coin',
-                            style: GoogleFonts.playfairDisplay(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
                               color: _textDark,
@@ -504,7 +496,7 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   _inrFormat.format(customTotal),
-                                  style: GoogleFonts.playfairDisplay(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: 19,
                                     fontWeight: FontWeight.bold,
                                     color: _pineDark,
@@ -671,7 +663,7 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
                         children: <Widget>[
                           Text(
                             weightLabel,
-                            style: GoogleFonts.playfairDisplay(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
                               color: const Color(0xFF451A03),
@@ -703,7 +695,7 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
                     children: <Widget>[
                       Text(
                         title,
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: _textDark,
@@ -721,7 +713,7 @@ class _CoinRatesScreenState extends ConsumerState<CoinRatesScreen> {
                       const SizedBox(height: 3),
                       Text(
                         _inrFormat.format(price),
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: _pineDark,
@@ -809,7 +801,7 @@ class _CoinBookingDialog extends StatelessWidget {
               child: const Center(
                 child: Icon(
                   Icons.check_rounded,
-                  color: Color(0xFF07392F),
+                  color: AppColors.primaryEmerald,
                   size: 26,
                 ),
               ),
@@ -820,7 +812,7 @@ class _CoinBookingDialog extends StatelessWidget {
             // Title & Subtitle
             Text(
               'Confirm Coin Booking',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF1A2120),
@@ -867,10 +859,10 @@ class _CoinBookingDialog extends StatelessWidget {
                       ),
                       Text(
                         _inrFormat.format(totalAmount),
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF07392F),
+                          color: AppColors.primaryEmerald,
                         ),
                       ),
                     ],
@@ -888,8 +880,8 @@ class _CoinBookingDialog extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF1A2120),
-                      side: const BorderSide(color: Color(0xFFEBE5D8)),
+                      foregroundColor: AppColors.deepForestCharcoal,
+                      side: const BorderSide(color: AppColors.surfaceCardBorder),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -909,7 +901,7 @@ class _CoinBookingDialog extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: onConfirmed,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF07392F),
+                      backgroundColor: AppColors.primaryEmerald,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12),

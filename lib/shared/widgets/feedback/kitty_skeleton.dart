@@ -23,7 +23,7 @@ class KittySkeletonBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color effectiveColor = color ??
-        (isDarkSurface ? const Color(0xFF092B22) : const Color(0xFFE5E7EB));
+        (isDarkSurface ? const Color(0xFFE2DDD5) : const Color(0xFFEFE9DF));
 
     return Container(
       width: width,

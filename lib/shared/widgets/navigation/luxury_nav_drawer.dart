@@ -8,7 +8,7 @@ class LuxuryNavDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Drawer(
-      backgroundColor: Color(0xFF07392F),
+      backgroundColor: Color(0xFF063B2C),
       child: SafeArea(
         bottom: false,
         child: KittyMenuSheet(),

@@ -13,7 +13,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../providers/auth_controller.dart';
-import '../widgets/jewelry_constellation_painter.dart';
 
 /// Multi-step Login flow views matching `login.html`.
 enum LoginStep {
@@ -112,7 +111,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 </svg>''';
 
   static const String _phoneIconSvg = '''
-<svg viewBox="0 0 24 24" fill="none" stroke="#F4E2AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
 </svg>''';
 
@@ -164,16 +163,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     _cardEntranceController.forward();
 
-    // 2. 3D Background Jewelry Constellation (continuous 24s loop)
+    // 2. Background Animation Controller
     _bgConstellationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 24),
     );
-    if (!_isInTest) {
-      _bgConstellationController.repeat();
-    } else {
-      _bgConstellationController.value = 0.5;
-    }
 
     // 3. Success Pulse Badge Animation (active strictly on success step)
     _successPulseController = AnimationController(
@@ -500,17 +494,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       context: context,
       builder: (BuildContext ctx) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF05241C),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
-            side: const BorderSide(color: Color(0x59CCA243)),
+            side: const BorderSide(color: Color(0xFFEFE6DB)),
           ),
           title: Text(
             title,
-            style: GoogleFonts.cormorantGaramond(
+            style: GoogleFonts.playfairDisplay(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFFF4E2AA),
+              color: const Color(0xFF0A221C),
             ),
           ),
           content: SingleChildScrollView(
@@ -518,7 +512,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               content,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13.5,
-                color: const Color(0xFF8FA499),
+                color: const Color(0xFF68726E),
                 height: 1.5,
               ),
             ),
@@ -530,7 +524,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 'Close',
                 style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFCCA243),
+                  color: const Color(0xFF063B2C),
                 ),
               ),
             ),
@@ -570,7 +564,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF05241C), // Exact: #05241C
+        backgroundColor: const Color(0xFFFAF7F2), // Gold Plans primary canvas
         body: GestureDetector(
           onTap: () {
             if (_isCountryDropdownOpen) {
@@ -584,12 +578,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               // 1. Subtle Damask Wallpaper Pattern Overlay (.wallpaper-overlay)
               Positioned.fill(
                 child: Opacity(
-                  opacity: 0.08,
+                  opacity: 0.035,
                   child: Image.asset(
                     'assets/patterns/damask-pattern.jpg',
                     fit: BoxFit.cover,
                     repeat: ImageRepeat.repeat,
-                    color: const Color(0xFFCCA243),
+                    color: const Color(0xFFC88A35),
                     colorBlendMode: BlendMode.screen,
                     errorBuilder: (BuildContext ctx, Object err, StackTrace? st) {
                       return const SizedBox.shrink();
@@ -598,24 +592,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 ),
               ),
 
-              // 2. 3D Faceted Jewelry Constellation Canvas (#diamond-bg-canvas)
-              Positioned.fill(
-                child: RepaintBoundary(
-                  child: AnimatedBuilder(
-                    animation: _bgConstellationController,
-                    builder: (BuildContext context, Widget? child) {
-                      return CustomPaint(
-                        painter: JewelryConstellationPainter(
-                          progress: _bgConstellationController.value,
-                          opacity: 0.90,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // 3. Ambient Emerald & Gold Radial Glow Orb (.ambient-glow-orb)
+              // 2. Ambient Gold Radial Glow Orb (.ambient-glow-orb)
               Center(
                 child: RepaintBoundary(
                   child: ImageFiltered(
@@ -627,8 +604,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: <Color>[
-                            const Color(0xFFCCA243).withValues(alpha: 0.12),
-                            const Color(0xFF0D4A3A).withValues(alpha: 0.18),
+                            const Color(0xFFC88A35).withValues(alpha: 0.08),
+                            const Color(0xFFEFE6DB).withValues(alpha: 0.14),
                             Colors.transparent,
                           ],
                           stops: const <double>[0.0, 0.45, 0.70],
@@ -659,33 +636,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               scale: _cardScaleAnimation,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(cardRadius),
-                                child: BackdropFilter(
-                                  filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xD9062018), // rgba(6, 32, 24, 0.85) luxury emerald glass
-                                      borderRadius: BorderRadius.circular(cardRadius),
-                                      border: Border.all(
-                                        color: const Color(0x47CCA243), // var(--gold-muted)
-                                        width: 1.0,
-                                      ),
-                                      boxShadow: const <BoxShadow>[
-                                        BoxShadow(
-                                          color: Color(0xA6000000), // rgba(0,0,0,0.65)
-                                          blurRadius: 60,
-                                          spreadRadius: -12,
-                                          offset: Offset(0, 24),
-                                        ),
-                                        BoxShadow(
-                                          color: Color(0x14CCA243), // rgba(204, 162, 65, 0.08)
-                                          blurRadius: 35,
-                                          offset: Offset(0, 0),
-                                        ),
-                                      ],
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(cardRadius),
+                                    border: Border.all(
+                                      color: const Color(0xFFEFE6DB), // Gold Plans card border
+                                      width: 1.0,
                                     ),
+                                    boxShadow: const <BoxShadow>[
+                                      BoxShadow(
+                                        color: Color(0x0A000000),
+                                        blurRadius: 18,
+                                        spreadRadius: 0,
+                                        offset: Offset(0, 4),
+                                      ),
+                                      BoxShadow(
+                                        color: Color(0x08C88A35),
+                                        blurRadius: 28,
+                                        offset: Offset(0, 8),
+                                      ),
+                                    ],
+                                  ),
                                   child: Stack(
                                     children: <Widget>[
-                                      // Top Specular Hairline Highlight (inset 0 1px 1px rgba(255,255,255,0.12))
+                                      // Top Specular Hairline Highlight
                                       Positioned(
                                         top: 0,
                                         left: 0,
@@ -696,9 +671,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                             gradient: LinearGradient(
                                               colors: <Color>[
                                                 Colors.transparent,
-                                                Color(0x33FFFFFF),
-                                                Color(0x55F4E2AA),
-                                                Color(0x33FFFFFF),
+                                                Color(0x33C88A35),
+                                                Color(0x66C88A35),
+                                                Color(0x33C88A35),
                                                 Colors.transparent,
                                               ],
                                               stops: <double>[0.0, 0.2, 0.5, 0.8, 1.0],
@@ -753,7 +728,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   ),
                 ),
               ),
-            ),
 
               // 5. Toast Notification (.swastik-toast)
               _buildFloatingToast(),
@@ -782,41 +756,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               return const Icon(
                 Icons.diamond_outlined,
                 size: 44,
-                color: Color(0xFFCCA243),
+                color: Color(0xFFC88A35),
               );
             },
           ),
         ),
 
         // Brand Subtitle: "Sign in to continue" (.brand-subtitle)
-        ShaderMask(
-          blendMode: BlendMode.srcIn,
-          shaderCallback: (Rect bounds) {
-            return const LinearGradient(
-              colors: <Color>[
-                Color(0xFFCCA243),
-                Color(0xFFF4E2AA),
-                Color(0xFFCCA243),
-              ],
-              stops: <double>[0.0, 0.5, 1.0],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ).createShader(bounds);
-          },
-          child: Text(
-            _currentStep == LoginStep.profile
-                ? 'Complete Your Profile'
-                : (_currentStep == LoginStep.success
-                    ? 'Vault Access Granted'
-                    : 'Sign in to continue'),
-            textAlign: TextAlign.center,
-            style: GoogleFonts.cormorantGaramond(
-              fontSize: 21.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-              letterSpacing: 0.63,
-              height: 1.25,
-            ),
+        Text(
+          _currentStep == LoginStep.profile
+              ? 'Complete Your Profile'
+              : (_currentStep == LoginStep.success
+                  ? 'Vault Access Granted'
+                  : 'Sign in to continue'),
+          textAlign: TextAlign.center,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 22.0,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF0A221C),
+            letterSpacing: -0.2,
+            height: 1.25,
           ),
         ),
       ],
@@ -856,17 +815,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         Container(
           height: buttonHeight,
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+            color: Colors.white,
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.9),
+              color: const Color(0xFFE5DDD0),
               width: 1.0,
             ),
             borderRadius: BorderRadius.circular(14.0),
             boxShadow: const <BoxShadow>[
               BoxShadow(
-                color: Color(0x40000000),
-                blurRadius: 14,
-                offset: Offset(0, 4),
+                color: Color(0x0A000000),
+                blurRadius: 10,
+                offset: Offset(0, 2),
               ),
             ],
           ),
@@ -889,7 +848,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 height: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2.2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4B5563)),
+                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0A221C)),
                                 ),
                               ),
                               const SizedBox(width: 10),
@@ -898,7 +857,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w500,
-                                  color: const Color(0xFF1F2937),
+                                  color: const Color(0xFF0A221C),
                                 ),
                               ),
                             ],
@@ -917,7 +876,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF1F2937),
+                                  color: const Color(0xFF0A221C),
                                 ),
                               ),
                             ],
@@ -941,7 +900,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     gradient: LinearGradient(
                       colors: <Color>[
                         Colors.transparent,
-                        Color(0x40CCA243),
+                        Color(0x33C88A35),
                       ],
                     ),
                   ),
@@ -953,9 +912,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   'OR',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 11.5,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.38,
-                    color: const Color(0x59CCA243), // rgba(204, 162, 65, 0.28)
+                    color: const Color(0xFF8C9691),
                   ),
                 ),
               ),
@@ -965,7 +924,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: <Color>[
-                        Color(0x40CCA243),
+                        Color(0x33C88A35),
                         Colors.transparent,
                       ],
                     ),
@@ -980,12 +939,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         Container(
           height: buttonHeight,
           decoration: BoxDecoration(
-            color: const Color(0x730D4A3A), // rgba(13, 74, 58, 0.45)
-            border: Border.all(
-              color: const Color(0x38CCA243), // rgba(204, 162, 65, 0.22)
-              width: 1.0,
-            ),
+            color: const Color(0xFF063B2C),
             borderRadius: BorderRadius.circular(14.0),
+            boxShadow: const <BoxShadow>[
+              BoxShadow(
+                color: Color(0x1F063B2C),
+                blurRadius: 8,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
           child: Material(
             color: Colors.transparent,
@@ -1010,15 +972,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           'Continue with Mobile',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14.0,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFFF4E2AA),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(width: 8),
                         const Icon(
                           Icons.arrow_forward_ios_rounded,
                           size: 13,
-                          color: Color(0xFFF4E2AA),
+                          color: Colors.white,
                         ),
                       ],
                     ),
@@ -1036,7 +998,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             TextSpan(
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11.5,
-                color: const Color(0xFF5C7469),
+                color: const Color(0xFF68726E),
                 height: 1.5,
               ),
               children: <InlineSpan>[
@@ -1045,7 +1007,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 TextSpan(
                   text: 'Terms',
                   style: const TextStyle(
-                    color: Color(0xFFF4E2AA),
+                    color: Color(0xFF063B2C),
                     decoration: TextDecoration.underline,
                   ),
                   recognizer: TapGestureRecognizer()
@@ -1061,7 +1023,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 TextSpan(
                   text: 'Privacy Policy',
                   style: const TextStyle(
-                    color: Color(0xFFF4E2AA),
+                    color: Color(0xFF063B2C),
                     decoration: TextDecoration.underline,
                   ),
                   recognizer: TapGestureRecognizer()
@@ -1112,15 +1074,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   const Icon(
                     Icons.arrow_back_rounded,
                     size: 16,
-                    color: Color(0xFFF4E2AA),
+                    color: Color(0xFF0A221C),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Back',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 13.0,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFFF4E2AA),
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF0A221C),
                     ),
                   ),
                 ],
@@ -1134,11 +1096,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         // Step Heading Group (.step-heading-group)
         Text(
           'Enter your mobile number',
-          style: GoogleFonts.cormorantGaramond(
+          style: GoogleFonts.playfairDisplay(
             fontSize: isMobile ? 20.0 : 23.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-            letterSpacing: 0.46,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF0A221C),
+            letterSpacing: -0.2,
           ),
         ),
         const SizedBox(height: 6),
@@ -1146,7 +1108,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           'We will send a 6-digit OTP to verify your identity',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 13.0,
-            color: const Color(0xFF8FA499),
+            color: const Color(0xFF68726E),
             height: 1.5,
           ),
         ),
@@ -1174,11 +1136,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       decoration: BoxDecoration(
-                        color: const Color(0xD8041913), // rgba(4, 25, 19, 0.85)
+                        color: const Color(0xFFFAF8F5),
                         border: Border.all(
                           color: _isCountryDropdownOpen
-                              ? const Color(0xFFCCA243)
-                              : const Color(0x47CCA243),
+                              ? const Color(0xFFC88A35)
+                              : const Color(0xFFE5DDD0),
                           width: 1.0,
                         ),
                         borderRadius: BorderRadius.circular(14.0),
@@ -1192,8 +1154,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               '${authState.countryFlag} ${authState.countryCode}',
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13.5,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF0A221C),
                               ),
                             ),
                             const SizedBox(width: 4),
@@ -1202,7 +1164,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   ? Icons.keyboard_arrow_up_rounded
                                   : Icons.keyboard_arrow_down_rounded,
                               size: 14,
-                              color: const Color(0xFFF4E2AA),
+                              color: const Color(0xFF0A221C),
                             ),
                           ],
                         ),
@@ -1224,21 +1186,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         height: buttonHeight,
                         decoration: BoxDecoration(
                           color: isPhoneFocused
-                              ? const Color(0xF2062019) // rgba(6, 32, 25, 0.95)
-                              : const Color(0xD8041913),
+                              ? Colors.white
+                              : const Color(0xFFFAF8F5),
                           border: Border.all(
                             color: hasError
                                 ? const Color(0xFFEF4444)
                                 : (isPhoneFocused
-                                    ? const Color(0xFFCCA243)
-                                    : const Color(0x47CCA243)),
+                                    ? const Color(0xFFC88A35)
+                                    : const Color(0xFFE5DDD0)),
                             width: isPhoneFocused || hasError ? 1.5 : 1.0,
                           ),
                           borderRadius: BorderRadius.circular(14.0),
                           boxShadow: isPhoneFocused && !hasError
                               ? const <BoxShadow>[
                                   BoxShadow(
-                                    color: Color(0x2ECCAC43), // 0 0 0 3px rgba(204, 162, 65, 0.18)
+                                    color: Color(0x1FC88A35),
                                     blurRadius: 6,
                                     spreadRadius: 1,
                                   ),
@@ -1260,17 +1222,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 onSubmitted: (_) => _handleSendOtp(),
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 15.5,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                   letterSpacing: 0.77,
-                                  color: Colors.white,
+                                  color: const Color(0xFF0A221C),
                                 ),
-                                cursorColor: const Color(0xFFCCA243),
+                                cursorColor: const Color(0xFF063B2C),
                                 decoration: InputDecoration(
                                   hintText: '98765 43210',
                                   hintStyle: GoogleFonts.plusJakartaSans(
                                     fontSize: 15.0,
                                     fontWeight: FontWeight.w400,
-                                    color: const Color(0xFF5C7469),
+                                    color: const Color(0xFF9CA3AF),
                                     letterSpacing: 0.0,
                                   ),
                                   border: InputBorder.none,
@@ -1289,7 +1251,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   child: Icon(
                                     Icons.close_rounded,
                                     size: 16,
-                                    color: Color(0xFF5C7469),
+                                    color: Color(0xFF9CA3AF),
                                   ),
                                 ),
                               ),
@@ -1312,14 +1274,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   color: Colors.transparent,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xF205241C),
-                      border: Border.all(color: const Color(0x47CCA243)),
+                      color: Colors.white,
+                      border: Border.all(color: const Color(0xFFEFE6DB)),
                       borderRadius: BorderRadius.circular(14.0),
                       boxShadow: const <BoxShadow>[
                         BoxShadow(
-                          color: Color(0xB3000000),
-                          blurRadius: 30,
-                          offset: Offset(0, 12),
+                          color: Color(0x1F000000),
+                          blurRadius: 20,
+                          offset: Offset(0, 8),
                         ),
                       ],
                     ),
@@ -1340,7 +1302,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
                             decoration: BoxDecoration(
-                              color: isSelected ? const Color(0x40CCA243) : Colors.transparent,
+                              color: isSelected ? const Color(0xFFF3EDE4) : Colors.transparent,
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: Row(
@@ -1352,8 +1314,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                     item['name'] ?? '',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13.0,
-                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                      color: isSelected ? const Color(0xFFFFE899) : const Color(0xFFE2E8F0),
+                                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                                      color: isSelected ? const Color(0xFF063B2C) : const Color(0xFF0A221C),
                                     ),
                                   ),
                                 ),
@@ -1441,15 +1403,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   const Icon(
                     Icons.arrow_back_rounded,
                     size: 16,
-                    color: Color(0xFFF4E2AA),
+                    color: Color(0xFF0A221C),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Change Number',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 13.0,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFFF4E2AA),
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF0A221C),
                     ),
                   ),
                 ],
@@ -1463,11 +1425,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         // Step Heading Group
         Text(
           'Verify your number',
-          style: GoogleFonts.cormorantGaramond(
+          style: GoogleFonts.playfairDisplay(
             fontSize: isMobile ? 20.0 : 23.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-            letterSpacing: 0.46,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF0A221C),
+            letterSpacing: -0.2,
           ),
         ),
         const SizedBox(height: 6),
@@ -1479,7 +1441,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13.0,
                 fontWeight: FontWeight.w400,
-                color: const Color(0xFF8FA499),
+                color: const Color(0xFF68726E),
                 height: 1.5,
               ),
             ),
@@ -1489,8 +1451,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   : '+91 98765 43210',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13.0,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFFF4E2AA),
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF0A221C),
                 height: 1.5,
               ),
             ),
@@ -1500,7 +1462,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               child: const Icon(
                 Icons.edit_outlined,
                 size: 14,
-                color: Color(0xFFCCA243),
+                color: Color(0xFFC88A35),
               ),
             ),
           ],
@@ -1540,22 +1502,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         height: boxHeight,
                         decoration: BoxDecoration(
                           color: isFilled
-                              ? const Color(0xE6082A21) // rgba(8, 42, 33, 0.9)
-                              : (isFocused ? const Color(0xF207241C) : const Color(0xD8041913)),
+                              ? const Color(0xFFFBF8F3)
+                              : (isFocused ? Colors.white : const Color(0xFFFAF8F5)),
                           border: Border.all(
                             color: hasError
                                 ? const Color(0xFFEF4444)
                                 : (isFocused
-                                    ? const Color(0xFFFFE899)
-                                    : (isFilled ? const Color(0xFFCCA243) : const Color(0x47CCA243))),
-                            width: isFocused || hasError ? 1.8 : 1.5,
+                                    ? const Color(0xFFC88A35)
+                                    : (isFilled ? const Color(0xFF063B2C) : const Color(0xFFE5DDD0))),
+                            width: isFocused || hasError ? 1.8 : 1.2,
                           ),
                           borderRadius: BorderRadius.circular(isMobile ? 8.0 : 14.0),
                           boxShadow: isFocused && !hasError
                               ? const <BoxShadow>[
                                   BoxShadow(
-                                    color: Color(0x40CCA243),
-                                    blurRadius: 16,
+                                    color: Color(0x1FC88A35),
+                                    blurRadius: 10,
                                     spreadRadius: 1,
                                   ),
                                 ]
@@ -1585,12 +1547,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               onChanged: (String val) => _handleOtpDigitChange(index, val),
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: isTiny ? 18.0 : (isMobile ? 19.0 : 22.0),
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w700,
                                 color: hasError
-                                    ? const Color(0xFFFCA5A5)
-                                    : const Color(0xFFF4E2AA),
+                                    ? const Color(0xFFEF4444)
+                                    : const Color(0xFF0A221C),
                               ),
-                              cursorColor: const Color(0xFFCCA243),
+                              cursorColor: const Color(0xFF063B2C),
                               decoration: const InputDecoration(
                                 counterText: '',
                                 border: InputBorder.none,
@@ -1638,14 +1600,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         text: 'Resend OTP in ',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12.5,
-                          color: const Color(0xFF5C7469),
+                          color: const Color(0xFF68726E),
                         ),
                         children: <InlineSpan>[
                           TextSpan(
                             text: _formatTimer(authState.resendCountdownSeconds),
                             style: const TextStyle(
-                              color: Color(0xFFF4E2AA),
-                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF063B2C),
+                              fontWeight: FontWeight.w700,
                               fontFeatures: <ui.FontFeature>[
                                 ui.FontFeature.tabularFigures(),
                               ],
@@ -1658,7 +1620,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       "Didn't receive code?",
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 12.5,
-                        color: const Color(0xFF8FA499),
+                        color: const Color(0xFF68726E),
                       ),
                     ),
             ),
@@ -1671,8 +1633,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
                   color: authState.canResend
-                      ? const Color(0xFFCCA243)
-                      : const Color(0xFF5C7469).withValues(alpha: 0.5),
+                      ? const Color(0xFFC88A35)
+                      : const Color(0xFF68726E).withValues(alpha: 0.5),
                   decoration: authState.canResend ? TextDecoration.underline : null,
                 ),
               ),
@@ -1718,10 +1680,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           // Step Heading
           Text(
             'Personal Details',
-            style: GoogleFonts.cormorantGaramond(
+            style: GoogleFonts.playfairDisplay(
               fontSize: 22.0,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFFF4E2AA),
+              color: const Color(0xFF0A221C),
             ),
           ),
           const SizedBox(height: 4),
@@ -1730,7 +1692,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12.0,
               fontWeight: FontWeight.w400,
-              color: const Color(0xFF8FA499),
+              color: const Color(0xFF68726E),
               height: 1.4,
             ),
           ),
@@ -1742,15 +1704,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               Text(
                 'Full Name',
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12.0,
+                  fontSize: 13.0,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFE2D6BE),
+                  color: const Color(0xFF0A221C),
                 ),
               ),
               const SizedBox(width: 4),
               const Text(
                 '*',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFFCCA243)),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFFC88A35)),
               ),
             ],
           ),
@@ -1760,36 +1722,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             controller: _nameController,
             textCapitalization: TextCapitalization.words,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 14.0,
-              color: const Color(0xFFF4E2AA),
-              fontWeight: FontWeight.w500,
+              fontSize: 15.5,
+              color: const Color(0xFF0A221C),
+              fontWeight: FontWeight.w600,
             ),
-            cursorColor: const Color(0xFFCCA243),
+            cursorColor: const Color(0xFF063B2C),
             decoration: InputDecoration(
               hintText: 'e.g. Rihan Saifi',
               hintStyle: GoogleFonts.plusJakartaSans(
-                fontSize: 13.0,
-                color: const Color(0xFF5C7469),
+                fontSize: 14.0,
+                color: const Color(0xFF9CA3AF),
               ),
               prefixIcon: const Icon(
                 Icons.person_outline_rounded,
-                color: Color(0xFFCCA243),
-                size: 18,
+                color: Color(0xFF063B2C),
+                size: 20,
               ),
               filled: true,
-              fillColor: const Color(0x66031A13),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              fillColor: const Color(0xFFFAF8F5),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                  color: Color(0x55CCA243),
+                  color: Color(0xFFE5DDD0),
                   width: 1.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                  color: Color(0xFFCCA243),
+                  color: Color(0xFFC88A35),
                   width: 1.5,
                 ),
               ),
@@ -1830,15 +1792,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               Text(
                 'Email Address',
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12.0,
+                  fontSize: 13.0,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFE2D6BE),
+                  color: const Color(0xFF0A221C),
                 ),
               ),
               const SizedBox(width: 4),
               const Text(
                 '*',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFFCCA243)),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFFC88A35)),
               ),
             ],
           ),
@@ -1848,36 +1810,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 14.0,
-              color: const Color(0xFFF4E2AA),
-              fontWeight: FontWeight.w500,
+              fontSize: 15.5,
+              color: const Color(0xFF0A221C),
+              fontWeight: FontWeight.w600,
             ),
-            cursorColor: const Color(0xFFCCA243),
+            cursorColor: const Color(0xFF063B2C),
             decoration: InputDecoration(
               hintText: 'e.g. patron@swastikjewel.com',
               hintStyle: GoogleFonts.plusJakartaSans(
-                fontSize: 13.0,
-                color: const Color(0xFF5C7469),
+                fontSize: 14.0,
+                color: const Color(0xFF9CA3AF),
               ),
               prefixIcon: const Icon(
                 Icons.email_outlined,
-                color: Color(0xFFCCA243),
-                size: 18,
+                color: Color(0xFF063B2C),
+                size: 20,
               ),
               filled: true,
-              fillColor: const Color(0x66031A13),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              fillColor: const Color(0xFFFAF8F5),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                  color: Color(0x55CCA243),
+                  color: Color(0xFFE5DDD0),
                   width: 1.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                  color: Color(0xFFCCA243),
+                  color: Color(0xFFC88A35),
                   width: 1.5,
                 ),
               ),
@@ -1913,15 +1875,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               return null;
             },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
           // City Input (Optional)
           Text(
             'City / Region',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 12.0,
+              fontSize: 13.0,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFFE2D6BE),
+              color: const Color(0xFF0A221C),
             ),
           ),
           const SizedBox(height: 6),
@@ -1930,36 +1892,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             controller: _cityController,
             textCapitalization: TextCapitalization.words,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 14.0,
-              color: const Color(0xFFF4E2AA),
-              fontWeight: FontWeight.w500,
+              fontSize: 15.5,
+              color: const Color(0xFF0A221C),
+              fontWeight: FontWeight.w600,
             ),
-            cursorColor: const Color(0xFFCCA243),
+            cursorColor: const Color(0xFF063B2C),
             decoration: InputDecoration(
               hintText: 'e.g. Mumbai, Maharashtra',
               hintStyle: GoogleFonts.plusJakartaSans(
-                fontSize: 13.0,
-                color: const Color(0xFF5C7469),
+                fontSize: 14.0,
+                color: const Color(0xFF9CA3AF),
               ),
               prefixIcon: const Icon(
                 Icons.location_city_outlined,
-                color: Color(0xFFCCA243),
-                size: 18,
+                color: Color(0xFF063B2C),
+                size: 20,
               ),
               filled: true,
-              fillColor: const Color(0x66031A13),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              fillColor: const Color(0xFFFAF8F5),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                  color: Color(0x55CCA243),
+                  color: Color(0xFFE5DDD0),
                   width: 1.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
-                  color: Color(0xFFCCA243),
+                  color: Color(0xFFC88A35),
                   width: 1.5,
                 ),
               ),
@@ -1991,7 +1953,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12.0,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFF8FA499),
+                    color: const Color(0xFF68726E),
                     decoration: TextDecoration.underline,
                   ),
                 ),
@@ -2042,17 +2004,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   shape: BoxShape.circle,
                   gradient: const RadialGradient(
                     colors: <Color>[
-                      Color(0x40CCA243),
-                      Color(0x660D4A3A),
+                      Color(0xFFC88A35),
+                      Color(0xFF063B2C),
                     ],
                   ),
                   border: Border.all(
-                    color: const Color(0xFFCCA243),
+                    color: const Color(0xFFC88A35),
                     width: 1.5,
                   ),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: const Color(0xFFCCA243).withValues(
+                      color: const Color(0xFFC88A35).withValues(
                         alpha: 0.35 + (_successPulseController.value * 0.15),
                       ),
                       blurRadius: 30,
@@ -2063,7 +2025,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   child: Icon(
                     Icons.check_rounded,
                     size: 34,
-                    color: Color(0xFFFFE899),
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -2077,10 +2039,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         Text(
           'Welcome Back, $displayName',
           textAlign: TextAlign.center,
-          style: GoogleFonts.cormorantGaramond(
-            fontSize: 26.0,
+          style: GoogleFonts.playfairDisplay(
+            fontSize: 25.0,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFFF4E2AA),
+            color: const Color(0xFF0A221C),
           ),
         ),
 
@@ -2090,16 +2052,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 4.0),
           decoration: BoxDecoration(
-            color: const Color(0x26CCA243),
-            border: Border.all(color: const Color(0x47CCA243)),
+            color: const Color(0xFFF3EDE4),
+            border: Border.all(color: const Color(0xFFE5DDD0)),
             borderRadius: BorderRadius.circular(20.0),
           ),
           child: Text(
             tierText,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12.0,
-              fontWeight: FontWeight.w500,
-              color: const Color(0xFFFFE899),
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF063B2C),
             ),
           ),
         ),
@@ -2115,7 +2077,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           style: GoogleFonts.plusJakartaSans(
             fontSize: 13.5,
             fontWeight: FontWeight.w400,
-            color: const Color(0xFF8FA499),
+            color: const Color(0xFF68726E),
             height: 1.6,
           ),
         ),
@@ -2142,7 +2104,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   // ===========================================================================
-  // REUSABLE PRIMARY LUXURY GOLD BUTTON (.btn-primary-gold)
+  // REUSABLE PRIMARY LUXURY ACTION BUTTON (.btn-primary-gold)
   // ===========================================================================
   Widget _buildGoldButton({
     required double height,
@@ -2156,26 +2118,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     return Container(
       height: height,
       decoration: BoxDecoration(
-        gradient: isEnabled
-            ? const LinearGradient(
-                colors: <Color>[
-                  Color(0xFFCCA243),
-                  Color(0xFFF4E2AA),
-                  Color(0xFFCCA243),
-                ],
-                stops: <double>[0.0, 0.5, 1.0],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
-        color: isEnabled ? null : const Color(0xFFCCA243).withValues(alpha: 0.35),
+        color: isEnabled
+            ? const Color(0xFF063B2C)
+            : const Color(0xFF063B2C).withValues(alpha: 0.38),
         borderRadius: BorderRadius.circular(14.0),
         boxShadow: isEnabled
             ? const <BoxShadow>[
                 BoxShadow(
-                  color: Color(0x52CCA243),
-                  blurRadius: 22,
-                  offset: Offset(0, 6),
+                  color: Color(0x1F063B2C),
+                  blurRadius: 8,
+                  offset: Offset(0, 3),
                 ),
               ]
             : null,
@@ -2199,7 +2151,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             height: 18,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A1404)),
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -2208,7 +2160,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF1A1404),
+                              color: Colors.white,
                             ),
                           ),
                         ],
@@ -2222,18 +2174,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               fontSize: 14.0,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.42,
-                              color: isEnabled
-                                  ? const Color(0xFF1A1404)
-                                  : const Color(0x801A1404),
+                              color: Colors.white,
                             ),
                           ),
                           const SizedBox(width: 8),
                           Icon(
                             icon,
                             size: 16,
-                            color: isEnabled
-                                ? const Color(0xFF1A1404)
-                                : const Color(0x801A1404),
+                            color: Colors.white,
                           ),
                         ],
                       ),
@@ -2263,58 +2211,43 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             curve: const Cubic(0.16, 1.0, 0.3, 1.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(14.0),
-              child: BackdropFilter(
-                filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    color: _isToastError
-                        ? const Color(0xF2280A0A) // rgba(40, 10, 10, 0.95)
-                        : const Color(0xF007241C), // rgba(7, 36, 28, 0.94)
-                    border: Border.all(
-                      color: _isToastError
-                          ? const Color(0xFFEF4444)
-                          : const Color(0xFFCCA243),
-                      width: 1.0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 12.0),
+                decoration: BoxDecoration(
+                  color: _isToastError
+                      ? const Color(0xFFEF4444)
+                      : const Color(0xFF063B2C),
+                  borderRadius: BorderRadius.circular(14.0),
+                  boxShadow: const <BoxShadow>[
+                    BoxShadow(
+                      color: Color(0x33000000),
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
                     ),
-                    borderRadius: BorderRadius.circular(14.0),
-                    boxShadow: const <BoxShadow>[
-                      BoxShadow(
-                        color: Color(0x80000000),
-                        blurRadius: 30,
-                        offset: Offset(0, 10),
-                      ),
-                      BoxShadow(
-                        color: Color(0x33CCA243),
-                        blurRadius: 20,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        _isToastError
-                            ? Icons.error_outline_rounded
-                            : Icons.check_circle_outline_rounded,
-                        size: 18,
-                        color: _isToastError
-                            ? const Color(0xFFEF4444)
-                            : const Color(0xFFCCA243),
-                      ),
-                      const SizedBox(width: 10),
-                      Flexible(
-                        child: Text(
-                          _toastMessage ?? '',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Icon(
+                      _isToastError
+                          ? Icons.error_outline_rounded
+                          : Icons.check_circle_outline_rounded,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        _toastMessage ?? '',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

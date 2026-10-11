@@ -14,23 +14,11 @@ class KycConsentCheckbox extends StatelessWidget {
   final ValueChanged<bool> onChanged;
   final bool enabled;
 
-  static const Color _goldLight = Color(0xFFF4E2AA);
-  static const Color _goldBright = Color(0xFFFFE899);
-  static const Color _checkboxBg = Color(0xD9041913); // rgba(4, 25, 19, 0.85)
-  static const Color _checkboxBorder = Color(0x59CCA243); // rgba(204, 162, 65, 0.35)
-  static const Color _textMuted = Color(0xFF8FA499);
-  static const Color _darkCheck = Color(0xFF1A1404);
-
-  static const LinearGradient _goldGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: <Color>[
-      Color(0xFFCCA243),
-      Color(0xFFF4E2AA),
-      Color(0xFFCCA243),
-    ],
-    stops: <double>[0.0, 0.5, 1.0],
-  );
+  static const Color _checkboxBg = Color(0xFFFAF8F5);
+  static const Color _checkboxBorder = Color(0xFFD6CBC0);
+  static const Color _textMuted = Color(0xFF68726E);
+  static const Color _activeEmerald = Color(0xFF063B2C);
+  static const Color _darkHighlight = Color(0xFF0A221C);
 
   @override
   Widget build(BuildContext context) {
@@ -52,18 +40,17 @@ class KycConsentCheckbox extends StatelessWidget {
                 height: 20,
                 margin: const EdgeInsets.only(top: 2, right: 12),
                 decoration: BoxDecoration(
-                  gradient: isChecked ? _goldGradient : null,
-                  color: isChecked ? null : _checkboxBg,
+                  color: isChecked ? _activeEmerald : _checkboxBg,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
-                    color: isChecked ? _goldBright : _checkboxBorder,
+                    color: isChecked ? _activeEmerald : _checkboxBorder,
                     width: 1.5,
                   ),
                   boxShadow: isChecked
                       ? const <BoxShadow>[
                           BoxShadow(
-                            color: Color(0x59CCA243), // rgba(204, 162, 65, 0.35)
-                            blurRadius: 10,
+                            color: Color(0x1F063B2C),
+                            blurRadius: 6,
                             spreadRadius: 1,
                           ),
                         ]
@@ -74,7 +61,7 @@ class KycConsentCheckbox extends StatelessWidget {
                         child: Icon(
                           Icons.check_rounded,
                           size: 14,
-                          color: _darkCheck,
+                          color: Colors.white,
                         ),
                       )
                     : null,
@@ -94,8 +81,8 @@ class KycConsentCheckbox extends StatelessWidget {
                       TextSpan(
                         text: 'Swastik CRM',
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: _goldLight,
+                          fontWeight: FontWeight.w700,
+                          color: _darkHighlight,
                         ),
                       ),
                       TextSpan(
@@ -105,8 +92,8 @@ class KycConsentCheckbox extends StatelessWidget {
                       TextSpan(
                         text: 'RBI & PMLA',
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: _goldLight,
+                          fontWeight: FontWeight.w700,
+                          color: _darkHighlight,
                         ),
                       ),
                       TextSpan(text: ' statutory regulations.'),

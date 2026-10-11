@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../../../checkout/presentation/screens/checkout_screen.dart';
@@ -13,7 +15,7 @@ import '../../../checkout/presentation/screens/checkout_screen.dart';
 /// - Plan Details Card with coin icon, title, and "Edit" button
 /// - Account Details Card with name, mobile, email, and "Edit" button
 /// - Interactive modal sheet to switch plans (6M, 9M, 11M)
-/// - "Proceed to Payment" CTA button in #073B2C
+/// - "Proceed to Payment" CTA button in #063B2C
 class ReviewPlanScreen extends ConsumerStatefulWidget {
   const ReviewPlanScreen({super.key});
 
@@ -54,13 +56,12 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Text(
+                  Text(
                     'Change Plan Duration',
-                    style: TextStyle(
-                      fontFamily: 'Playfair',
+                    style: GoogleFonts.playfairDisplay(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF111A16),
+                      color: const Color(0xFF111A16),
                     ),
                   ),
                   IconButton(
@@ -144,7 +145,7 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
           color: isSelected ? const Color(0xFFEDF5F1) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFF073B2C) : const Color(0xFFEFE8DE),
+            color: isSelected ? AppColors.primaryEmerald : const Color(0xFFEFE8DE),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -156,8 +157,7 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
               children: <Widget>[
                 Text(
                   title,
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                     color: const Color(0xFF111A16),
@@ -166,10 +166,9 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
                 const SizedBox(height: 2),
                 Text(
                   '₹$monthly / month • Total ₹$total',
-                  style: const TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
-                    color: Color(0xFF6B6864),
+                    color: const Color(0xFF6B6864),
                   ),
                 ),
               ],
@@ -177,17 +176,16 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
             if (isSelected)
               const Icon(
                 Icons.check_rounded,
-                color: Color(0xFF073B2C),
+                color: AppColors.primaryEmerald,
                 size: 22,
               )
             else
-              const Text(
+              Text(
                 'Select',
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFFA8A29E),
+                  color: const Color(0xFFA8A29E),
                 ),
               ),
           ],
@@ -199,9 +197,9 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
   @override
   Widget build(BuildContext context) {
     final AppAuthState auth = ref.watch(appAuthStateProvider);
-    final String userName = auth.userName.isNotEmpty ? auth.userName : 'Mahak Garg';
+    final String userName = auth.userName.isNotEmpty ? auth.userName : 'Rihan';
     final String userPhone = auth.userPhone.isNotEmpty ? auth.userPhone : '+91 98765 43210';
-    const String userEmail = 'mahakgarg@email.com';
+    final String userEmail = auth.userEmail.isNotEmpty ? auth.userEmail : 'rihan@swastikjewel.com';
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAF7F2),
@@ -210,7 +208,7 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
           children: <Widget>[
             // Top Navigation Bar
             Padding(
-              padding: const EdgeInsets.only(left: 12, top: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
@@ -231,30 +229,28 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
             ),
 
             // Header Title & Subtitle
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 children: <Widget>[
                   Text(
                     'Review Your Plan',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Playfair',
+                    style: GoogleFonts.playfairDisplay(
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF111A16),
+                      color: const Color(0xFF111A16),
                       letterSpacing: -0.5,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Text(
                     'Please review your plan details\nbefore making the first payment.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xFF6B6864),
+                      color: const Color(0xFF6B6864),
                       height: 1.35,
                     ),
                   ),
@@ -313,32 +309,30 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
                                   const SizedBox(width: 12),
                                   Text(
                                     _planTitle,
-                                    style: const TextStyle(
-                                      fontFamily: 'Playfair',
+                                    style: GoogleFonts.playfairDisplay(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w700,
-                                      color: Color(0xFF111A16),
+                                      color: const Color(0xFF111A16),
                                     ),
                                   ),
                                 ],
                               ),
                               GestureDetector(
                                 onTap: _showEditPlanModal,
-                                child: const Row(
+                                child: Row(
                                   children: <Widget>[
                                     Text(
                                       'Edit',
-                                      style: TextStyle(
-                                        fontFamily: 'Plus Jakarta Sans',
+                                      style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFF073B2C),
+                                        color: AppColors.primaryEmerald,
                                       ),
                                     ),
-                                    SizedBox(width: 4),
-                                    Icon(
+                                    const SizedBox(width: 4),
+                                    const Icon(
                                       Icons.edit_outlined,
-                                      color: Color(0xFF073B2C),
+                                      color: AppColors.primaryEmerald,
                                       size: 15,
                                     ),
                                   ],
@@ -384,32 +378,30 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              const Text(
+                              Text(
                                 'Account Details',
-                                style: TextStyle(
-                                  fontFamily: 'Playfair',
+                                style: GoogleFonts.playfairDisplay(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF111A16),
+                                  color: const Color(0xFF111A16),
                                 ),
                               ),
                               GestureDetector(
                                 onTap: () => context.push(RoutePaths.profile),
-                                child: const Row(
+                                child: Row(
                                   children: <Widget>[
                                     Text(
                                       'Edit',
-                                      style: TextStyle(
-                                        fontFamily: 'Plus Jakarta Sans',
+                                      style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFF073B2C),
+                                        color: AppColors.primaryEmerald,
                                       ),
                                     ),
-                                    SizedBox(width: 4),
-                                    Icon(
+                                    const SizedBox(width: 4),
+                                    const Icon(
                                       Icons.edit_outlined,
-                                      color: Color(0xFF073B2C),
+                                      color: AppColors.primaryEmerald,
                                       size: 15,
                                     ),
                                   ],
@@ -446,18 +438,17 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF073B2C),
+                          backgroundColor: AppColors.primaryEmerald,
                           foregroundColor: Colors.white,
                           elevation: 3,
-                          shadowColor: const Color(0x33073B2C),
+                          shadowColor: const Color(0x33063B2C),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(26),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Proceed to Payment',
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.3,
@@ -485,20 +476,18 @@ class _ReviewPlanScreenState extends ConsumerState<ReviewPlanScreen> {
         children: <Widget>[
           Text(
             label,
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: Color(0xFF6B6864),
+              color: const Color(0xFF6B6864),
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14.5,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF111A16),
+              color: const Color(0xFF111A16),
             ),
           ),
         ],
