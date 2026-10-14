@@ -24,7 +24,7 @@ class BookingScreen extends StatefulWidget {
 class _BookingScreenState extends State<BookingScreen> {
   // Pre-configured according to dddd/book.html
   static const Set<String> _bookedNumbers = <String>{
-    '03', '09', '13', '16', '17', '22', '25'
+    '03', '09', '13', '16', '17', '22', '25', '34', '42', '51', '63', '74', '82', '88', '95',
   };
 
   String? _selectedNumber;
@@ -215,17 +215,17 @@ class _BookingScreenState extends State<BookingScreen> {
 
                     const SizedBox(height: 14),
 
-                    // 30-Numbers Grid (5 columns x 6 rows)
+                    // 100-Numbers Grid (10 columns x 10 rows)
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        crossAxisSpacing: 9,
-                        mainAxisSpacing: 9,
-                        childAspectRatio: 1.35,
+                        crossAxisCount: 10,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
+                        childAspectRatio: 1.0,
                       ),
-                      itemCount: 30,
+                      itemCount: 100,
                       itemBuilder: (BuildContext context, int index) {
                         final String numStr = (index + 1).toString().padLeft(2, '0');
                         final bool isBooked = _bookedNumbers.contains(numStr);
@@ -238,15 +238,15 @@ class _BookingScreenState extends State<BookingScreen> {
                         if (isBooked) {
                           bgColor = const Color(0xFFDCD7CF);
                           textColor = const Color(0xFF8D877E);
-                          border = Border.all(color: const Color(0xFFCFC8BD));
+                          border = Border.all(color: const Color(0xFFCFC8BD), width: 0.8);
                         } else if (isSelected) {
                           bgColor = const Color(0xFF063B2C);
                           textColor = Colors.white;
-                          border = Border.all(color: const Color(0xFF063B2C));
+                          border = Border.all(color: const Color(0xFF063B2C), width: 0.8);
                         } else {
                           bgColor = Colors.white;
                           textColor = const Color(0xFF1C1917);
-                          border = Border.all(color: const Color(0xFFC8BDAB));
+                          border = Border.all(color: const Color(0xFFC8BDAB), width: 0.8);
                         }
 
                         return GestureDetector(
@@ -255,14 +255,14 @@ class _BookingScreenState extends State<BookingScreen> {
                             duration: const Duration(milliseconds: 150),
                             decoration: BoxDecoration(
                               color: bgColor,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(6),
                               border: border,
                               boxShadow: isSelected
                                   ? const <BoxShadow>[
                                       BoxShadow(
                                         color: Color(0x33063B2C),
-                                        blurRadius: 6,
-                                        offset: Offset(0, 2),
+                                        blurRadius: 4,
+                                        offset: Offset(0, 1),
                                       ),
                                     ]
                                   : null,
@@ -272,7 +272,7 @@ class _BookingScreenState extends State<BookingScreen> {
                               numStr,
                               style: TextStyle(
                                 fontFamily: 'Plus Jakarta Sans',
-                                fontSize: 15,
+                                fontSize: 10.5,
                                 fontWeight: isSelected || isBooked
                                     ? FontWeight.w700
                                     : FontWeight.w600,

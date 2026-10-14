@@ -595,6 +595,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     backgroundColor: _darkPine,
                     foregroundColor: Colors.white,
                     elevation: 0,
+                    minimumSize: const Size(0, 38),
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -1072,6 +1073,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     backgroundColor: _darkPine,
                     foregroundColor: Colors.white,
                     elevation: 0,
+                    minimumSize: const Size(0, 38),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

@@ -83,7 +83,7 @@ abstract final class AppTheme {
           backgroundColor: AppColors.primaryEmerald,
           foregroundColor: Colors.white,
           elevation: 0,
-          minimumSize: const Size.fromHeight(AppDimensions.primaryButtonHeight),
+          minimumSize: const Size(64, AppDimensions.primaryButtonHeight),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space20, vertical: AppSpacing.space12),
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border14,
@@ -238,7 +238,7 @@ abstract final class AppTheme {
           backgroundColor: AppColors.primaryEmerald,
           foregroundColor: Colors.white,
           elevation: 0,
-          minimumSize: const Size.fromHeight(AppDimensions.primaryButtonHeight),
+          minimumSize: const Size(64, AppDimensions.primaryButtonHeight),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space20, vertical: AppSpacing.space12),
           shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.border14,

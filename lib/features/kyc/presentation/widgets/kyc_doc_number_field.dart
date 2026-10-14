@@ -11,20 +11,44 @@ class AadhaarInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final String digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+    if (oldValue.text == newValue.text) return newValue;
+
+    final String text = newValue.text;
+    final int selectionIndex = newValue.selection.end;
+
+    // Count non-space characters before cursor in newValue
+    int nonSpacesBeforeCursor = 0;
+    for (int i = 0; i < selectionIndex && i < text.length; i++) {
+      if (text[i] != ' ') {
+        nonSpacesBeforeCursor++;
+      }
+    }
+
+    final String digitsOnly = text.replaceAll(RegExp(r'\D'), '');
     final StringBuffer buffer = StringBuffer();
+    int newCursorPos = 0;
+    int digitCount = 0;
 
     for (int i = 0; i < digitsOnly.length && i < 12; i++) {
       if (i > 0 && i % 4 == 0) {
         buffer.write(' ');
+        if (digitCount < nonSpacesBeforeCursor) {
+          newCursorPos++;
+        }
       }
       buffer.write(digitsOnly[i]);
+      digitCount++;
+      if (digitCount <= nonSpacesBeforeCursor) {
+        newCursorPos++;
+      }
     }
 
     final String formatted = buffer.toString();
+    newCursorPos = newCursorPos.clamp(0, formatted.length);
+
     return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
+      selection: TextSelection.collapsed(offset: newCursorPos),
     );
   }
 }
@@ -205,14 +229,17 @@ class _KycDocNumberFieldState extends State<KycDocNumberField> {
                   focusNode: _focusNode,
                   enabled: widget.enabled,
                   keyboardType: isAadhaar
-                      ? TextInputType.number
+                      ? const TextInputType.numberWithOptions(signed: false, decimal: false)
                       : TextInputType.text,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  textInputAction: TextInputAction.done,
+                  scrollPadding: const EdgeInsets.only(bottom: 120),
                   textCapitalization: isAadhaar
                       ? TextCapitalization.none
                       : TextCapitalization.characters,
                   inputFormatters: isAadhaar
                       ? <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
                           AadhaarInputFormatter(),
                           LengthLimitingTextInputFormatter(14), // 12 digits + 2 spaces
                         ]

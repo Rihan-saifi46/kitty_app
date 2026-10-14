@@ -30,6 +30,8 @@ class AppAuthState {
     this.tier = 'Tier 1 Verified Member',
     this.isKycVerified = true,
     this.isOnboarded = true,
+    this.hasSkippedKyc = false,
+    this.photoPath,
   });
 
   const AppAuthState.initial() : this(status: AuthStatus.initial);
@@ -45,6 +47,8 @@ class AppAuthState {
     String tier = 'Tier 1 Verified Member',
     bool isKycVerified = true,
     bool isOnboarded = true,
+    bool hasSkippedKyc = false,
+    String? photoPath,
   }) : this(
           status: AuthStatus.authenticated,
           token: token,
@@ -55,6 +59,8 @@ class AppAuthState {
           tier: tier,
           isKycVerified: isKycVerified,
           isOnboarded: isOnboarded,
+          hasSkippedKyc: hasSkippedKyc,
+          photoPath: photoPath,
         );
 
   final AuthStatus status;
@@ -66,6 +72,8 @@ class AppAuthState {
   final String tier;
   final bool isKycVerified;
   final bool isOnboarded;
+  final bool hasSkippedKyc;
+  final String? photoPath;
 
   bool get isAuthenticated => status == AuthStatus.authenticated;
   bool get isInitial => status == AuthStatus.initial;
@@ -81,6 +89,8 @@ class AppAuthState {
     String? tier,
     bool? isKycVerified,
     bool? isOnboarded,
+    bool? hasSkippedKyc,
+    String? photoPath,
   }) {
     return AppAuthState(
       status: status ?? this.status,
@@ -92,6 +102,8 @@ class AppAuthState {
       tier: tier ?? this.tier,
       isKycVerified: isKycVerified ?? this.isKycVerified,
       isOnboarded: isOnboarded ?? this.isOnboarded,
+      hasSkippedKyc: hasSkippedKyc ?? this.hasSkippedKyc,
+      photoPath: photoPath ?? this.photoPath,
     );
   }
 
@@ -107,7 +119,9 @@ class AppAuthState {
         other.userDob == userDob &&
         other.tier == tier &&
         other.isKycVerified == isKycVerified &&
-        other.isOnboarded == isOnboarded;
+        other.isOnboarded == isOnboarded &&
+        other.hasSkippedKyc == hasSkippedKyc &&
+        other.photoPath == photoPath;
   }
 
   @override
@@ -121,6 +135,8 @@ class AppAuthState {
         tier,
         isKycVerified,
         isOnboarded,
+        hasSkippedKyc,
+        photoPath,
       );
 }
 
@@ -148,6 +164,9 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
         String tier = 'Tier 1 Verified Member';
         bool isKyc = true;
         bool isOnboarded = true;
+        bool hasSkippedKyc = false;
+
+        String? photoPath;
 
         final String? userJson = await _storage.getUserData();
         if (userJson != null && userJson.trim().isNotEmpty) {
@@ -168,8 +187,14 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
             if (data['tier'] is String && (data['tier'] as String).isNotEmpty) {
               tier = data['tier'] as String;
             }
+            if (data['photoPath'] is String && (data['photoPath'] as String).isNotEmpty) {
+              photoPath = data['photoPath'] as String;
+            }
             if (data['isOnboarded'] is bool) {
               isOnboarded = data['isOnboarded'] as bool;
+            }
+            if (data['hasSkippedKyc'] is bool) {
+              hasSkippedKyc = data['hasSkippedKyc'] as bool;
             }
             if (data['kyc'] is Map<String, dynamic>) {
               final Map<String, dynamic> kyc = data['kyc'] as Map<String, dynamic>;
@@ -187,6 +212,8 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
           tier: tier,
           isKycVerified: isKyc,
           isOnboarded: isOnboarded,
+          hasSkippedKyc: hasSkippedKyc,
+          photoPath: photoPath,
         );
       } else {
         state = const AppAuthState.unauthenticated();
@@ -220,13 +247,14 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
     );
   }
 
-  /// Updates user profile details (Name, Email, Phone, DOB, City) and persists them in SecureStorage.
+  /// Updates user profile details (Name, Email, Phone, DOB, City, Photo) and persists them in SecureStorage.
   Future<void> updateProfile({
     required String userName,
     String? userEmail,
     String? userPhone,
     String? userDob,
     String? city,
+    String? photoPath,
     bool? isOnboarded,
   }) async {
     final String currentPhone = (userPhone != null && userPhone.isNotEmpty)
@@ -238,6 +266,7 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
     final String currentDob = (userDob != null && userDob.isNotEmpty)
         ? userDob
         : state.userDob;
+    final String? currentPhotoPath = photoPath ?? state.photoPath;
     final bool currentOnboarded = isOnboarded ?? state.isOnboarded;
 
     state = state.copyWith(
@@ -245,6 +274,7 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
       userPhone: currentPhone,
       userEmail: currentEmail,
       userDob: currentDob,
+      photoPath: currentPhotoPath,
       isOnboarded: currentOnboarded,
     );
 
@@ -257,6 +287,7 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
         'dob': currentDob,
         'city': city ?? '',
         'tier': state.tier,
+        'photoPath': currentPhotoPath ?? '',
         'isOnboarded': currentOnboarded,
         'kyc': <String, dynamic>{
           'isVerified': state.isKycVerified,
@@ -275,6 +306,7 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
     state = state.copyWith(
       isKycVerified: true,
       isOnboarded: true,
+      hasSkippedKyc: false,
     );
 
     try {
@@ -286,10 +318,33 @@ class AppAuthNotifier extends Notifier<AppAuthState> {
         } catch (_) {}
       }
       userData['isOnboarded'] = true;
+      userData['hasSkippedKyc'] = false;
       userData['kyc'] = <String, dynamic>{
         'isVerified': true,
         'status': 'VERIFIED',
       };
+      await _storage.saveUserData(jsonEncode(userData));
+    } catch (_) {}
+  }
+
+  /// Allows the patron to skip KYC for now to explore gold schemes & jewellery,
+  /// preserving their pending statutory compliance status.
+  Future<void> skipKyc() async {
+    state = state.copyWith(
+      hasSkippedKyc: true,
+      isOnboarded: true,
+    );
+
+    try {
+      final String? userJson = await _storage.getUserData();
+      Map<String, dynamic> userData = <String, dynamic>{};
+      if (userJson != null && userJson.trim().isNotEmpty) {
+        try {
+          userData = jsonDecode(userJson) as Map<String, dynamic>;
+        } catch (_) {}
+      }
+      userData['isOnboarded'] = true;
+      userData['hasSkippedKyc'] = true;
       await _storage.saveUserData(jsonEncode(userData));
     } catch (_) {}
   }

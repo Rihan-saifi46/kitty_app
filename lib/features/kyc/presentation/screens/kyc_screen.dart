@@ -103,7 +103,15 @@ class _KycScreenState extends ConsumerState<KycScreen>
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go(RoutePaths.offers);
+      context.go(RoutePaths.postKycChoice);
+    }
+  }
+
+  Future<void> _handleSkip() async {
+    await HapticFeedback.lightImpact();
+    await ref.read(appAuthStateProvider.notifier).skipKyc();
+    if (mounted) {
+      context.go(RoutePaths.postKycChoice);
     }
   }
 
@@ -140,7 +148,9 @@ class _KycScreenState extends ConsumerState<KycScreen>
     if (success && mounted) {
       await ref.read(appAuthStateProvider.notifier).completeKyc();
       if (mounted) {
-        context.go(RoutePaths.postKycChoice);
+        try {
+          context.go(RoutePaths.postKycChoice);
+        } catch (_) {}
       }
     }
   }
@@ -167,6 +177,17 @@ class _KycScreenState extends ConsumerState<KycScreen>
       _docNumberController.clear();
     }
 
+    final bool isKeyboardVisible = MediaQuery.viewInsetsOf(context).bottom > 0;
+    if (isKeyboardVisible) {
+      if (_bgConstellationController.isAnimating) {
+        _bgConstellationController.stop();
+      }
+    } else {
+      if (!_isInTest && !_bgConstellationController.isAnimating) {
+        _bgConstellationController.repeat();
+      }
+    }
+
     return Scaffold(
       backgroundColor: _bgPrimary,
       body: Stack(
@@ -174,42 +195,96 @@ class _KycScreenState extends ConsumerState<KycScreen>
         children: <Widget>[
           // 1. Subtle Damask Wallpaper Pattern Overlay
           Positioned.fill(
-            child: Opacity(
-              opacity: 0.035,
-              child: Image.asset(
-                'assets/patterns/damask-pattern.jpg',
-                fit: BoxFit.cover,
-                repeat: ImageRepeat.repeat,
-                color: AppColors.goldPrimary,
-                colorBlendMode: BlendMode.screen,
-                errorBuilder: (BuildContext ctx, Object err, StackTrace? st) {
-                  return const SizedBox.shrink();
-                },
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.035,
+                child: Image.asset(
+                  'assets/patterns/damask-pattern.jpg',
+                  fit: BoxFit.cover,
+                  repeat: ImageRepeat.repeat,
+                  color: AppColors.goldPrimary,
+                  colorBlendMode: BlendMode.screen,
+                  errorBuilder: (BuildContext ctx, Object err, StackTrace? st) {
+                    return const SizedBox.shrink();
+                  },
+                ),
               ),
             ),
           ),
 
           // 2. 3D Faceted Jewelry Constellation Canvas
           Positioned.fill(
-            child: RepaintBoundary(
-              child: AnimatedBuilder(
-                animation: _bgConstellationController,
-                builder: (BuildContext context, Widget? child) {
-                  return CustomPaint(
-                    painter: JewelryConstellationPainter(
-                      progress: _bgConstellationController.value,
-                      opacity: 0.35,
-                    ),
-                  );
-                },
+            child: IgnorePointer(
+              child: RepaintBoundary(
+                child: AnimatedBuilder(
+                  animation: _bgConstellationController,
+                  builder: (BuildContext context, Widget? child) {
+                    return CustomPaint(
+                      painter: JewelryConstellationPainter(
+                        progress: _bgConstellationController.value,
+                        opacity: 0.35,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
 
-          // 3. Foreground Content with Floating Back Button and Centered Card
+          // 3. Foreground Content with Floating Controls and Steady Scrollable Card
           SafeArea(
             child: Stack(
               children: <Widget>[
+                // Steady Card Container matching Gold Plans theme
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: RepaintBoundary(
+                    child: SingleChildScrollView(
+                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                      physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        left: isSmall ? 12.0 : 16.0,
+                        right: isSmall ? 12.0 : 16.0,
+                        top: isSmall ? 56.0 : 64.0,
+                        bottom: isSmall ? 24.0 : 36.0,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 440),
+                        child: FadeTransition(
+                          opacity: _cardFadeAnimation,
+                          child: SlideTransition(
+                            position: _cardSlideAnimation,
+                            child: ScaleTransition(
+                              scale: _cardScaleAnimation,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(cardRadius),
+                                  border: Border.all(
+                                    color: AppColors.surfaceCardBorder,
+                                    width: 1.0,
+                                  ),
+                                  boxShadow: const <BoxShadow>[
+                                    BoxShadow(
+                                      color: Color(0x0C000000),
+                                      blurRadius: 24,
+                                      offset: Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: cardPadding,
+                                  child: _buildCardContent(state, controller, isSmall),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
                 // Floating Luxury Back Button in top-left
                 Positioned(
                   top: 8,
@@ -252,57 +327,33 @@ class _KycScreenState extends ConsumerState<KycScreen>
                   ),
                 ),
 
+                // Top-right Skip Button
+                Positioned(
+                  top: 8,
+                  right: 58,
+                  child: TextButton(
+                    onPressed: state.status == KycFormStatus.submitting ? null : _handleSkip,
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      'Skip',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryEmerald,
+                      ),
+                    ),
+                  ),
+                ),
+
                 // Top-right Hamburger Menu Button
                 const Positioned(
                   top: 8,
                   right: 12,
                   child: KittyHamburgerButton(isLightSurface: true),
-                ),
-
-                // Centered Card Container matching Gold Plans theme
-                Center(
-                  child: RepaintBoundary(
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmall ? 12.0 : 16.0,
-                        vertical: isSmall ? 16.0 : 24.0,
-                      ),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 440),
-                        child: FadeTransition(
-                          opacity: _cardFadeAnimation,
-                          child: SlideTransition(
-                            position: _cardSlideAnimation,
-                            child: ScaleTransition(
-                              scale: _cardScaleAnimation,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(cardRadius),
-                                  border: Border.all(
-                                    color: AppColors.surfaceCardBorder,
-                                    width: 1.0,
-                                  ),
-                                  boxShadow: const <BoxShadow>[
-                                    BoxShadow(
-                                      color: Color(0x0C000000),
-                                      blurRadius: 24,
-                                      offset: Offset(0, 8),
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: cardPadding,
-                                  child: _buildCardContent(state, controller, isSmall),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -501,6 +552,30 @@ class _KycScreenState extends ConsumerState<KycScreen>
           onPressed: _handleSubmit,
         ),
 
+        const SizedBox(height: 12),
+
+        // 6. Skip for now link
+        Center(
+          child: TextButton(
+            onPressed: isSubmitting ? null : _handleSkip,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              'Skip for now',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                color: AppColors.mutedSlateGray,
+                decoration: TextDecoration.underline,
+                decorationColor: AppColors.mutedSlateGray,
+              ),
+            ),
+          ),
+        ),
+
         const SizedBox(height: 8),
       ],
     );
@@ -578,6 +653,7 @@ class _KycScreenState extends ConsumerState<KycScreen>
               children: <Widget>[
                 // Custom 20x20 Checkbox
                 AnimatedContainer(
+                  key: const Key('terms_checkbox'),
                   duration: const Duration(milliseconds: 180),
                   curve: Curves.easeOutCubic,
                   width: 20,

@@ -42,10 +42,8 @@ final GlobalKey<NavigatorState> _offersNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'offers');
 final GlobalKey<NavigatorState> _dashboardNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'dashboard');
-final GlobalKey<NavigatorState> _liveRatesNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'liveRates');
-final GlobalKey<NavigatorState> _calculatorNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'calculator');
+final GlobalKey<NavigatorState> _jewelleryNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'jewellery');
 
 /// Provider exposing the configured GoRouter instance with reactive auth guards.
 final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
@@ -89,8 +87,8 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
           return null; // Allow welcome / biometric post-auth step, profile registration, or choice screen
         }
 
-        // Statutory KYC Guard: If KYC is not completed, redirect to KYC screen
-        if (!auth.isKycVerified) {
+        // Statutory KYC Guard: If KYC is not completed and user has not chosen to skip for now, redirect to KYC screen
+        if (!auth.isKycVerified && !auth.hasSkippedKyc) {
           if (location == RoutePaths.kyc) {
             return null; // Allow KYC screen
           }
@@ -238,34 +236,17 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
             ],
           ),
 
-          // Branch 2: Live Rate
+          // Branch 2: Jewellery (Showroom fine jewellery web bridge)
           StatefulShellBranch(
-            navigatorKey: _liveRatesNavigatorKey,
+            navigatorKey: _jewelleryNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
-                path: RoutePaths.liveRates,
-                name: AppRoute.liveRates.name,
+                path: RoutePaths.jewellery,
+                name: AppRoute.jewellery.name,
                 pageBuilder: (BuildContext context, GoRouterState state) {
                   return RouteTransitions.fadeTransitionPage(
                     key: state.pageKey,
-                    child: const LiveRatesScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-
-          // Branch 3: Calculator (Dedicated Page)
-          StatefulShellBranch(
-            navigatorKey: _calculatorNavigatorKey,
-            routes: <RouteBase>[
-              GoRoute(
-                path: RoutePaths.calculator,
-                name: AppRoute.calculator.name,
-                pageBuilder: (BuildContext context, GoRouterState state) {
-                  return RouteTransitions.fadeTransitionPage(
-                    key: state.pageKey,
-                    child: const CalculatorScreen(),
+                    child: const JewelleryScreen(),
                   );
                 },
               ),
@@ -279,6 +260,28 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       // =======================================================================
       GoRoute(
         parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.liveRates,
+        name: AppRoute.liveRates.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.fadeTransitionPage(
+            key: state.pageKey,
+            child: const LiveRatesScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        path: RoutePaths.calculator,
+        name: AppRoute.calculator.name,
+        pageBuilder: (BuildContext context, GoRouterState state) {
+          return RouteTransitions.fadeTransitionPage(
+            key: state.pageKey,
+            child: const CalculatorScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
         path: RoutePaths.coinRates,
         name: AppRoute.coinRates.name,
         pageBuilder: (BuildContext context, GoRouterState state) {
@@ -288,17 +291,6 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
           return RouteTransitions.slideFromRightPage(
             key: state.pageKey,
             child: CoinRatesScreen(initialMetal: initialMetal ?? CoinMetal.gold),
-          );
-        },
-      ),
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: RoutePaths.jewellery,
-        name: AppRoute.jewellery.name,
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          return RouteTransitions.fadeTransitionPage(
-            key: state.pageKey,
-            child: const JewelleryScreen(),
           );
         },
       ),

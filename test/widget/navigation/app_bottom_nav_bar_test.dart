@@ -27,28 +27,29 @@ void main() {
       // Verify all 4 approved canonical destinations are present
       expect(find.text('Gold Plans'), findsOneWidget);
       expect(find.text('My Plan'), findsOneWidget);
-      expect(find.text('Live Rate'), findsOneWidget);
-      expect(find.text('Calculator'), findsOneWidget);
+      expect(find.text('Instagram'), findsOneWidget);
+      expect(find.text('Jewellery'), findsOneWidget);
 
-      // Verify Home, Menu, KYC, Jewellery do NOT appear in bottom navigation
+      // Verify Live Rate and Calculator do NOT appear in bottom navigation
+      expect(find.text('Live Rate'), findsNothing);
+      expect(find.text('Calculator'), findsNothing);
       expect(find.text('Home'), findsNothing);
       expect(find.text('Coins'), findsNothing);
       expect(find.text('Menu'), findsNothing);
       expect(find.text('KYC'), findsNothing);
-      expect(find.text('Jewellery'), findsNothing);
 
       // Tap on Tab 1 ('My Plan')
       await tester.tap(find.text('My Plan'));
       await tester.pump();
       expect(tappedIndex, equals(1));
 
-      // Tap on Tab 2 ('Live Rate')
-      await tester.tap(find.text('Live Rate'));
+      // Tap on Tab 2 ('Instagram')
+      await tester.tap(find.text('Instagram'));
       await tester.pump();
       expect(tappedIndex, equals(2));
 
-      // Tap on Tab 3 ('Calculator')
-      await tester.tap(find.text('Calculator'));
+      // Tap on Tab 3 ('Jewellery')
+      await tester.tap(find.text('Jewellery'));
       await tester.pump();
       expect(tappedIndex, equals(3));
 
@@ -72,10 +73,8 @@ void main() {
         ),
       );
 
-      // Verify SVG icons exist for plans, my plan, liverate
+      // Verify SVG icons exist for plans, my plan, instagram, jewellery
       expect(find.byType(SvgPicture), findsWidgets);
-      // Verify calculator icon
-      expect(find.byIcon(Icons.calculate_outlined), findsOneWidget);
     });
 
     testWidgets('Handles off-dock currentIndex -1 cleanly', (WidgetTester tester) async {
@@ -96,8 +95,8 @@ void main() {
       // All 4 tabs rendered
       expect(find.text('Gold Plans'), findsOneWidget);
       expect(find.text('My Plan'), findsOneWidget);
-      expect(find.text('Live Rate'), findsOneWidget);
-      expect(find.text('Calculator'), findsOneWidget);
+      expect(find.text('Instagram'), findsOneWidget);
+      expect(find.text('Jewellery'), findsOneWidget);
     });
   });
 }

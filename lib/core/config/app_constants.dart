@@ -16,6 +16,14 @@ abstract final class AppConstants {
   /// Official Swastik Jewellers showroom web catalog URL.
   static const String jewelleryCatalogUrl = 'https://swastikjewel.in';
 
+  /// Official Swastik Jewellers Instagram profile URL.
+  static const String officialInstagramUrl =
+      'https://www.instagram.com/swastikjewels_bynitingupta/';
+
+  /// Fallback Swastik Jewellers Instagram profile URL.
+  static const String fallbackInstagramUrl =
+      'https://www.instagram.com/swastikjewels_bynitingupta/';
+
   /// Official showroom concierge contact phone number.
   static const String showroomContactPhone = '+919876543210';
 

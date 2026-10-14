@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/routing/route_paths.dart';
 import '../../../../shared/widgets/feedback/kitty_error_state.dart';
 import '../../../../shared/widgets/navigation/kitty_hamburger_button.dart';
 import '../providers/live_rate_controller.dart';
@@ -111,30 +114,55 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
     }
   }
 
+  void _handleBack() {
+    HapticFeedback.lightImpact();
+    if (context.canPop()) {
+      context.pop();
+    } else if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    } else {
+      context.go(RoutePaths.offers);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final LiveRateState rateState = ref.watch(liveRateControllerProvider);
 
     if (rateState.isLoading && rateState.data == null) {
-      return const Scaffold(
-        backgroundColor: Color(0xFFFAF7F2),
-        body: SafeArea(child: LiveRatesSkeletonLoader()),
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (bool didPop, dynamic result) {
+          if (didPop) return;
+          _handleBack();
+        },
+        child: const Scaffold(
+          backgroundColor: Color(0xFFFAF7F2),
+          body: SafeArea(child: LiveRatesSkeletonLoader()),
+        ),
       );
     }
 
     if (rateState.isError && rateState.data == null) {
-      return Scaffold(
-        backgroundColor: const Color(0xFFFAF7F2),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.space24),
-            child: KittyErrorState(
-              title: 'Unable to Load Live Rates',
-              message: rateState.errorMessage ??
-                  'Failed to fetch latest market bullion rates. Please check your internet connection.',
-              retryLabel: 'TRY AGAIN',
-              isDarkSurface: false,
-              onRetry: () => ref.read(liveRateControllerProvider.notifier).loadRates(force: true),
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (bool didPop, dynamic result) {
+          if (didPop) return;
+          _handleBack();
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFFFAF7F2),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.space24),
+              child: KittyErrorState(
+                title: 'Unable to Load Live Rates',
+                message: rateState.errorMessage ??
+                    'Failed to fetch latest market bullion rates. Please check your internet connection.',
+                retryLabel: 'TRY AGAIN',
+                isDarkSurface: false,
+                onRetry: () => ref.read(liveRateControllerProvider.notifier).loadRates(force: true),
+              ),
             ),
           ),
         ),
@@ -153,58 +181,60 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
         : (baseSilver999 * (_calcPurity == '925' ? 0.925 : 1.0));
     final double parsedWeight = double.tryParse(_weightController.text.trim()) ?? 0.0;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFAF7F2),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 576),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFAF7F2),
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: const Color(0xFFECE7DD)),
-                  boxShadow: const <BoxShadow>[
-                    BoxShadow(
-                      color: Color(0x0F1C1917),
-                      blurRadius: 40,
-                      offset: Offset(0, 12),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    // =========================================================
-                    // 1. TOP BAR NAVIGATION (header)
-                    // =========================================================
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              if (Navigator.of(context).canPop()) {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              alignment: Alignment.center,
-                              child: const Icon(
-                                Icons.arrow_back_rounded,
-                                size: 22,
-                                color: Color(0xFF1E1B18),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (didPop) return;
+        _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFAF7F2),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 576),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFAF7F2),
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(color: const Color(0xFFECE7DD)),
+                    boxShadow: const <BoxShadow>[
+                      BoxShadow(
+                        color: Color(0x0F1C1917),
+                        blurRadius: 40,
+                        offset: Offset(0, 12),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      // =========================================================
+                      // 1. TOP BAR NAVIGATION (header)
+                      // =========================================================
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            InkWell(
+                              onTap: _handleBack,
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                alignment: Alignment.center,
+                                child: const Icon(
+                                  Icons.arrow_back_rounded,
+                                  size: 22,
+                                  color: Color(0xFF1E1B18),
+                                ),
                               ),
                             ),
-                          ),
                           Text(
                             'Live Rates',
                             style: GoogleFonts.playfairDisplay(
@@ -777,8 +807,9 @@ class _LiveRatesScreenState extends ConsumerState<LiveRatesScreen>
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildGoldRateCard(double price) {
     return Container(

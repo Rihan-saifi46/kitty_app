@@ -1,13 +1,16 @@
+import 'dart:io' as io;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/config/app_constants.dart';
+import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
+import '../../../../core/utils/url_launcher_helper.dart';
+import '../../../../shared/widgets/dialogs/edit_profile_dialog.dart';
 
 /// Destination / Launch Choice Screen.
 ///
@@ -16,83 +19,31 @@ import '../../../../core/routing/route_paths.dart';
 ///
 /// Layout:
 /// - Scaffold Background: Warm Pearl / Light Parchment (#FAF7F2 - Gold Plans baseline)
-/// - Top Heading ONLY: "Welcome to Swastik Jewels" (Playfair Display 28px bold #0A221C)
+/// - Top Bar:
+///   - Top-left: Swastik Jewels official logo asset
+///   - Top-right: Patron profile icon launching Edit Profile dialog
 /// - 3 Luxury Destination Cards matching the approved visual structure:
-///   1. "Shop Gold" -> Enters internal Kitty App Gold Plans (/offers)
-///   2. "View on Instagram" -> Official Swastik Jewels Instagram external link
-///   3. "Shop Jewellery" -> Official Swastik Jewels jewellery website catalog external link
+///   1. "View Gold Schemes" -> Enters internal Kitty App Gold Plans (/offers)
+///   2. "Shop Jewellery" -> Official Swastik Jewels jewellery website catalog external link
+///   3. "View Our Instagram" -> Official Swastik Jewels Instagram external link
 class OnboardingChoiceScreen extends ConsumerWidget {
   const OnboardingChoiceScreen({super.key});
 
-  static const String _officialInstagramUrl =
-      'https://www.instagram.com/swastikjewellers_official/';
-  static const String _fallbackInstagramUrl =
-      'https://instagram.com/swastikjewel';
+  Future<void> _launchInstagram(BuildContext context) =>
+      UrlLauncherHelper.launchInstagram(context);
 
-  Future<void> _launchInstagram(BuildContext context) async {
-    await HapticFeedback.lightImpact();
-    final Uri primaryUri = Uri.parse(_officialInstagramUrl);
-    final Uri fallbackUri = Uri.parse(_fallbackInstagramUrl);
-
-    try {
-      final bool launched = await launchUrl(
-        primaryUri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!launched) {
-        await launchUrl(fallbackUri, mode: LaunchMode.externalApplication);
-      }
-    } catch (_) {
-      try {
-        await launchUrl(fallbackUri, mode: LaunchMode.externalApplication);
-      } catch (_) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not open Instagram profile.'),
-              backgroundColor: Color(0xFF063B2C),
-            ),
-          );
-        }
-      }
-    }
-  }
+  Future<void> _launchShopJewellery(BuildContext context) =>
+      UrlLauncherHelper.launchJewelleryCatalog(context);
 
   void _navigateToShopGold(BuildContext context) {
     HapticFeedback.lightImpact();
     context.go(RoutePaths.offers);
   }
 
-  Future<void> _launchShopJewellery(BuildContext context) async {
-    await HapticFeedback.lightImpact();
-    final Uri websiteUri = Uri.parse(AppConstants.jewelleryCatalogUrl);
-    try {
-      final bool launched = await launchUrl(
-        websiteUri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!launched && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not open Swastik Jewellers website.'),
-            backgroundColor: Color(0xFF063B2C),
-          ),
-        );
-      }
-    } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not open Swastik Jewellers website.'),
-            backgroundColor: Color(0xFF063B2C),
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final AppAuthState authState = ref.watch(appAuthStateProvider);
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) {
@@ -103,69 +54,128 @@ class OnboardingChoiceScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: const Color(0xFFFAF7F2), // Exact Gold Plans Background
         body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 460),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    const SizedBox(height: 12),
-
-                    // Top Main Heading
-                    Center(
-                      child: Text(
-                        'Welcome to Swastik Jewels',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.playfairDisplay(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF0A221C),
-                          letterSpacing: -0.2,
+          child: Column(
+            children: <Widget>[
+              // Top Bar: Positioned slightly higher near the top
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 460),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        // Top-left: Swastik Jewels Logo
+                        SvgPicture.asset(
+                          'assets/icons/swastiklogo.svg',
+                          height: 36,
+                          fit: BoxFit.contain,
+                          semanticsLabel: 'Swastik Jewels',
                         ),
-                      ),
+
+                        // Top-right: Profile Icon
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              showEditProfileDialog(context, authState: authState);
+                            },
+                            borderRadius: BorderRadius.circular(22),
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color(0xFF063B2C).withValues(alpha: 0.08),
+                                border: Border.all(
+                                  color: const Color(0xFFEFE7DA),
+                                  width: 1.2,
+                                ),
+                              ),
+                              child: Center(
+                                child: authState.photoPath != null &&
+                                        authState.photoPath!.isNotEmpty
+                                    ? ClipOval(
+                                        child: kIsWeb
+                                            ? Image.network(
+                                                authState.photoPath!,
+                                                width: 40,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.file(
+                                                io.File(authState.photoPath!),
+                                                width: 40,
+                                                height: 40,
+                                                fit: BoxFit.cover,
+                                              ),
+                                      )
+                                    : const Icon(
+                                        Icons.person_outline_rounded,
+                                        size: 22,
+                                        color: Color(0xFF063B2C),
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-
-                    const SizedBox(height: 28),
-
-                    // Destination 1: View Gold Schemes
-                    _buildDestinationCard(
-                      iconPath: 'assets/icons/gold-plans.svg',
-                      title: 'View Gold Schemes',
-                      description:
-                          'Explore gold savings schemes, lock in live rates & grow wealth.',
-                      onTap: () => _navigateToShopGold(context),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Destination 2: Shop Jewellery
-                    _buildDestinationCard(
-                      iconPath: 'assets/icons/explore-jewellery.svg',
-                      title: 'Shop Jewellery',
-                      description:
-                          'Browse handcrafted bridal, gold & diamond jewellery collections.',
-                      onTap: () => _launchShopJewellery(context),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Destination 3: View Our Instagram
-                    _buildDestinationCard(
-                      iconPath: 'assets/icons/instagram.svg',
-                      title: 'View Our Instagram',
-                      description:
-                          'Follow our daily jewellery showcases, stories & latest designs.',
-                      onTap: () => _launchInstagram(context),
-                    ),
-
-                    const SizedBox(height: 20),
-                  ],
+                  ),
                 ),
               ),
-            ),
+
+              // The 3 destination options centered in their original position
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 460),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          // Destination 1: View Gold Schemes
+                          _buildDestinationCard(
+                            iconPath: 'assets/icons/gold-plans.svg',
+                            title: 'View Gold Schemes',
+                            description:
+                                'Explore gold savings schemes, lock in live rates & grow wealth.',
+                            onTap: () => _navigateToShopGold(context),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Destination 2: Shop Jewellery
+                          _buildDestinationCard(
+                            iconPath: 'assets/icons/explore-jewellery.svg',
+                            title: 'Shop Jewellery',
+                            description:
+                                'Browse handcrafted bridal, gold & diamond jewellery collections.',
+                            onTap: () => _launchShopJewellery(context),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Destination 3: View Our Instagram
+                          _buildDestinationCard(
+                            iconPath: 'assets/icons/instagram.svg',
+                            title: 'View Our Instagram',
+                            description:
+                                'Follow our daily jewellery showcases, stories & latest designs.',
+                            onTap: () => _launchInstagram(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

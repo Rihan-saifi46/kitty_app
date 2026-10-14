@@ -9,16 +9,14 @@ import '../../../core/constants/app_colors.dart';
 class _DdddNavItem {
   const _DdddNavItem({
     required this.label,
-    this.activeSvg,
-    this.inactiveSvg,
-    this.icon,
+    required this.activeSvg,
+    required this.inactiveSvg,
     this.tintActive = false,
   });
 
   final String label;
-  final String? activeSvg;
-  final String? inactiveSvg;
-  final IconData? icon;
+  final String activeSvg;
+  final String inactiveSvg;
   final bool tintActive;
 }
 
@@ -27,8 +25,8 @@ class _DdddNavItem {
 /// Exactly 4 canonical tabs:
 /// 1. Gold Plans (`assets/icons/plans-active.svg` / `assets/icons/plans-nav.svg`)
 /// 2. My Plan (`assets/icons/my-plan-nav.svg`)
-/// 3. Live Rate (`assets/icons/liverate-nav.svg`)
-/// 4. Calculator (`Icons.calculate_outlined`)
+/// 3. Instagram (`assets/icons/instagram.svg`)
+/// 4. Jewellery (`assets/icons/jewellery-nav.svg`)
 class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({
     required this.currentIndex,
@@ -52,14 +50,15 @@ class AppBottomNavBar extends StatelessWidget {
       tintActive: true,
     ),
     _DdddNavItem(
-      label: 'Live Rate',
-      activeSvg: 'assets/icons/liverate-nav.svg',
-      inactiveSvg: 'assets/icons/liverate-nav.svg',
+      label: 'Instagram',
+      activeSvg: 'assets/icons/instagram.svg',
+      inactiveSvg: 'assets/icons/instagram.svg',
       tintActive: true,
     ),
     _DdddNavItem(
-      label: 'Calculator',
-      icon: Icons.calculate_outlined,
+      label: 'Jewellery',
+      activeSvg: 'assets/icons/jewellery-nav.svg',
+      inactiveSvg: 'assets/icons/jewellery-nav.svg',
       tintActive: true,
     ),
   ];
@@ -110,27 +109,19 @@ class AppBottomNavBar extends StatelessWidget {
                           width: 22,
                           height: 22,
                           child: Center(
-                            child: item.icon != null
-                                ? Icon(
-                                    item.icon,
-                                    size: 22,
-                                    color: isActive
-                                        ? AppColors.primaryEmerald
-                                        : const Color(0xFF77726A),
-                                  )
-                                : SvgPicture.asset(
-                                    isActive ? item.activeSvg! : item.inactiveSvg!,
-                                    width: 22,
-                                    height: 22,
-                                    colorFilter: item.tintActive
-                                        ? ColorFilter.mode(
-                                            isActive
-                                                ? AppColors.primaryEmerald
-                                                : const Color(0xFF77726A),
-                                            BlendMode.srcIn,
-                                          )
-                                        : null,
-                                  ),
+                            child: SvgPicture.asset(
+                              isActive ? item.activeSvg : item.inactiveSvg,
+                              width: 22,
+                              height: 22,
+                              colorFilter: item.tintActive
+                                  ? ColorFilter.mode(
+                                      isActive
+                                          ? AppColors.primaryEmerald
+                                          : const Color(0xFF77726A),
+                                      BlendMode.srcIn,
+                                    )
+                                  : null,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 3),

@@ -8,7 +8,6 @@ import 'package:kitty_app/features/kyc/data/repositories/mock_kyc_repository.dar
 import 'package:kitty_app/features/kyc/domain/entities/kyc_entity.dart';
 import 'package:kitty_app/features/kyc/presentation/providers/kyc_controller.dart';
 import 'package:kitty_app/features/kyc/presentation/screens/kyc_screen.dart';
-import 'package:kitty_app/features/kyc/presentation/widgets/kyc_consent_checkbox.dart';
 import 'package:kitty_app/features/kyc/presentation/widgets/kyc_status_views.dart';
 
 void main() {
@@ -49,8 +48,9 @@ void main() {
       expect(find.text('Aadhaar Number (12 Digits)'), findsOneWidget);
       expect(find.text('Take Photo'), findsOneWidget);
       expect(find.text('Choose from Gallery'), findsOneWidget);
-      expect(find.byType(KycConsentCheckbox), findsOneWidget);
-      expect(find.text('SUBMIT KYC DOCUMENTS'), findsOneWidget);
+      expect(find.textContaining('Terms & Conditions'), findsOneWidget);
+      expect(find.text('COMPLETE KYC'), findsOneWidget);
+      expect(find.text('Skip for now'), findsOneWidget);
     });
 
     testWidgets('2. Tapping PAN tab switches doc type and updates label', (WidgetTester tester) async {
@@ -120,11 +120,11 @@ void main() {
       expect(find.text('1.5 MB • Ready'), findsOneWidget);
 
       // Tap consent checkbox
-      await tester.tap(find.byType(KycConsentCheckbox));
+      await tester.tap(find.byKey(const Key('terms_checkbox')));
       await tester.pumpAndSettle();
 
       // Submit KYC button is now enabled
-      final Finder submitBtn = find.text('SUBMIT KYC DOCUMENTS');
+      final Finder submitBtn = find.text('COMPLETE KYC');
       expect(submitBtn, findsOneWidget);
 
       await tester.tap(submitBtn);
@@ -194,6 +194,33 @@ void main() {
 
       // Back to Form
       expect(find.text('KYC Document Verification'), findsOneWidget);
+    });
+
+    testWidgets('6. KycScreen displays Skip options and executes skip callback', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2340);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            kycRepositoryProvider.overrideWithValue(mockRepo),
+          ],
+          child: const MaterialApp(
+            home: KycScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Top right and bottom Skip actions are displayed
+      expect(find.text('Skip'), findsOneWidget);
+      expect(find.text('Skip for now'), findsOneWidget);
+
+      // Tap Skip for now
+      await tester.tap(find.text('Skip for now'));
+      await tester.pumpAndSettle();
     });
   });
 }

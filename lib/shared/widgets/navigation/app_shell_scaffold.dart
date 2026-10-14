@@ -3,14 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/routing/route_paths.dart';
+import '../../../../core/utils/url_launcher_helper.dart';
 import '../../../features/menu/presentation/widgets/kitty_menu_sheet.dart';
 import 'app_bottom_nav_bar.dart';
 
-/// Persistent luxury application shell wrapping the 4 canonical navigation tabs:
+/// Persistent luxury application shell wrapping the primary navigation tabs:
 /// 1. Gold Plans
 /// 2. My Plan
-/// 3. Live Rate
-/// 4. Calculator
+/// 3. Instagram (External action)
+/// 4. Jewellery (Showroom web bridge)
 class AppShellScaffold extends ConsumerStatefulWidget {
   const AppShellScaffold({
     required this.navigationShell,
@@ -30,13 +31,23 @@ class _AppShellScaffoldState extends ConsumerState<AppShellScaffold> {
   int _resolveBottomNavIndex(String location) {
     if (location.startsWith(RoutePaths.offers) || location == '/') return 0;
     if (location.startsWith(RoutePaths.dashboard)) return 1;
-    if (location.startsWith(RoutePaths.liveRates)) return 2;
-    if (location.startsWith(RoutePaths.calculator)) return 3;
     return 0; // Default to Tab 0 (Gold Plans)
   }
 
   void _onBottomNavTapped(int index) {
-    debugPrint('>>> APP_SHELL_SCAFFOLD: tapped tab index=$index, currentIndex=${widget.navigationShell.currentIndex} <<<');
+    if (index == 2) {
+      // Safely launch official Swastik Jewels Instagram profile externally
+      UrlLauncherHelper.launchInstagram(context);
+      return;
+    }
+
+    if (index == 3) {
+      // Safely launch official Swastik Jewels website externally
+      UrlLauncherHelper.launchJewelleryCatalog(context);
+      return;
+    }
+
+    // Branch 0 = Gold Plans, Branch 1 = My Plan
     widget.navigationShell.goBranch(
       index,
       initialLocation: index == widget.navigationShell.currentIndex,

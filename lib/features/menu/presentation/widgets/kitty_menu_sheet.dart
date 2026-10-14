@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
+import '../../../../shared/widgets/dialogs/edit_profile_dialog.dart';
 import '../../../live_rates/presentation/providers/live_rate_controller.dart';
 import '../../../live_rates/presentation/providers/live_rate_state.dart';
 
@@ -83,11 +84,7 @@ class _KittyMenuSheetState extends ConsumerState<KittyMenuSheet>
   }
 
   void _openEditProfileDialog(BuildContext context, AppAuthState authState) {
-    showDialog<void>(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.60),
-      builder: (BuildContext ctx) => _EditProfileDialog(authState: authState),
-    );
+    showEditProfileDialog(context, authState: authState);
   }
 
   void _openLogoutConfirmDialog(BuildContext context) {
@@ -111,10 +108,20 @@ class _KittyMenuSheetState extends ConsumerState<KittyMenuSheet>
 
   void _navigate(String routePath) {
     HapticFeedback.selectionClick();
+    final GoRouter router = GoRouter.of(context);
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
-    context.go(routePath);
+    if (routePath == RoutePaths.liveRates ||
+        routePath == RoutePaths.coinRates ||
+        routePath == RoutePaths.orders ||
+        routePath == RoutePaths.kyc ||
+        routePath == RoutePaths.settings ||
+        routePath == RoutePaths.passbook) {
+      router.push(routePath);
+    } else {
+      router.go(routePath);
+    }
   }
 
   @override
@@ -921,7 +928,6 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
           decoration: BoxDecoration(
             color: const Color(0xFFFAF7F2),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFEFE7DA)),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: TextField(
@@ -939,6 +945,11 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
                 color: const Color(0xFFA8B2B0),
               ),
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              focusedErrorBorder: InputBorder.none,
               isDense: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 11),
             ),

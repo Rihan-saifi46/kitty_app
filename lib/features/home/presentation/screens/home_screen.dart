@@ -4,13 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/providers/auth_state_provider.dart';
 import '../../../../core/routing/route_paths.dart';
 import '../../../../core/utils/currency_formatter.dart';
+import '../../../../core/utils/url_launcher_helper.dart';
 import '../../../../shared/widgets/feedback/kitty_error_state.dart';
 import '../../../checkout/presentation/screens/checkout_screen.dart';
 import '../../../dashboard/domain/entities/dashboard_summary_entity.dart';
@@ -403,17 +403,12 @@ class HomeScreen extends ConsumerWidget {
                           _buildQuickActionItem(
                             label: 'Explore\nJewellery',
                             iconSvg: 'assets/icons/explore-jewellery.svg',
-                            onTap: () => context.go(RoutePaths.jewellery),
+                            onTap: () => UrlLauncherHelper.launchJewelleryCatalog(context),
                           ),
                           _buildQuickActionItem(
                             label: 'Instagram',
                             iconSvg: 'assets/icons/instagram.svg',
-                            onTap: () async {
-                              final Uri uri = Uri.parse('https://instagram.com');
-                              if (await canLaunchUrl(uri)) {
-                                await launchUrl(uri, mode: LaunchMode.externalApplication);
-                              }
-                            },
+                            onTap: () => UrlLauncherHelper.launchInstagram(context),
                           ),
                         ],
                       ),

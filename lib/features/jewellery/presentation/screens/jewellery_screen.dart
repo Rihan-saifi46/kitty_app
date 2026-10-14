@@ -437,11 +437,15 @@ class _JewelleryScreenState extends ConsumerState<JewelleryScreen> {
                     color: AppColors.primaryEmerald,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    'swastikjewel.in · Official Web Catalog',
-                    style: AppTypography.caption(color: AppColors.primaryEmerald).copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 11,
+                  Flexible(
+                    child: Text(
+                      'swastikjewel.in · Official Web Catalog',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.caption(color: AppColors.primaryEmerald).copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ],
